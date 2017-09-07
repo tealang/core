@@ -13,7 +13,7 @@ import (
 const (
 	welcomeText = `Tealang v0.1-alpha
 Copyright 2017 Lennart Espe. All rights reserved.`
-	replSymbol = ">>> "
+	replSymbol = "~> "
 )
 
 func main() {
