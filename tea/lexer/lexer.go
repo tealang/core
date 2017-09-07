@@ -1,4 +1,4 @@
-package tea
+package lexer
 
 import (
 	"fmt"

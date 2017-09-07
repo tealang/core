@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/tealang/tea-go/tea"
+	"github.com/tealang/tea-go/tea/repl"
 )
 
 const (
@@ -22,7 +22,7 @@ func main() {
 	fmt.Println(welcomeText)
 
 	reader := bufio.NewReader(os.Stdin)
-	runtime := tea.NewRuntime()
+	runtime := repl.New()
 
 	for runtime.Active {
 		fmt.Print(replSymbol)
