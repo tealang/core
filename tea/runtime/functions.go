@@ -52,9 +52,9 @@ func (f *Function) Eval(args []Value, c *Context) (Value, error) {
 			continue
 		}
 		return c.Substitute(func(c *Context) (Value, error) {
-			executionSpace := NewNamespace(f.Source)
+			c.Namespace = NewNamespace(f.Source)
 			for _, arg := range matched {
-				executionSpace.Store(arg)
+				c.Namespace.Store(arg)
 			}
 			return sign.Function.Eval(c)
 		})
