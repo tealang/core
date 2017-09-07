@@ -1,6 +1,4 @@
 // Tealang runtime REPL tool.
-// Copyright 2017 Lennart Espe
-// All rights reserved.
 package main
 
 import (
