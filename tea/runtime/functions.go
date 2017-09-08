@@ -2,6 +2,10 @@ package runtime
 
 import "fmt"
 
+type Evaluable interface {
+	Eval(c *Context) (Value, error)
+}
+
 type Signature struct {
 	Expected []Value
 	Function Evaluable
@@ -36,7 +40,7 @@ func (sign *Signature) Match(args []Value) ([]Value, error) {
 }
 
 func (sign *Signature) String() string {
-	return fmt.Sprintf("<S {%s}>", sign.Expected)
+	return fmt.Sprintf("<S {%v}>", sign.Expected)
 }
 
 type Function struct {
