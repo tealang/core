@@ -7,6 +7,9 @@ type ContextBehavior int
 const (
 	// BehaviorDefault is the normal behavior.
 	BehaviorDefault ContextBehavior = iota
+	BehaviorContinue
+	BehaviorBreak
+	BehaviorReturn
 )
 
 // Context is the runtime context the AST is executed in.
