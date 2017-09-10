@@ -2,46 +2,84 @@ package runtime
 
 import "fmt"
 
-func ConstantException(alias string) error {
-	return fmt.Errorf("ConstantException: %s can not be changed", alias)
+type ConstantException struct {
+	Alias string
 }
 
-func RuntimeException(err string) error {
-	return fmt.Errorf("RuntimeException: %s", err)
+func (c ConstantException) Error() string {
+	return fmt.Sprintf("ConstantException: %s can not be changed", c.Alias)
 }
 
-func ValueReferenceException() error {
-	return fmt.Errorf("ValueReferenceException: Can not assign value to reference")
+type RuntimeException struct {
+	Message string
 }
 
-func ReferenceValueException() error {
-	return fmt.Errorf("ReferenceValueException: Can not assign reference to value")
+func (c RuntimeException) Error() string {
+	return fmt.Sprintf("RuntimeException: %s", c.Message)
 }
 
-func SearchSpaceException() error {
-	return fmt.Errorf("SearchSpaceException: Can not assign values from different search spaces")
+type ValueReferenceException struct{}
+
+func (c ValueReferenceException) Error() string {
+	return fmt.Sprintf("ValueReferenceException: Can not assign value to reference")
 }
 
-func NamespaceException(alias string) error {
-	return fmt.Errorf("NamespaceException: %s not found in search space", alias)
+type ReferenceValueException struct{}
+
+func (c ReferenceValueException) Error() string {
+	return fmt.Sprintf("ReferenceValueException: Can not assign reference to value")
 }
 
-func ArgumentException(expected, got int) error {
-	return fmt.Errorf("ArgumentException: Unknown signature, expected %d got %d", expected, got)
+type SearchSpaceException struct{}
+
+func (c SearchSpaceException) Error() string {
+	return fmt.Sprintf("SearchSpaceException: Can not assign values from different search spaces")
 }
 
-func ArgumentCastException(expected, got *Datatype) error {
-	return fmt.Errorf("ArgumentCastException: Unknown signature, expected %s got %s", expected, got)
+type NamespaceException struct {
+	Alias string
 }
 
-func FunctionException(alias string) error {
-	return fmt.Errorf("FunctionException: No matching signature for %s", alias)
+func (c NamespaceException) Error() string {
+	return fmt.Sprintf("NamespaceException: %s not found in search space", c.Alias)
 }
 
-func CastException(from, to *Datatype) error {
-	return fmt.Errorf("CastException: %s can not be implicitly casted to %s", from, to)
+type ArgumentException struct {
+	Expected, Got int
 }
 
-func StoreException(t interface{}) error {
-	return fmt.Errorf("StoreException: Cannot store %s in namespace", t)
+func (c ArgumentException) Error() string {
+	return fmt.Sprintf("ArgumentException: Unknown signature, expected %d got %d", c.Expected, c.Got)
+}
+
+type ArgumentCastException struct {
+	Expected, Got *Datatype
+}
+
+func (c ArgumentCastException) Error() string {
+	return fmt.Sprintf("ArgumentCastException: Unknown signature, expected %s got %s", c.Expected, c.Got)
+}
+
+type FunctionException struct {
+	Alias string
+}
+
+func (c FunctionException) Error() string {
+	return fmt.Sprintf("FunctionException: No matching signature for %s", c.Alias)
+}
+
+type CastException struct {
+	From, To *Datatype
+}
+
+func (c CastException) Error() string {
+	return fmt.Sprintf("CastException: %s can not be implicitly casted to %s", c.From, c.To)
+}
+
+type StoreException struct {
+	Item interface{}
+}
+
+func (c StoreException) Error() string {
+	return fmt.Sprintf("StoreException: Cannot store %s in namespace", c.Item)
 }

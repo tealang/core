@@ -14,14 +14,20 @@ type Signature struct {
 func (sign *Signature) Match(args []Value) ([]Value, error) {
 	expected, got := len(sign.Expected), len(args)
 	if expected < got {
-		return nil, ArgumentException(expected, got)
+		return nil, ArgumentException{
+			Expected: expected,
+			Got:      got,
+		}
 	}
 
 	matched := make([]Value, expected)
 	for i := range sign.Expected {
 		if got > i {
 			if !args[i].Type.KindOf(sign.Expected[i].Type) {
-				return nil, ArgumentCastException(sign.Expected[i].Type, args[i].Type)
+				return nil, ArgumentCastException{
+					Expected: sign.Expected[i].Type,
+					Got:      args[i].Type,
+				}
 			}
 			casted, err := sign.Expected[i].Type.Cast(args[i])
 			if err != nil {
@@ -31,7 +37,10 @@ func (sign *Signature) Match(args []Value) ([]Value, error) {
 		} else if sign.Expected[i].Data != nil {
 			matched[i], _ = sign.Expected[i].Type.Cast(sign.Expected[i])
 		} else {
-			return nil, ArgumentException(expected, got)
+			return nil, ArgumentException{
+				Expected: expected,
+				Got:      got,
+			}
 		}
 		matched[i].Name = sign.Expected[i].Name
 	}
@@ -63,5 +72,5 @@ func (f *Function) Eval(args []Value, c *Context) (Value, error) {
 			return sign.Function.Eval(c)
 		})
 	}
-	return Value{}, FunctionException(f.Name)
+	return Value{}, FunctionException{f.Name}
 }

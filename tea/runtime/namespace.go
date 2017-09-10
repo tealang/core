@@ -51,15 +51,18 @@ func (v Value) SearchSpace() SearchSpace {
 // Update sets the data of the value.
 func (v Value) Update(item SearchItem) (SearchItem, error) {
 	if v.SearchSpace() != item.SearchSpace() {
-		return v, SearchSpaceException()
+		return v, SearchSpaceException{}
 	}
 	switch c := item.(type) {
 	case Value:
 		if v.Constant {
-			return v, ConstantException(v.Name)
+			return v, ConstantException{v.Name}
 		}
 		if !c.Type.KindOf(v.Type) {
-			return v, CastException(c.Type, v.Type)
+			return v, CastException{
+				From: c.Type,
+				To:   v.Type,
+			}
 		}
 		casted, err := v.Type.Cast(c)
 		if err != nil {
@@ -68,7 +71,7 @@ func (v Value) Update(item SearchItem) (SearchItem, error) {
 		v.Data = casted.Data
 		return v, nil
 	case Reference:
-		return v, ReferenceValueException()
+		return v, ReferenceValueException{}
 	}
 	return v, nil
 }
@@ -94,17 +97,20 @@ func (r Reference) SearchSpace() SearchSpace {
 // Update sets the reference link.
 func (r Reference) Update(item SearchItem) (SearchItem, error) {
 	if r.SearchSpace() != item.SearchSpace() {
-		return r, SearchSpaceException()
+		return r, SearchSpaceException{}
 	}
 	switch c := item.(type) {
 	case Value:
-		return r, ValueReferenceException()
+		return r, ValueReferenceException{}
 	case Reference:
 		if r.Constant {
-			return r, ConstantException(r.Name)
+			return r, ConstantException{r.Name}
 		}
 		if !c.Type.KindOf(r.Type) {
-			return r, CastException(c.Type, r.Type)
+			return r, CastException{
+				From: c.Type,
+				To:   r.Type,
+			}
 		}
 		r.Link = c.Link
 	}
@@ -153,7 +159,7 @@ func (ns *Namespace) Find(space SearchSpace, alias string) (SearchItem, error) {
 		if ns.Parent != nil {
 			return ns.Parent.Find(space, alias)
 		}
-		return nil, NamespaceException(alias)
+		return nil, NamespaceException{alias}
 	}
 	return item, nil
 }
@@ -163,7 +169,7 @@ func (ns *Namespace) Update(item SearchItem) error {
 	existing, ok := ns.Storage[item.SearchSpace()][item.Alias()]
 	if !ok {
 		if ns.Parent == nil {
-			return NamespaceException(item.Alias())
+			return NamespaceException{item.Alias()}
 		}
 		return ns.Parent.Update(item)
 	}
