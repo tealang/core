@@ -32,9 +32,9 @@ func (n *Sequence) Eval(c *runtime.Context) (runtime.Value, error) {
 	return runtime.Value{}, nil
 }
 
-func NewSequenceNode(substitute bool, childs ...Node) *Sequence {
+func NewSequence(substitute bool, childs ...Node) *Sequence {
 	return &Sequence{
-		BasicNode:  NewBasicNode(childs...),
+		BasicNode:  NewBasic(childs...),
 		Substitute: substitute,
 	}
 }

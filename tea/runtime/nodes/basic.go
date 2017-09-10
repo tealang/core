@@ -33,7 +33,7 @@ func (n *BasicNode) AddFront(child Node) {
 	n.Childs = append([]Node{child}, n.Childs...)
 }
 
-func NewBasicNode(childs ...Node) BasicNode {
+func NewBasic(childs ...Node) BasicNode {
 	return BasicNode{
 		Childs:   childs,
 		Metadata: make(map[string]string),
