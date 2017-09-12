@@ -2,12 +2,13 @@ package nodes
 
 import "github.com/tealang/tea-go/tea/runtime"
 
+// Sequence executes a list of nodes as long as the behavior is default.
 type Sequence struct {
 	BasicNode
 	Substitute bool
 }
 
-func (n *Sequence) Name() string {
+func (Sequence) Name() string {
 	return "Sequence"
 }
 

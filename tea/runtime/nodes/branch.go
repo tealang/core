@@ -7,11 +7,12 @@ import (
 	"github.com/tealang/tea-go/tea/stdlib/types"
 )
 
+// Branch executes a list of conditionals until the active conditional executes successfully.
 type Branch struct {
 	BasicNode
 }
 
-func (b *Branch) Name() string {
+func (Branch) Name() string {
 	return "Branch"
 }
 
@@ -47,6 +48,7 @@ func (c ConditionalTypeException) Error() string {
 	return fmt.Sprintf("ConditionalTypeException: Expected type bool, got %s", c.Type)
 }
 
+// Conditional executes its first child, if it returns true the second child will be executed.
 type Conditional struct {
 	BasicNode
 }
