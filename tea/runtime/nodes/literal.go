@@ -15,3 +15,10 @@ func (Literal) Name() string {
 func (l *Literal) Eval(c *runtime.Context) (runtime.Value, error) {
 	return l.Value, nil
 }
+
+func NewLiteral(value runtime.Value) *Literal {
+	return &Literal{
+		BasicNode: NewBasic(),
+		Value:     value,
+	}
+}
