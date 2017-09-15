@@ -31,15 +31,20 @@ func (datatype *Datatype) String() string {
 
 // Value of a given datatype stored data associated with a name.
 type Value struct {
-	Type     *Datatype
-	Data     interface{}
-	Name     string
-	Constant bool
+	Type      *Datatype
+	Data      interface{}
+	Name      string
+	Constant  bool
+	Reference bool
 }
 
 func (v Value) String() string {
 	if v.Type == nil {
 		return "null"
+	}
+
+	if v.Reference {
+		return v.Type.Format(*v.Data.(*Value))
 	}
 	return v.Type.Format(v)
 }
@@ -70,57 +75,21 @@ func (v Value) Update(item SearchItem) (SearchItem, error) {
 				To:   v.Type,
 			}
 		}
+		if v.Reference {
+			if !c.Reference {
+				return v, ReferenceValueException{}
+			}
+			v.Data = c.Data
+			return v, nil
+		}
+
 		casted, err := v.Type.Cast(c)
 		if err != nil {
 			return v, err
 		}
 		v.Data = casted.Data
 		return v, nil
-	case Reference:
-		return v, ReferenceValueException{}
-	}
 	return v, nil
-}
-
-// Reference of a given datatype stores a link to the value.
-type Reference struct {
-	Type     *Datatype
-	Name     string
-	Link     *Value
-	Constant bool
-}
-
-// Alias returns the reference name.
-func (r Reference) Alias() string {
-	return r.Name
-}
-
-// SearchSpace returns the reference search space.
-func (r Reference) SearchSpace() SearchSpace {
-	return IdentifierSearchSpace
-}
-
-// Update sets the reference link.
-func (r Reference) Update(item SearchItem) (SearchItem, error) {
-	if r.SearchSpace() != item.SearchSpace() {
-		return r, SearchSpaceException{}
-	}
-	switch c := item.(type) {
-	case Value:
-		return r, ValueReferenceException{}
-	case Reference:
-		if r.Constant {
-			return r, ConstantException{r.Name}
-		}
-		if !c.Type.KindOf(r.Type) {
-			return r, CastException{
-				From: c.Type,
-				To:   r.Type,
-			}
-		}
-		r.Link = c.Link
-	}
-	return r, nil
 }
 
 // SearchItem is a generic item that can be stored in a namespace.
