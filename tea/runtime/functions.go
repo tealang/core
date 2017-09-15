@@ -11,7 +11,7 @@ type Signature struct {
 	Function Evaluable
 }
 
-func (sign *Signature) Match(args []Value) ([]Value, error) {
+func (sign Signature) Match(args []Value) ([]Value, error) {
 	expected, got := len(sign.Expected), len(args)
 	if expected < got {
 		return nil, ArgumentException{
@@ -48,8 +48,15 @@ func (sign *Signature) Match(args []Value) ([]Value, error) {
 	return matched, nil
 }
 
-func (sign *Signature) String() string {
+func (sign Signature) String() string {
 	return fmt.Sprintf("<S {%v}>", sign.Expected)
+}
+
+func NewSignature(eval Evaluable, args ...Value) Signature {
+	return Signature{
+		Function: eval,
+		Expected: args,
+	}
 }
 
 type Function struct {
@@ -57,7 +64,7 @@ type Function struct {
 	Source     *Namespace
 }
 
-func (f *Function) Eval(args []Value, c *Context) (Value, error) {
+func (f Function) Eval(args []Value, c *Context) (Value, error) {
 	for _, sign := range f.Signatures {
 		matched, err := sign.Match(args)
 		if err != nil {
@@ -72,4 +79,11 @@ func (f *Function) Eval(args []Value, c *Context) (Value, error) {
 		})
 	}
 	return Value{}, FunctionException{}
+}
+
+func NewFunction(source *Namespace, signatures ...Signature) Function {
+	return Function{
+		Source:     source,
+		Signatures: signatures,
+	}
 }
