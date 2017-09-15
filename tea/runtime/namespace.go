@@ -94,6 +94,35 @@ func (v Value) Update(item SearchItem) (SearchItem, error) {
 	return v, nil
 }
 
+type Operator struct {
+	Function
+	Symbol   string
+	Constant bool
+}
+
+func (Operator) SearchSpace() SearchSpace {
+	return SearchOperator
+}
+
+func (o Operator) Alias() string {
+	return o.Symbol
+}
+
+func (o Operator) Update(item SearchItem) (SearchItem, error) {
+	if o.Constant {
+		return o, ConstantException{o.Symbol}
+	}
+	if o.SearchSpace() != item.SearchSpace() {
+		return o, SearchSpaceException{}
+	}
+	op, ok := item.(Operator)
+	if !ok {
+		return o, UnexpectedItemException{Operator{}, item}
+	}
+	o.Signatures = op.Signatures
+	return o, nil
+}
+
 // SearchItem is a generic item that can be stored in a namespace.
 type SearchItem interface {
 	SearchSpace() SearchSpace
