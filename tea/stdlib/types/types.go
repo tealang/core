@@ -39,7 +39,7 @@ func init() {
 			return runtime.Value{}, runtime.ExplicitCastException{From: v.Type, To: Bool}
 		},
 		Format: func(v runtime.Value) string {
-			return fmt.Sprintf("bool<%s>", v.Data)
+			return fmt.Sprintf("bool<%t>", v.Data)
 		},
 	}
 
