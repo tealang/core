@@ -14,6 +14,18 @@ type Datatype struct {
 	Format Formatter
 }
 
+func (Datatype) SearchSpace() SearchSpace {
+	return SearchDatatype
+}
+
+func (datatype *Datatype) Alias() string {
+	return datatype.Name
+}
+
+func (datatype *Datatype) Update(item SearchItem) (SearchItem, error) {
+	return item, RuntimeException{"Datatypes cannot be overriden"}
+}
+
 // KindOf checks if this datatype is of the same kind as the given datatype.
 func (datatype *Datatype) KindOf(other *Datatype) bool {
 	if datatype != other {
