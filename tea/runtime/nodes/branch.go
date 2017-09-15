@@ -28,10 +28,12 @@ func (b *Branch) Eval(c *runtime.Context) (runtime.Value, error) {
 	return runtime.Value{}, nil
 }
 
-func NewBranch(childs ...Node) *Branch {
-	return &Branch{
-		NewBasic(childs...),
+func NewBranch(childs ...*Conditional) *Branch {
+	branch := &Branch{NewBasic()}
+	for _, c := range childs {
+		branch.AddBack(c)
 	}
+	return branch
 }
 
 type ConditionalException struct{}
