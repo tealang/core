@@ -56,39 +56,41 @@ func (v Value) Alias() string {
 
 // SearchSpace returns the search space of the value.
 func (v Value) SearchSpace() SearchSpace {
-	return IdentifierSearchSpace
+	return SearchIdentifier
 }
 
 // Update sets the data of the value.
 func (v Value) Update(item SearchItem) (SearchItem, error) {
+	if v.Constant {
+		return v, ConstantException{v.Name}
+	}
 	if v.SearchSpace() != item.SearchSpace() {
 		return v, SearchSpaceException{}
 	}
-	switch c := item.(type) {
-	case Value:
-		if v.Constant {
-			return v, ConstantException{v.Name}
+	c, ok := item.(Value)
+	if !ok {
+		return v, RuntimeException{Message: "Unexpected search item type"}
+	}
+	if !c.Type.KindOf(v.Type) {
+		return v, CastException{
+			From: c.Type,
+			To:   v.Type,
 		}
-		if !c.Type.KindOf(v.Type) {
-			return v, CastException{
-				From: c.Type,
-				To:   v.Type,
-			}
-		}
-		if v.Reference {
-			if !c.Reference {
-				return v, ReferenceValueException{}
-			}
-			v.Data = c.Data
-			return v, nil
-		}
+	}
 
+	if v.Reference {
+		if !c.Reference {
+			return v, ReferenceValueException{}
+		}
+		v.Data = c.Data
+	} else {
 		casted, err := v.Type.Cast(c)
 		if err != nil {
 			return v, err
 		}
 		v.Data = casted.Data
-		return v, nil
+	}
+
 	return v, nil
 }
 
@@ -103,20 +105,20 @@ type SearchItem interface {
 type SearchSpace int
 
 const (
-	// IdentifierSearchSpace is used for variables and functions.
-	IdentifierSearchSpace SearchSpace = iota
-	// OperatorSearchSpace is used for operators.
-	OperatorSearchSpace
-	// DatatypeSearchSpace is used for datatypes.
-	DatatypeSearchSpace
+	// SearchIdentifier is used for variables and functions.
+	SearchIdentifier SearchSpace = iota
+	// SearchOperator is used for operators.
+	SearchOperator
+	// SearchDatatype is used for datatypes.
+	SearchDatatype
 )
 
 var (
 	// SearchSpaces lists all available search spaces.
 	SearchSpaces = []SearchSpace{
-		IdentifierSearchSpace,
-		OperatorSearchSpace,
-		DatatypeSearchSpace,
+		SearchIdentifier,
+		SearchOperator,
+		SearchDatatype,
 	}
 )
 

@@ -25,10 +25,10 @@ func TestContext_Substitute(t *testing.T) {
 	} else if x != v {
 		t.Errorf("Invalid value: expected %v, got %v", v, x)
 	}
-	if _, err := ctx.Namespace.Find(IdentifierSearchSpace, "v"); err == nil {
+	if _, err := ctx.Namespace.Find(SearchIdentifier, "v"); err == nil {
 		t.Errorf("Expected error on find: %s", err)
 	}
-	if _, err := ctx.GlobalNamespace.Find(IdentifierSearchSpace, "v"); err == nil {
+	if _, err := ctx.GlobalNamespace.Find(SearchIdentifier, "v"); err == nil {
 		t.Errorf("Expected error on find (global): %s", err)
 	}
 }

@@ -24,7 +24,7 @@ func (Identifier) Name() string {
 }
 
 func (i *Identifier) Eval(c *runtime.Context) (runtime.Value, error) {
-	item, err := c.Namespace.Find(runtime.IdentifierSearchSpace, i.Alias)
+	item, err := c.Namespace.Find(runtime.SearchIdentifier, i.Alias)
 	if err != nil {
 		return runtime.Value{}, err
 	}
