@@ -76,6 +76,14 @@ func (c CastException) Error() string {
 	return fmt.Sprintf("CastException: %s can not be implicitly casted to %s", c.From, c.To)
 }
 
+type UncallableTypeException struct {
+	Type *Datatype
+}
+
+func (c UncallableTypeException) Error() string {
+	return fmt.Sprintf("UncallableTypeException: Value of type %s can not be called")
+}
+
 type ExplicitCastException struct {
 	From, To *Datatype
 }
