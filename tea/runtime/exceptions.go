@@ -76,6 +76,14 @@ func (c CastException) Error() string {
 	return fmt.Sprintf("CastException: %s can not be implicitly casted to %s", c.From, c.To)
 }
 
+type ExplicitCastException struct {
+	From, To *Datatype
+}
+
+func (c ExplicitCastException) Error() string {
+	return fmt.Sprintf("ExplicitCastException: %s can not be explicitly casted to %s", c.From, c.To)
+}
+
 type StoreException struct {
 	Item interface{}
 }
