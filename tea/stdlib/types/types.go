@@ -7,8 +7,8 @@ import (
 )
 
 var (
-	Any, Bool   *runtime.Datatype
-	True, False runtime.Value
+	Any, Bool, Function *runtime.Datatype
+	True, False         runtime.Value
 )
 
 func init() {
@@ -24,9 +24,22 @@ func init() {
 		Format: func(v runtime.Value) string {
 			v, ok := v.Data.(runtime.Value)
 			if !ok {
-				return "any<?>"
+				return "null"
 			}
 			return fmt.Sprintf("any<%s>", v.Type.Format(v))
+		},
+	}
+	Function = &runtime.Datatype{
+		Name:   "func",
+		Parent: Any,
+		Cast: func(v runtime.Value) (runtime.Value, error) {
+			if v.Type == Function {
+				return v, nil
+			}
+			return runtime.Value{}, runtime.ExplicitCastException{From: v.Type, To: Bool}
+		},
+		Format: func(v runtime.Value) string {
+			return fmt.Sprintf("func<%s>", v.Data)
 		},
 	}
 	Bool = &runtime.Datatype{
