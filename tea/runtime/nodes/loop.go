@@ -1,6 +1,8 @@
 package nodes
 
-import "github.com/tealang/tea-go/tea/runtime"
+import (
+	"github.com/tealang/tea-go/tea/runtime"
+)
 
 // Loop executes the conditional over and over, as long as the condition is true.
 type Loop struct {
@@ -23,6 +25,7 @@ func (l *Loop) Eval(c *runtime.Context) (runtime.Value, error) {
 			return runtime.Value{}, nil
 		default:
 			value, err = l.Conditional.Eval(c)
+			_, ok = err.(ConditionalException)
 		}
 	}
 	return value, nil
