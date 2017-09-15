@@ -31,3 +31,10 @@ func (o *Operation) Eval(c *runtime.Context) (runtime.Value, error) {
 	}
 	return op.Eval(args, c)
 }
+
+func NewOperation(symbol string, args ...Node) *Operation {
+	return &Operation{
+		BasicNode: NewBasic(args...),
+		Symbol:    symbol,
+	}
+}
