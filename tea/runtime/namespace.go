@@ -37,6 +37,13 @@ type Value struct {
 	Constant bool
 }
 
+func (v Value) String() string {
+	if v.Type == nil {
+		return "null"
+	}
+	return v.Type.Format(v)
+}
+
 // Alias returns the name of the value.
 func (v Value) Alias() string {
 	return v.Name
