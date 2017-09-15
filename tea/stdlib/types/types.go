@@ -11,3 +11,18 @@ var (
 		Parent: Any,
 	}
 )
+
+var (
+	True = runtime.Value{
+		Type:     Bool,
+		Data:     true,
+		Constant: true,
+		Name:     "true",
+	}
+	False = runtime.Value{
+		Type:     Bool,
+		Data:     false,
+		Constant: true,
+		Name:     "false",
+	}
+)
