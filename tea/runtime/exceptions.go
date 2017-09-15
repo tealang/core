@@ -76,6 +76,14 @@ func (c CastException) Error() string {
 	return fmt.Sprintf("CastException: %s can not be implicitly casted to %s", c.From, c.To)
 }
 
+type UnexpectedItemException struct {
+	Expected, Got interface{}
+}
+
+func (c UnexpectedItemException) Error() string {
+	return fmt.Sprintf("UnexpectedItemException: Expected search item of type %T, got type %T", c.Expected, c.Got)
+}
+
 type UncallableTypeException struct {
 	Type *Datatype
 }

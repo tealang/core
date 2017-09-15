@@ -69,7 +69,7 @@ func (v Value) Update(item SearchItem) (SearchItem, error) {
 	}
 	c, ok := item.(Value)
 	if !ok {
-		return v, RuntimeException{Message: "Unexpected search item type"}
+		return v, UnexpectedItemException{Expected: Value{}, Got: item}
 	}
 	if !c.Type.KindOf(v.Type) {
 		return v, CastException{

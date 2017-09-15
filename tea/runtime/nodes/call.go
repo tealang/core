@@ -21,7 +21,7 @@ func (call *FunctionCall) Eval(c *runtime.Context) (runtime.Value, error) {
 	}
 	value, ok := item.(runtime.Value)
 	if err != nil {
-		return runtime.Value{}, runtime.RuntimeException{Message: "SearchItem must be runtime.Value"}
+		return runtime.Value{}, runtime.UnexpectedItemException{Expected: runtime.Value{}, Got: item}
 	}
 	if !value.Type.KindOf(types.Function) {
 		return runtime.Value{}, runtime.UncallableTypeException{Type: value.Type}
