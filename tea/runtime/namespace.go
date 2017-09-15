@@ -1,7 +1,5 @@
 package runtime
 
-import "fmt"
-
 // Formatter formats the given value in the datatype format.
 type Formatter func(v Value) string
 
@@ -19,15 +17,16 @@ type Datatype struct {
 // KindOf checks if this datatype is of the same kind as the given datatype.
 func (datatype *Datatype) KindOf(other *Datatype) bool {
 	if datatype != other {
+		if datatype.Parent != nil {
+			return datatype.Parent.KindOf(other)
+		}
 		return false
-	} else if datatype.Parent != nil {
-		return datatype.Parent.KindOf(other)
 	}
 	return true
 }
 
 func (datatype *Datatype) String() string {
-	return fmt.Sprintf("<T %s{%s}>", datatype.Name, datatype.Parent)
+	return datatype.Name
 }
 
 // Value of a given datatype stored data associated with a name.
