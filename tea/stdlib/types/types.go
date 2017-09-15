@@ -7,7 +7,8 @@ import (
 )
 
 var (
-	Any, Bool *runtime.Datatype
+	Any, Bool   *runtime.Datatype
+	True, False runtime.Value
 )
 
 func init() {
@@ -41,9 +42,7 @@ func init() {
 			return fmt.Sprintf("bool<%s>", v.Data)
 		},
 	}
-}
 
-var (
 	True = runtime.Value{
 		Type:     Bool,
 		Data:     true,
@@ -56,4 +55,4 @@ var (
 		Constant: true,
 		Name:     "false",
 	}
-)
+}
