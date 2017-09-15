@@ -54,7 +54,6 @@ func (sign *Signature) String() string {
 
 type Function struct {
 	Signatures []Signature
-	Name       string
 	Source     *Namespace
 }
 
@@ -72,5 +71,5 @@ func (f *Function) Eval(args []Value, c *Context) (Value, error) {
 			return sign.Function.Eval(c)
 		})
 	}
-	return Value{}, FunctionException{f.Name}
+	return Value{}, FunctionException{}
 }
