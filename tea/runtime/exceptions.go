@@ -76,6 +76,13 @@ func (c CastException) Error() string {
 	return fmt.Sprintf("CastException: %s can not be implicitly casted to %s", c.From, c.To)
 }
 
+type AssignmentMismatchException struct {
+}
+
+func (c AssignmentMismatchException) Error() string {
+	return fmt.Sprintf("AssignmentMismatchException: Number of aliases must match number of values")
+}
+
 type UnexpectedItemException struct {
 	Expected, Got interface{}
 }
