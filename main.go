@@ -13,23 +13,27 @@ import (
 const (
 	welcomeText = `Tealang v0.1-alpha
 Copyright 2017 Lennart Espe. All rights reserved.`
-	replSymbol = "~> "
+	replSymbol = ">>> "
 )
 
 func main() {
 	fmt.Println(welcomeText)
 
 	reader := bufio.NewReader(os.Stdin)
-	runtime := repl.New()
+	ui := repl.New()
 
-	for runtime.Active {
+	for ui.Active {
 		fmt.Print(replSymbol)
 		input, err := reader.ReadString('\n')
 		if err != nil {
-			runtime.Stop()
+			ui.Stop()
 		} else {
-			output := runtime.Interpret(strings.TrimRight(input, "\n"))
-			fmt.Println(output)
+			output, err := ui.Interpret(strings.TrimRight(input, "\n"))
+			if err != nil {
+				fmt.Printf("Failed to execute: %v\n", err)
+			} else {
+				fmt.Println(output)
+			}
 		}
 	}
 	fmt.Println()
