@@ -1,5 +1,7 @@
 package runtime
 
+import "fmt"
+
 // Formatter formats the given value in the datatype format.
 type Formatter func(v Value) string
 
@@ -58,6 +60,17 @@ func (v Value) Rename(alias string) Value {
 		Constant:  v.Constant,
 		Reference: v.Reference,
 	}
+}
+
+func (v Value) VariableString() string {
+	if v.Type == nil {
+		return ":null"
+	}
+
+	if v.Reference {
+		return fmt.Sprintf("%s: &%s", v.Name, v.Type)
+	}
+	return fmt.Sprintf("%s: %s", v.Name, v.Type)
 }
 
 func (v Value) String() string {
