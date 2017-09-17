@@ -1,6 +1,9 @@
 package runtime
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type Evaluable interface {
 	Eval(c *Context) (Value, error)
@@ -49,7 +52,11 @@ func (sign Signature) Match(args []Value) ([]Value, error) {
 }
 
 func (sign Signature) String() string {
-	return fmt.Sprintf("<S {%v}>", sign.Expected)
+	items := make([]string, len(sign.Expected))
+	for i, n := range sign.Expected {
+		items[i] = n.VariableString()
+	}
+	return fmt.Sprintf("(%s)", strings.Join(items, ","))
 }
 
 func NewSignature(eval Evaluable, args ...Value) Signature {
@@ -79,6 +86,14 @@ func (f Function) Eval(args []Value, c *Context) (Value, error) {
 		})
 	}
 	return Value{}, FunctionException{}
+}
+
+func (f Function) String() string {
+	items := make([]string, len(f.Signatures))
+	for i, n := range f.Signatures {
+		items[i] = n.String()
+	}
+	return fmt.Sprintf("{%s}", strings.Join(items, ";"))
 }
 
 func NewFunction(source *Namespace, signatures ...Signature) Function {
