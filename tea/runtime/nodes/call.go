@@ -38,7 +38,7 @@ func (call *FunctionCall) Eval(c *runtime.Context) (runtime.Value, error) {
 		}
 		values[i] = v
 	}
-	return callable.Eval(values, c)
+	return callable.Eval(c, values)
 }
 
 func NewFunctionCall(alias string, args ...Node) *FunctionCall {

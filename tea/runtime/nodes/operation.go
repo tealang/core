@@ -29,7 +29,7 @@ func (o *Operation) Eval(c *runtime.Context) (runtime.Value, error) {
 		}
 		args[i] = v
 	}
-	return op.Eval(args, c)
+	return op.Eval(c, args)
 }
 
 func NewOperation(symbol string, args ...Node) *Operation {

@@ -12,6 +12,7 @@ type Evaluable interface {
 type Signature struct {
 	Expected []Value
 	Function Evaluable
+	Returns  Value
 }
 
 func (sign Signature) Match(args []Value) ([]Value, error) {
@@ -59,9 +60,10 @@ func (sign Signature) String() string {
 	return fmt.Sprintf("(%s)", strings.Join(items, ","))
 }
 
-func NewSignature(eval Evaluable, args ...Value) Signature {
+func NewSignature(returns Value, executes Evaluable, args []Value) Signature {
 	return Signature{
-		Function: eval,
+		Returns:  returns,
+		Function: executes,
 		Expected: args,
 	}
 }
@@ -71,7 +73,7 @@ type Function struct {
 	Source     *Namespace
 }
 
-func (f Function) Eval(args []Value, c *Context) (Value, error) {
+func (f Function) Eval(c *Context, args []Value) (Value, error) {
 	for _, sign := range f.Signatures {
 		matched, err := sign.Match(args)
 		if err != nil {
@@ -82,7 +84,14 @@ func (f Function) Eval(args []Value, c *Context) (Value, error) {
 			for _, arg := range matched {
 				c.Namespace.Store(arg)
 			}
-			return sign.Function.Eval(c)
+			value, err := sign.Function.Eval(c)
+			if err != nil {
+				return Value{}, err
+			}
+			if sign.Returns.Type != nil && !value.Type.KindOf(sign.Returns.Type) {
+				return Value{}, CastException{From: value.Type, To: sign.Returns.Type}
+			}
+			return value, nil
 		})
 	}
 	return Value{}, FunctionException{}
