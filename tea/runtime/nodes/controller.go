@@ -23,3 +23,10 @@ func (ctrl *Controller) Eval(c *runtime.Context) (runtime.Value, error) {
 	c.Behavior = ctrl.Behavior
 	return value, nil
 }
+
+func NewController(behavior runtime.ContextBehavior) *Controller {
+	return &Controller{
+		BasicNode: NewBasic(),
+		Behavior:  behavior,
+	}
+}
