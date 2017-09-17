@@ -52,6 +52,16 @@ type Value struct {
 	Reference bool
 }
 
+func (v Value) Rechange(constant bool) Value {
+	return Value{
+		Type:      v.Type,
+		Data:      v.Data,
+		Name:      v.Name,
+		Constant:  constant,
+		Reference: v.Reference,
+	}
+}
+
 func (v Value) Rename(alias string) Value {
 	return Value{
 		Type:      v.Type,
