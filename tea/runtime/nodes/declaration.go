@@ -5,7 +5,8 @@ import "github.com/tealang/tea-go/tea/runtime"
 // Declaration stores one or multiple initialized variables in the active namespace.
 type Declaration struct {
 	BasicNode
-	Alias []string
+	Alias    []string
+	Constant bool
 }
 
 func (Declaration) Name() string {
@@ -25,16 +26,25 @@ func (a *Declaration) Eval(c *runtime.Context) (runtime.Value, error) {
 		if err != nil {
 			return runtime.Value{}, err
 		}
-		if err = c.Namespace.Store(value.Rename(a.Alias[i])); err != nil {
+		if err = c.Namespace.Store(value.Rename(a.Alias[i]).Rechange(a.Constant)); err != nil {
 			return runtime.Value{}, err
 		}
 	}
 	return value, nil
 }
 
-func NewDeclaration(alias []string, values ...Node) *Declaration {
+func NewMultiDeclaration(alias []string, constant bool, values ...Node) *Declaration {
 	return &Declaration{
 		BasicNode: NewBasic(values...),
 		Alias:     alias,
+		Constant:  constant,
+	}
+}
+
+func NewDeclaration(alias string, constant bool, value Node) *Declaration {
+	return &Declaration{
+		BasicNode: NewBasic(value),
+		Alias:     []string{alias},
+		Constant:  constant,
 	}
 }
