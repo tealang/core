@@ -61,11 +61,10 @@ func (c ArgumentCastException) Error() string {
 }
 
 type FunctionException struct {
-	Alias string
 }
 
 func (c FunctionException) Error() string {
-	return fmt.Sprintf("FunctionException: No matching signature for %s", c.Alias)
+	return fmt.Sprintf("FunctionException: No matching signature found")
 }
 
 type CastException struct {
