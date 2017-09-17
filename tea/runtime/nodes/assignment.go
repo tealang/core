@@ -32,9 +32,16 @@ func (a *Assignment) Eval(c *runtime.Context) (runtime.Value, error) {
 	return value, nil
 }
 
-func NewAssignment(alias []string, values ...Node) *Assignment {
+func NewMultiAssignment(alias []string, values ...Node) *Assignment {
 	return &Assignment{
 		BasicNode: NewBasic(values...),
 		Alias:     alias,
+	}
+}
+
+func NewAssignment(alias string, value Node) *Assignment {
+	return &Assignment{
+		BasicNode: NewBasic(value),
+		Alias:     []string{alias},
 	}
 }
