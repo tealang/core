@@ -36,51 +36,51 @@ func (t Token) String() string {
 }
 
 var (
-	LeftParentheses = TokenType{
+	LeftParentheses = &TokenType{
 		Name:  "leftParentheses",
 		Match: NewTokenMatcher(`^\($`),
 	}
-	RightParentheses = TokenType{
+	RightParentheses = &TokenType{
 		Name:  "rightParentheses",
 		Match: NewTokenMatcher(`^\)$`),
 	}
-	Operator = TokenType{
+	Operator = &TokenType{
 		Name:  "operator",
 		Match: NewTokenMatcher(`^([+\-*/=:<>!%^&|]|([+\-*/^%<>=!]=)|([|^]\|)|(&&))$`),
 	}
-	Whitespace = TokenType{
+	Whitespace = &TokenType{
 		Name:  "whitespace",
 		Match: NewTokenMatcher(`^\s+$`),
 	}
-	Number = TokenType{
+	Number = &TokenType{
 		Name:  "number",
 		Match: NewTokenMatcher(`^\-?[0-9]+(\.[0-9]*)?$`),
 	}
-	Identifier = TokenType{
+	Identifier = &TokenType{
 		Name:  "identifier",
 		Match: NewTokenMatcher(`^(#|[a-zA-Z_])+([0-9a-zA-Z_]+)?$`),
 	}
-	String = TokenType{
+	String = &TokenType{
 		Name:  "string",
 		Match: NewTokenMatcher(`^"(\\(["abfnrtv])?|[^\n\r"])*"?$`),
 	}
-	Statement = TokenType{
+	Statement = &TokenType{
 		Name:  "statement",
 		Match: NewTokenMatcher(`^;$`),
 	}
-	Separator = TokenType{
+	Separator = &TokenType{
 		Name:  "separator",
 		Match: NewTokenMatcher(`^,$`),
 	}
-	RightBlock = TokenType{
+	RightBlock = &TokenType{
 		Name:  "rightBlock",
 		Match: NewTokenMatcher(`^}$`),
 	}
-	LeftBlock = TokenType{
+	LeftBlock = &TokenType{
 		Name:  "leftBlock",
 		Match: NewTokenMatcher(`^{$`),
 	}
-	AllTypes = []TokenType{
+	AllTypes = []*TokenType{
 		LeftParentheses,
 		RightParentheses,
 		Operator,
@@ -97,7 +97,7 @@ var (
 func FindMatch(value string) *TokenType {
 	for _, tt := range AllTypes {
 		if tt.Match(value) {
-			return &tt
+			return tt
 		}
 	}
 	return nil
