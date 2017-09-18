@@ -1,6 +1,6 @@
 # tea-go
 
-Go implementation of the Tealang interpreter. Not completely compatible to the Python implementation.
+Welcome to the repository of the Golang implementation of the Tealang interpreter runtime. It is NOT compatible to the Python implementation in some aspects. It is heavily work-in-progress, do not use in any production environment.
 
 ## How does FizzBuzz look?
 ```
