@@ -1,3 +1,4 @@
+![Tealang](https://avatars1.githubusercontent.com/u/23747541?v=4&s=200)
 # tea-go
 
 Welcome to the repository of the Golang implementation of the Tealang interpreter runtime. It is NOT compatible to the Python implementation in some aspects. It is heavily work-in-progress, do not use in any production environment.
