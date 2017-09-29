@@ -1,6 +1,6 @@
 package nodes
 
-import "github.com/tealang/tea-go/tea/runtime"
+import "github.com/tealang/tea-go/runtime"
 
 // Literal returns a constant value when evaluated.
 type Literal struct {

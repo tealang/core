@@ -1,6 +1,6 @@
 package nodes
 
-import "github.com/tealang/tea-go/tea/runtime"
+import "github.com/tealang/tea-go/runtime"
 
 // Sequence executes a list of nodes as long as the behavior is default.
 type Sequence struct {

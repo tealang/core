@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 
-	"github.com/tealang/tea-go/tea/runtime"
+	"github.com/tealang/tea-go/runtime"
 )
 
 var (

@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/tealang/tea-go/tea/repl"
+	"github.com/tealang/tea-go/repl"
 )
 
 const (

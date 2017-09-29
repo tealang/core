@@ -1,7 +1,7 @@
 // Package nodes provides an abstract syntax tree implementation for Tealang programs.
 package nodes
 
-import "github.com/tealang/tea-go/tea/runtime"
+import "github.com/tealang/tea-go/runtime"
 
 // Node is a tree node within an abstract syntax tree.
 type Node interface {

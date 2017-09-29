@@ -1,6 +1,6 @@
 package nodes
 
-import "github.com/tealang/tea-go/tea/runtime"
+import "github.com/tealang/tea-go/runtime"
 
 // Declaration stores one or multiple initialized variables in the active namespace.
 type Declaration struct {

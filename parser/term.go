@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"github.com/tealang/tea-go/tea/lexer/tokens"
-	"github.com/tealang/tea-go/tea/runtime/nodes"
+	"github.com/tealang/tea-go/lexer/tokens"
+	"github.com/tealang/tea-go/runtime/nodes"
 )
 
 func GenerateFunctionCall(input []tokens.Token) (nodes.Node, int, error) {

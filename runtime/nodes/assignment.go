@@ -1,6 +1,6 @@
 package nodes
 
-import "github.com/tealang/tea-go/tea/runtime"
+import "github.com/tealang/tea-go/runtime"
 
 // Assignment assigns one or multiple existing variables a new value (for each variable).
 type Assignment struct {

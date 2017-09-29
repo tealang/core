@@ -3,7 +3,7 @@ package nodes
 import (
 	"fmt"
 
-	"github.com/tealang/tea-go/tea/runtime"
+	"github.com/tealang/tea-go/runtime"
 )
 
 type UnsupportedTypeException struct {

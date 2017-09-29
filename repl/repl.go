@@ -1,9 +1,9 @@
 package repl
 
 import (
-	"github.com/tealang/tea-go/tea/lexer"
-	"github.com/tealang/tea-go/tea/parser"
-	"github.com/tealang/tea-go/tea/runtime"
+	"github.com/tealang/tea-go/lexer"
+	"github.com/tealang/tea-go/parser"
+	"github.com/tealang/tea-go/runtime"
 )
 
 type Instance struct {

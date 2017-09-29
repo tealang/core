@@ -1,7 +1,7 @@
 package nodes
 
 import (
-	"github.com/tealang/tea-go/tea/runtime"
+	"github.com/tealang/tea-go/runtime"
 )
 
 // Loop executes the conditional over and over, as long as the condition is true.

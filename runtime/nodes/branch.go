@@ -3,8 +3,8 @@ package nodes
 import (
 	"fmt"
 
-	"github.com/tealang/tea-go/tea/runtime"
-	"github.com/tealang/tea-go/tea/stdlib/types"
+	"github.com/tealang/tea-go/runtime"
+	"github.com/tealang/tea-go/stdlib/types"
 )
 
 // Branch executes a list of conditionals until the active conditional executes successfully.
