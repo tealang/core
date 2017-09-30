@@ -5,7 +5,8 @@ import "github.com/tealang/tea-go/runtime"
 // Operation calls an operator on the results of its children as arguments.
 type Operation struct {
 	BasicNode
-	Symbol string
+	Symbol   string
+	ArgCount int
 }
 
 func (Operation) Name() string {
@@ -32,9 +33,10 @@ func (o *Operation) Eval(c *runtime.Context) (runtime.Value, error) {
 	return op.Eval(c, args)
 }
 
-func NewOperation(symbol string, args ...Node) *Operation {
+func NewOperation(symbol string, argCount int, args ...Node) *Operation {
 	return &Operation{
 		BasicNode: NewBasic(args...),
 		Symbol:    symbol,
+		ArgCount:  argCount,
 	}
 }
