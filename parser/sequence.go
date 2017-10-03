@@ -13,10 +13,18 @@ const (
 	LevelDefault
 )
 
-func GenerateSequence(input []tokens.Token, block bool, level SequenceLevel) (nodes.Node, int, error) {
+func NewSequenceParser(substitute bool) *SequenceParser {
+	return &SequenceParser{substitute}
+}
+
+type SequenceParser struct {
+	Substitute bool
+}
+
+func (sp *SequenceParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	var (
 		index = 0
-		seq   = nodes.NewSequence(block)
+		seq   = nodes.NewSequence(sp.Substitute)
 	)
 	for ; index < len(input); index++ {
 		requireEndStatement := true
@@ -25,7 +33,7 @@ func GenerateSequence(input []tokens.Token, block bool, level SequenceLevel) (no
 		case tokens.RightBlock:
 			return seq, index, nil
 		case tokens.LeftBlock:
-			item, n, err := GenerateSequence(input[index+1:], true, LevelDefault)
+			item, n, err := NewSequenceParser(true).Parse(input[index+1:])
 			if err != nil {
 				return seq, index, err
 			}
@@ -34,7 +42,7 @@ func GenerateSequence(input []tokens.Token, block bool, level SequenceLevel) (no
 		case tokens.Identifier:
 			switch active.Value {
 			case "let", "var":
-				stmt, n, err := GenerateDeclaration(input[index:])
+				stmt, n, err := NewDeclarationParser().Parse(input[index:])
 				if err != nil {
 					return seq, index, err
 				}

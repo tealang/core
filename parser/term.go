@@ -5,62 +5,78 @@ import (
 	"github.com/tealang/tea-go/runtime/nodes"
 )
 
-func GenerateFunctionCall(input []tokens.Token) (nodes.Node, int, error) {
+type FunctionCallParser struct{}
+
+func (FunctionCallParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	return nil, 0, nil
 }
 
-type EmptyOperatorStackException struct{}
-
-func (EmptyOperatorStackException) Error() string {
-	return "EmptyOperatorStackException: The operator stack is empty"
-}
-
-type MissingOperatorArgsException struct {
-}
-
-func (MissingOperatorArgsException) Error() string {
-	return "MissingOperatorArgsException: The operation is missing arguments"
-}
-
-type UnexpectedNodeTypeException struct{}
-
-func (UnexpectedNodeTypeException) Error() string {
-	return "UnexpectedNodeTypeException: Unexpected node type, cannot be handled correctly"
-}
-
-type InvalidExpressionException struct{}
-
-func (InvalidExpressionException) Error() string {
-	return "InvalidExpressionException: The expression is invalid"
-}
-
-func GenerateTerm(input []tokens.Token) (nodes.Node, int, error) {
-	operands, operators := make([]nodes.Node, 0), make([]*nodes.Operation, 0)
-
-	popOperator := func() error {
-		if len(operators) < 1 {
-			return EmptyOperatorStackException{}
-		}
-		var op *nodes.Operation
-		op, operators = operators[len(operators)-1], operators[:len(operators)-1]
-		if len(operands) < op.ArgCount {
-			return MissingOperatorArgsException{}
-		}
-		for i := 0; i < op.ArgCount; i++ {
-			var value nodes.Node
-			value, operands = operands[len(operands)-1], operands[:len(operands)-1]
-			op.AddFront(value)
-		}
-		operands = append(operands, op)
-		return nil
+func NewTermParser() *TermParser {
+	return &TermParser{
+		Operands:  make([]nodes.Node, 0),
+		Operators: make([]nodes.Node, 0),
 	}
+}
 
-	popOperand := func() nodes.Node {
-		value := operands[len(operands)-1]
-		operands = operands[:len(operands)-1]
-		return value
+type TermParser struct {
+	Operands, Operators []nodes.Node
+}
+
+func (TermParser) PriorityOf(symbol string, previous tokens.Token) (int, error) {
+	switch symbol {
+	case "&", "|":
+		return 8, nil
+	case "!":
+		return 7, nil
+	case "^":
+		return 6, nil
+	case "*", "/":
+		return 5, nil
+	case "+", "-", ":":
+		return 4, nil
+	case "%":
+		return 3, nil
+	case "<", ">", ">=", "<=", "=>", "=<", "!=", "==":
+		return 2, nil
+	case "&&", "||", "^|":
+		return 1, nil
 	}
+	return 0, nil
+}
 
+func (tp *TermParser) PopOperator() (nodes.Node, error) {
+	operatorStackSize := len(tp.Operators)
+	if operatorStackSize < 1 {
+		return nil, ParseException{"Operator stack is empty"}
+	}
+	operatorStackItem := tp.Operators[operatorStackSize-1]
+	tp.Operators = tp.Operators[:operatorStackSize-1]
+	operation, ok := operatorStackItem.(*nodes.Operation)
+	if !ok {
+		return nil, ParseException{"Operator stack item is no operation"}
+	}
+	operandStackSize := len(tp.Operands)
+	for i := 0; i < operation.ArgCount; i++ {
+		operand, err := tp.PopOperand()
+		if err != nil {
+			return nil, err
+		}
+		operation.AddFront(operand)
+	}
+	return operation, nil
+}
+
+func (tp *TermParser) PopOperand() (nodes.Node, error) {
+	operandStackSize := len(tp.Operands)
+	if operandStackSize < 1 {
+		return nil, ParseException{"Operand stack is empty"}
+	}
+	operand := tp.Operands[operandStackSize-1]
+	tp.Operands = tp.Operands[:operandStackSize-1]
+	return operand, nil
+}
+
+func (tp *TermParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	var (
 		index       int
 		level       int
@@ -70,24 +86,25 @@ func GenerateTerm(input []tokens.Token) (nodes.Node, int, error) {
 	for index = 0; index < len(input); index++ {
 		//lastToken = activeToken
 		activeToken = input[index]
+		/*
 
-		switch activeToken.Type {
-		case tokens.Separator:
-			for len(operators) > 0 {
-				err := popOperator()
-				if err != nil {
-					return nil, 0, err
+			switch activeToken.Type {
+			case tokens.Separator:
+				for len(operators) > 0 {
+					err := popOperator()
+					if err != nil {
+						return nil, 0, err
+					}
 				}
-			}
-			if level > 0 {
-				return operands[0], index, nil
-			}
-		}
+				if level > 0 {
+					return operands[0], index, nil
+				}
+			}*/
 	}
 
-	if len(operands) != 1 {
-		return nil, 0, InvalidExpressionException{}
+	if len(tp.Operands) != 1 {
+		return nil, 0, ParseException{"Operator stack should have size 1"}
 	}
 
-	return operands[0], index, nil
+	return tp.Operands[0], index, nil
 }
