@@ -12,7 +12,7 @@ func GenerateReturn(input []tokens.Token) (nodes.Node, int, error) {
 		return ctrl, 1, nil
 	}
 
-	term, n, err := GenerateTerm(input[1:])
+	term, n, err := NewTermParser().Parse(input[1:])
 	if err != nil {
 		return ctrl, n + 1, err
 	}

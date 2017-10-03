@@ -55,7 +55,6 @@ func (tp *TermParser) PopOperator() (nodes.Node, error) {
 	if !ok {
 		return nil, ParseException{"Operator stack item is no operation"}
 	}
-	operandStackSize := len(tp.Operands)
 	for i := 0; i < operation.ArgCount; i++ {
 		operand, err := tp.PopOperand()
 		if err != nil {
@@ -78,14 +77,11 @@ func (tp *TermParser) PopOperand() (nodes.Node, error) {
 
 func (tp *TermParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	var (
-		index       int
-		level       int
-		activeToken tokens.Token
+		index int
 	)
 
 	for index = 0; index < len(input); index++ {
 		//lastToken = activeToken
-		activeToken = input[index]
 		/*
 
 			switch activeToken.Type {

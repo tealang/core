@@ -6,13 +6,6 @@ import (
 	"github.com/tealang/tea-go/runtime/nodes"
 )
 
-type SequenceLevel int
-
-const (
-	LevelGlobal SequenceLevel = iota
-	LevelDefault
-)
-
 func NewSequenceParser(substitute bool) *SequenceParser {
 	return &SequenceParser{substitute}
 }

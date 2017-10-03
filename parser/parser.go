@@ -31,7 +31,7 @@ type ProgramParser struct {
 }
 
 func (ProgramParser) Parse(input []tokens.Token) (nodes.Node, error) {
-	seq, _, err := NewSequenceParser().Parse(input, false, LevelGlobal)
+	seq, _, err := NewSequenceParser(false).Parse(input)
 	if err != nil {
 		return nil, err
 	}
