@@ -34,24 +34,24 @@ func (sp *sequenceParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 			seq.AddBack(item)
 		case tokens.Identifier:
 			switch active.Value {
-			case "let", "var":
+			case variableKeyword, constantKeyword:
 				stmt, n, err := newDeclarationParser().Parse(input[index:])
 				if err != nil {
 					return seq, index, err
 				}
 				seq.AddBack(stmt)
 				index += n
-			case "return":
+			case returnController:
 				stmt, n, err := newReturnParser().Parse(input[index:])
 				if err != nil {
 					return seq, index, err
 				}
 				seq.AddBack(stmt)
 				index += n
-			case "break":
+			case breakController:
 				seq.AddBack(nodes.NewController(runtime.BehaviorBreak))
 				index++
-			case "continue":
+			case continueController:
 				seq.AddBack(nodes.NewController(runtime.BehaviorContinue))
 				index++
 			default:
