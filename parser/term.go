@@ -19,15 +19,23 @@ func (functionCallParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 }
 
 func newTermParser() *termParser {
-	return &termParser{
+	tp := &termParser{
 		output:    newItemStack(),
 		operators: newItemStack(),
 	}
+	tp.handlers = map[*tokens.TokenType]func() error{
+		tokens.Identifier: tp.handleIdentifier,
+		tokens.String:     tp.handleString,
+		tokens.Number:     tp.handleNumber,
+		tokens.Operator:   tp.handleOperator,
+	}
+	return tp
 }
 
 type termParser struct {
 	output, operators      *itemStack
 	active, previous, next tokens.Token
+	handlers               map[*tokens.TokenType]func() error
 }
 
 func (termParser) binding(item termItem) bool {
@@ -81,6 +89,81 @@ func (tp *termParser) itemFromActive(node nodes.Node) termItem {
 	}
 }
 
+func (tp *termParser) handleIdentifier() error {
+	switch tp.active.Value {
+	case trueLiteral:
+		tp.output.Push(tp.itemFromActive(nodes.NewLiteral(types.True)))
+	case falseLiteral:
+		tp.output.Push(tp.itemFromActive(nodes.NewLiteral(types.False)))
+	case nullLiteral:
+		tp.output.Push(tp.itemFromActive(nodes.NewLiteral(runtime.Value{})))
+	default:
+		tp.output.Push(tp.itemFromActive(nodes.NewIdentifier(tp.active.Value)))
+	}
+	return nil
+}
+
+func (tp *termParser) handleString() error {
+	tp.output.Push(tp.itemFromActive(nodes.NewLiteral(runtime.Value{
+		Type:     types.String,
+		Data:     strings.Trim(tp.active.Value, "\""),
+		Constant: true,
+	})))
+	return nil
+}
+
+func (tp *termParser) handleNumber() error {
+	if strings.Contains(tp.active.Value, ".") {
+		f, err := strconv.ParseFloat(tp.active.Value, 64)
+		if err != nil {
+			return err
+		}
+		tp.output.Push(tp.itemFromActive(nodes.NewLiteral(runtime.Value{
+			Type:     types.Float,
+			Data:     f,
+			Constant: true,
+		})))
+	} else {
+		i, err := strconv.ParseInt(tp.active.Value, 10, 64)
+		if err != nil {
+			return err
+		}
+		tp.output.Push(tp.itemFromActive(nodes.NewLiteral(runtime.Value{
+			Type:     types.Integer,
+			Data:     i,
+			Constant: true,
+		})))
+	}
+	return nil
+}
+
+func (tp *termParser) handleOperator() error {
+	item := tp.itemFromActive(nil)
+	item.Node = nodes.NewOperation(tp.active.Value, tp.argCount(item))
+	for !tp.operators.Empty() {
+		top := tp.operators.Peek()
+		if top.Value.Type != tokens.Operator {
+			break
+		}
+		if tp.priority(top) >= tp.priority(item) {
+			break
+		}
+		if tp.binding(top) {
+			break
+		}
+		for i := 0; i < tp.argCount(top); i++ {
+			if tp.output.Empty() {
+				return ParseException{"Missing operands"}
+			}
+			top.Node.AddFront(tp.output.Peek().Node)
+			tp.output.Pop()
+		}
+		tp.output.Push(top)
+	}
+	tp.operators.Push(item)
+	return nil
+}
+
 func (tp *termParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	tp.operators.Clear()
 	tp.output.Clear()
@@ -107,59 +190,11 @@ parser:
 		switch tp.active.Type {
 		case tokens.Statement:
 			break parser
-		case tokens.Identifier:
-			switch tp.active.Value {
-			case trueLiteral:
-				tp.output.Push(tp.itemFromActive(nodes.NewLiteral(types.True)))
-			case falseLiteral:
-				tp.output.Push(tp.itemFromActive(nodes.NewLiteral(types.False)))
-			case nullLiteral:
-				tp.output.Push(tp.itemFromActive(nodes.NewLiteral(runtime.Value{})))
-			default:
-				tp.output.Push(tp.itemFromActive(nodes.NewIdentifier(tp.active.Value)))
-			}
-		case tokens.String:
-			tp.output.Push(tp.itemFromActive(nodes.NewLiteral(runtime.Value{
-				Type:     types.String,
-				Data:     strings.Trim(tp.active.Value, "\""),
-				Constant: true,
-			})))
-		case tokens.Number:
-			if strings.Contains(tp.active.Value, ".") {
-				f, err := strconv.ParseFloat(tp.active.Value, 64)
-				if err != nil {
-					return nil, 0, err
-				}
-				tp.output.Push(tp.itemFromActive(nodes.NewLiteral(runtime.Value{
-					Type:     types.Float,
-					Data:     f,
-					Constant: true,
-				})))
-			} else {
-				i, err := strconv.ParseInt(tp.active.Value, 10, 64)
-				if err != nil {
-					return nil, 0, err
-				}
-				tp.output.Push(tp.itemFromActive(nodes.NewLiteral(runtime.Value{
-					Type:     types.Integer,
-					Data:     i,
-					Constant: true,
-				})))
-			}
-		case tokens.Operator:
-			item := tp.itemFromActive(nil)
-			item.Node = nodes.NewOperation(tp.active.Value, tp.argCount(item))
-			for !tp.operators.Empty() {
+		case tokens.LeftParentheses:
+			tp.operators.Push(tp.itemFromActive(nil))
+		case tokens.RightParentheses:
+			for !tp.operators.Empty() && tp.operators.Peek().Value.Type != tokens.LeftParentheses {
 				top := tp.operators.Peek()
-				if top.Value.Type != tokens.Operator {
-					break
-				}
-				if tp.priority(top) >= tp.priority(item) {
-					break
-				}
-				if tp.binding(top) {
-					break
-				}
 				for i := 0; i < tp.argCount(top); i++ {
 					if tp.output.Empty() {
 						return nil, 0, ParseException{"Missing operands"}
@@ -169,7 +204,18 @@ parser:
 				}
 				tp.output.Push(top)
 			}
-			tp.operators.Push(item)
+			if tp.operators.Peek().Value.Type != tokens.LeftParentheses {
+				return nil, 0, ParseException{"Missing closing bracket"}
+			}
+			tp.operators.Pop()
+		default:
+			handler, ok := tp.handlers[tp.active.Type]
+			if !ok {
+				return nil, 0, ParseException{"Unexpected token type"}
+			}
+			if err := handler(); err != nil {
+				return nil, 0, err
+			}
 		}
 	}
 
