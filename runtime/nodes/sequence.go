@@ -34,7 +34,7 @@ func (n *Sequence) Eval(c *runtime.Context) (runtime.Value, error) {
 			return value, err
 		}
 		if c.Behavior != runtime.BehaviorDefault {
-			return value, nil
+			break
 		}
 	}
 
@@ -47,5 +47,6 @@ func NewSequence(substitute bool, childs ...Node) *Sequence {
 		Substitute: substitute,
 	}
 	seq.Metadata["label"] = fmt.Sprintf("Sequence (sub=%t)", substitute)
+	seq.Metadata["shape"] = "house"
 	return seq
 }
