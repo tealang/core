@@ -121,7 +121,7 @@ parser:
 		case tokens.String:
 			tp.output.Push(tp.itemFromActive(nodes.NewLiteral(runtime.Value{
 				Type:     types.String,
-				Data:     tp.active.Value,
+				Data:     strings.Trim(tp.active.Value, "\""),
 				Constant: true,
 			})))
 		case tokens.Number:
