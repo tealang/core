@@ -13,9 +13,12 @@ func (Controller) Name() string {
 }
 
 func (ctrl *Controller) Eval(c *runtime.Context) (runtime.Value, error) {
-	var value runtime.Value
+	var (
+		value runtime.Value
+		err   error
+	)
 	for _, n := range ctrl.Childs {
-		value, err := n.Eval(c)
+		value, err = n.Eval(c)
 		if err != nil {
 			return value, err
 		}
@@ -25,8 +28,19 @@ func (ctrl *Controller) Eval(c *runtime.Context) (runtime.Value, error) {
 }
 
 func NewController(behavior runtime.ContextBehavior) *Controller {
-	return &Controller{
+	ctrl := &Controller{
 		BasicNode: NewBasic(),
 		Behavior:  behavior,
 	}
+	switch behavior {
+	case runtime.BehaviorDefault:
+		ctrl.Metadata["label"] = "Controller (default)"
+	case runtime.BehaviorContinue:
+		ctrl.Metadata["label"] = "Controller (continue)"
+	case runtime.BehaviorBreak:
+		ctrl.Metadata["label"] = "Controller (break)"
+	case runtime.BehaviorReturn:
+		ctrl.Metadata["label"] = "Controller (return)"
+	}
+	return ctrl
 }
