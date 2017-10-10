@@ -25,6 +25,6 @@ func NewLiteral(value runtime.Value) *Literal {
 		BasicNode: NewBasic(),
 		Value:     value,
 	}
-	lit.Metadata["label"] = fmt.Sprintf("Literal (value=%s)", value)
+	lit.Metadata["label"] = fmt.Sprintf("Literal (value='%s')", value)
 	return lit
 }
