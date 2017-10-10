@@ -1,6 +1,10 @@
 package nodes
 
-import "github.com/tealang/tea-go/runtime"
+import (
+	"fmt"
+
+	"github.com/tealang/tea-go/runtime"
+)
 
 // Declaration stores one or multiple initialized variables in the active namespace.
 type Declaration struct {
@@ -34,17 +38,21 @@ func (a *Declaration) Eval(c *runtime.Context) (runtime.Value, error) {
 }
 
 func NewMultiDeclaration(alias []string, constant bool, values ...Node) *Declaration {
-	return &Declaration{
+	decl := &Declaration{
 		BasicNode: NewBasic(values...),
 		Alias:     alias,
 		Constant:  constant,
 	}
+	decl.Metadata["label"] = fmt.Sprintf("Declaration (alias=%v, constant=%t)", alias, constant)
+	return decl
 }
 
 func NewDeclaration(alias string, constant bool, value Node) *Declaration {
-	return &Declaration{
+	decl := &Declaration{
 		BasicNode: NewBasic(value),
 		Alias:     []string{alias},
 		Constant:  constant,
 	}
+	decl.Metadata["label"] = fmt.Sprintf("Declaration (alias=%v, constant=%t)", alias, constant)
+	return decl
 }
