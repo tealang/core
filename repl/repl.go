@@ -7,6 +7,8 @@ import (
 	"github.com/tealang/tea-go/lexer"
 	"github.com/tealang/tea-go/parser"
 	"github.com/tealang/tea-go/runtime"
+	"github.com/tealang/tea-go/runtime/operators"
+	"github.com/tealang/tea-go/runtime/types"
 )
 
 type Instance struct {
@@ -20,7 +22,7 @@ func (r *Instance) Interpret(input string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fmt.Println(strings.Join(ast.Graphviz("head"), ";"))
+	fmt.Println("digraph G {\n", strings.Join(ast.Graphviz("head"), "\n"), "}")
 	output, err := ast.Eval(r.Context)
 	if err != nil {
 		return "", err
@@ -33,8 +35,11 @@ func (r *Instance) Stop() {
 }
 
 func New() *Instance {
+	ctx := runtime.NewContext()
+	operators.Load(ctx)
+	types.Load(ctx)
 	return &Instance{
 		Active:  true,
-		Context: runtime.NewContext(),
+		Context: ctx,
 	}
 }
