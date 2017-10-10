@@ -8,8 +8,12 @@ import (
 )
 
 const (
-	KeywordConstant = "let"
-	KeywordVariable = "var"
+	constantKeyword    = "let"
+	variableKeyword    = "var"
+	returnController   = "return"
+	breakController    = "break"
+	defaultController  = "default"
+	continueController = "continue"
 )
 
 type Parser interface {
