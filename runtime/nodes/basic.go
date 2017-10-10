@@ -25,7 +25,7 @@ type BasicNode struct {
 }
 
 func (n *BasicNode) Graphviz(uid string) []string {
-	lines := []string{fmt.Sprintf("%s [label=\"%s\"]", uid, n.Metadata["label"])}
+	lines := []string{fmt.Sprintf("%s [label=\"%s\" shape=%s]", uid, n.Metadata["label"], n.Metadata["shape"])}
 	for i, c := range n.Childs {
 		id := fmt.Sprintf("%sn%d", uid, i)
 		lines = append(lines, c.Graphviz(id)...)
@@ -53,7 +53,10 @@ func (n *BasicNode) AddFront(child Node) {
 
 func NewBasic(childs ...Node) BasicNode {
 	return BasicNode{
-		Childs:   childs,
-		Metadata: make(map[string]string),
+		Childs: childs,
+		Metadata: map[string]string{
+			"label": "Node",
+			"shape": "oval",
+		},
 	}
 }
