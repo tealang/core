@@ -6,15 +6,15 @@ import (
 	"github.com/tealang/tea-go/runtime/nodes"
 )
 
-func NewSequenceParser(substitute bool) *SequenceParser {
-	return &SequenceParser{substitute}
+func newSequenceParser(substitute bool) *sequenceParser {
+	return &sequenceParser{substitute}
 }
 
-type SequenceParser struct {
+type sequenceParser struct {
 	Substitute bool
 }
 
-func (sp *SequenceParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
+func (sp *sequenceParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	var (
 		index = 0
 		seq   = nodes.NewSequence(sp.Substitute)
@@ -26,7 +26,7 @@ func (sp *SequenceParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 		case tokens.RightBlock:
 			return seq, index, nil
 		case tokens.LeftBlock:
-			item, n, err := NewSequenceParser(true).Parse(input[index+1:])
+			item, n, err := newSequenceParser(true).Parse(input[index+1:])
 			if err != nil {
 				return seq, index, err
 			}
@@ -35,14 +35,14 @@ func (sp *SequenceParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 		case tokens.Identifier:
 			switch active.Value {
 			case "let", "var":
-				stmt, n, err := NewDeclarationParser().Parse(input[index:])
+				stmt, n, err := newDeclarationParser().Parse(input[index:])
 				if err != nil {
 					return seq, index, err
 				}
 				seq.AddBack(stmt)
 				index += n
 			case "return":
-				stmt, n, err := GenerateReturn(input[index:])
+				stmt, n, err := newReturnParser().Parse(input[index:])
 				if err != nil {
 					return seq, index, err
 				}

@@ -5,24 +5,24 @@ import (
 	"github.com/tealang/tea-go/runtime/nodes"
 )
 
-type FunctionCallParser struct{}
+type functionCallParser struct{}
 
-func (FunctionCallParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
+func (functionCallParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	return nil, 0, nil
 }
 
-func NewTermParser() *TermParser {
-	return &TermParser{
+func newTermParser() *termParser {
+	return &termParser{
 		Operands:  make([]nodes.Node, 0),
 		Operators: make([]nodes.Node, 0),
 	}
 }
 
-type TermParser struct {
+type termParser struct {
 	Operands, Operators []nodes.Node
 }
 
-func (TermParser) PriorityOf(symbol string, previous tokens.Token) (int, error) {
+func (termParser) PriorityOf(symbol string, previous tokens.Token) (int, error) {
 	switch symbol {
 	case "&", "|":
 		return 8, nil
@@ -44,7 +44,7 @@ func (TermParser) PriorityOf(symbol string, previous tokens.Token) (int, error) 
 	return 0, nil
 }
 
-func (tp *TermParser) PopOperator() (nodes.Node, error) {
+func (tp *termParser) PopOperator() (nodes.Node, error) {
 	operatorStackSize := len(tp.Operators)
 	if operatorStackSize < 1 {
 		return nil, ParseException{"Operator stack is empty"}
@@ -65,7 +65,7 @@ func (tp *TermParser) PopOperator() (nodes.Node, error) {
 	return operation, nil
 }
 
-func (tp *TermParser) PopOperand() (nodes.Node, error) {
+func (tp *termParser) PopOperand() (nodes.Node, error) {
 	operandStackSize := len(tp.Operands)
 	if operandStackSize < 1 {
 		return nil, ParseException{"Operand stack is empty"}
@@ -75,7 +75,7 @@ func (tp *TermParser) PopOperand() (nodes.Node, error) {
 	return operand, nil
 }
 
-func (tp *TermParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
+func (tp *termParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	var (
 		index int
 	)

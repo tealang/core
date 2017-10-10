@@ -13,7 +13,7 @@ type Instance struct {
 
 func (r *Instance) Interpret(input string) (string, error) {
 	tokens := lexer.Lex(input)
-	ast, err := parser.Parse(tokens)
+	ast, err := parser.New().Parse(tokens)
 	if err != nil {
 		return "", err
 	}

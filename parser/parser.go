@@ -27,18 +27,22 @@ func (p ParseException) Error() string {
 	return fmt.Sprintf("ParseException: %s", p.Message)
 }
 
-type ProgramParser struct {
+func New() *programParser {
+	return &programParser{}
 }
 
-func (ProgramParser) Parse(input []tokens.Token) (nodes.Node, error) {
-	seq, _, err := NewSequenceParser(false).Parse(input)
+type programParser struct {
+}
+
+func (programParser) Parse(input []tokens.Token) (nodes.Node, error) {
+	seq, _, err := newSequenceParser(false).Parse(input)
 	if err != nil {
 		return nil, err
 	}
 	return seq, nil
 }
 
-func (ProgramParser) CleanWhitespace(input []tokens.Token) []tokens.Token {
+func (programParser) CleanWhitespace(input []tokens.Token) []tokens.Token {
 	output := make([]tokens.Token, 0, len(input))
 	for _, tk := range input {
 		if tk.Type != tokens.Whitespace {

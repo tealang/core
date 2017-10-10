@@ -6,7 +6,7 @@ import (
 	"github.com/tealang/tea-go/runtime/nodes"
 )
 
-type DeclarationParser struct {
+type declarationParser struct {
 	ExpectTypeInformation bool
 	ExpectAssignment      bool
 	StopCollectingAlias   bool
@@ -15,14 +15,14 @@ type DeclarationParser struct {
 	Index                 int
 }
 
-func NewDeclarationParser() *DeclarationParser {
-	return &DeclarationParser{
+func newDeclarationParser() *declarationParser {
+	return &declarationParser{
 		Casts:       make([]string, 0),
 		Declaration: nodes.NewMultiDeclaration([]string{}, false),
 	}
 }
 
-func (dp *DeclarationParser) Fetch(input []tokens.Token) (tokens.Token, error) {
+func (dp *declarationParser) Fetch(input []tokens.Token) (tokens.Token, error) {
 	if dp.Index >= len(input) {
 		return tokens.Token{}, ParseException{"Reached unexpected end of tokens"}
 	}
@@ -31,7 +31,7 @@ func (dp *DeclarationParser) Fetch(input []tokens.Token) (tokens.Token, error) {
 	return tk, nil
 }
 
-func (dp *DeclarationParser) ParseConstantState(input []tokens.Token) error {
+func (dp *declarationParser) ParseConstantState(input []tokens.Token) error {
 	descriptor, err := dp.Fetch(input)
 	if err != nil {
 		return err
@@ -50,7 +50,7 @@ func (dp *DeclarationParser) ParseConstantState(input []tokens.Token) error {
 	return nil
 }
 
-func (dp *DeclarationParser) CollectAliases(input []tokens.Token) error {
+func (dp *declarationParser) CollectAliases(input []tokens.Token) error {
 	for !dp.StopCollectingAlias {
 		active, err := dp.Fetch(input)
 		if err != nil {
@@ -88,7 +88,7 @@ func (dp *DeclarationParser) CollectAliases(input []tokens.Token) error {
 	return nil
 }
 
-func (dp *DeclarationParser) StoreDefaultValues(input []tokens.Token) error {
+func (dp *declarationParser) StoreDefaultValues(input []tokens.Token) error {
 	if len(dp.Casts) != len(dp.Declaration.Alias) {
 		return ParseException{"Required type information not found"}
 	}
@@ -98,10 +98,10 @@ func (dp *DeclarationParser) StoreDefaultValues(input []tokens.Token) error {
 	return nil
 }
 
-func (dp *DeclarationParser) CollectAssignedValues(input []tokens.Token) error {
+func (dp *declarationParser) CollectAssignedValues(input []tokens.Token) error {
 	iteration := 0
 	for ; dp.Index < len(input); dp.Index++ {
-		term, offset, err := NewTermParser().Parse(input[dp.Index:])
+		term, offset, err := newTermParser().Parse(input[dp.Index:])
 		if err != nil {
 			return err
 		}
@@ -115,7 +115,7 @@ func (dp *DeclarationParser) CollectAssignedValues(input []tokens.Token) error {
 	return nil
 }
 
-func (dp *DeclarationParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
+func (dp *declarationParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	if err := dp.ParseConstantState(input); err != nil {
 		return nil, 0, err
 	}
