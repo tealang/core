@@ -54,7 +54,21 @@ func (sp *sequenceParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 			case "continue":
 				seq.AddBack(nodes.NewController(runtime.BehaviorContinue))
 				index++
+			default:
+				term, n, err := newTermParser().Parse(input[index:])
+				if err != nil {
+					return seq, index, err
+				}
+				seq.AddBack(term)
+				index += n
 			}
+		default:
+			term, n, err := newTermParser().Parse(input[index:])
+			if err != nil {
+				return seq, index, err
+			}
+			seq.AddBack(term)
+			index += n
 		}
 
 		if index >= len(input) {
