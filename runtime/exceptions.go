@@ -95,7 +95,7 @@ type UncallableTypeException struct {
 }
 
 func (c UncallableTypeException) Error() string {
-	return fmt.Sprintf("UncallableTypeException: Value of type %s can not be called")
+	return fmt.Sprintf("UncallableTypeException: Value of type %s can not be called", c.Type)
 }
 
 type ExplicitCastException struct {
