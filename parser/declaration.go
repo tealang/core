@@ -40,9 +40,9 @@ func (dp *declarationParser) ParseConstantState(input []tokens.Token) error {
 		return ParseException{"Identifier state descriptor is no keyword identifier"}
 	}
 	switch descriptor.Value {
-	case "var":
+	case variableKeyword:
 		dp.Declaration.Constant = false
-	case "let":
+	case constantKeyword:
 		dp.Declaration.Constant = true
 	default:
 		return ParseException{"Unknown identifier state descriptor"}
