@@ -2,15 +2,16 @@ package types
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/tealang/tea-go/runtime"
 )
 
 var (
-	Any, Bool, Function    *runtime.Datatype
-	Number, Integer, Float *runtime.Datatype
-	String                 *runtime.Datatype
-	True, False            runtime.Value
+	Any, Bool, Function *runtime.Datatype
+	Integer, Float      *runtime.Datatype
+	String              *runtime.Datatype
+	True, False         runtime.Value
 )
 
 func init() {
@@ -31,22 +32,47 @@ func init() {
 			return fmt.Sprintf("any<%s>", v.Type.Format(v))
 		},
 	}
-	Number = &runtime.Datatype{
-		Name:   "number",
-		Parent: Any,
-	}
 	Integer = &runtime.Datatype{
 		Name:   "int",
-		Parent: Number,
+		Parent: Any,
 		Format: func(v runtime.Value) string {
 			return fmt.Sprintf("int<%d>", v.Data)
+		},
+		Cast: func(v runtime.Value) (runtime.Value, error) {
+			switch v.Type {
+			case Integer:
+				return v, nil
+			case Float:
+				return runtime.Value{
+					Type: Integer,
+					Data: int64(v.Data.(float64)),
+				}, nil
+			case String:
+				i, err := strconv.Atoi(v.Data.(string))
+				if err != nil {
+					return runtime.Value{}, runtime.ExplicitCastException{From: String, To: Integer}
+				}
+				return runtime.Value{
+					Type: Integer,
+					Data: i,
+				}, nil
+			default:
+				return runtime.Value{}, runtime.ExplicitCastException{From: v.Type, To: Integer}
+			}
 		},
 	}
 	Float = &runtime.Datatype{
 		Name:   "float",
-		Parent: Number,
+		Parent: Any,
 		Format: func(v runtime.Value) string {
 			return fmt.Sprintf("float<%f>", v.Data)
+		},
+	}
+	String = &runtime.Datatype{
+		Name:   "string",
+		Parent: Any,
+		Format: func(v runtime.Value) string {
+			return fmt.Sprintf("string<'%s'>", v.Data)
 		},
 	}
 	Function = &runtime.Datatype{
@@ -87,4 +113,13 @@ func init() {
 		Constant: true,
 		Name:     "false",
 	}
+}
+
+func Load(ctx *runtime.Context) {
+	ctx.Namespace.Store(Any)
+	ctx.Namespace.Store(Function)
+	ctx.Namespace.Store(Bool)
+	ctx.Namespace.Store(String)
+	ctx.Namespace.Store(Integer)
+	ctx.Namespace.Store(Float)
 }
