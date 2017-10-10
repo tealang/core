@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"fmt"
+
 	"github.com/tealang/tea-go/lexer/tokens"
 	"github.com/tealang/tea-go/runtime"
 	"github.com/tealang/tea-go/runtime/nodes"
@@ -51,11 +53,12 @@ func (dp *declarationParser) ParseConstantState(input []tokens.Token) error {
 }
 
 func (dp *declarationParser) CollectAliases(input []tokens.Token) error {
-	for !dp.StopCollectingAlias {
+	for !dp.StopCollectingAlias && dp.Index < len(input) {
 		active, err := dp.Fetch(input)
 		if err != nil {
 			return err
 		}
+		fmt.Println(active, dp.Index)
 		switch active.Type {
 		case tokens.Identifier:
 			if dp.ExpectTypeInformation {
@@ -81,9 +84,6 @@ func (dp *declarationParser) CollectAliases(input []tokens.Token) error {
 		default:
 			return ParseException{"Unexpected token"}
 		}
-		if !dp.StopCollectingAlias {
-			dp.Index++
-		}
 	}
 	return nil
 }
@@ -101,12 +101,13 @@ func (dp *declarationParser) StoreDefaultValues(input []tokens.Token) error {
 func (dp *declarationParser) CollectAssignedValues(input []tokens.Token) error {
 	iteration := 0
 	for ; dp.Index < len(input); dp.Index++ {
+		fmt.Println(dp.Index)
 		term, offset, err := newTermParser().Parse(input[dp.Index:])
 		if err != nil {
 			return err
 		}
 		dp.Index += offset
-		if iteration < len(dp.Declaration.Alias) {
+		if iteration < len(dp.Casts) {
 			term = nodes.NewTypecast(dp.Casts[iteration])
 			iteration++
 		}
