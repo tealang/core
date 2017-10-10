@@ -44,5 +44,6 @@ func NewOperation(symbol string, argCount int, args ...Node) *Operation {
 		ArgCount:  argCount,
 	}
 	op.Metadata["label"] = fmt.Sprintf("%s (%d)", symbol, argCount)
+	op.Metadata["shape"] = "octagon"
 	return op
 }
