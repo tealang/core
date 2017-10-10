@@ -40,6 +40,11 @@ func init() {
 		},
 		Cast: func(v runtime.Value) (runtime.Value, error) {
 			switch v.Type {
+			case nil:
+				return runtime.Value{
+					Type: Integer,
+					Data: int64(0),
+				}, nil
 			case Integer:
 				return v, nil
 			case Float:
@@ -92,10 +97,17 @@ func init() {
 		Name:   "bool",
 		Parent: Any,
 		Cast: func(v runtime.Value) (runtime.Value, error) {
-			if v.Type == Bool {
+			switch v.Type {
+			case Bool:
 				return v, nil
+			case nil:
+				return runtime.Value{
+					Type: Bool,
+					Data: false,
+				}, nil
+			default:
+				return runtime.Value{}, runtime.ExplicitCastException{From: v.Type, To: Bool}
 			}
-			return runtime.Value{}, runtime.ExplicitCastException{From: v.Type, To: Bool}
 		},
 		Format: func(v runtime.Value) string {
 			return fmt.Sprintf("bool<%t>", v.Data)
