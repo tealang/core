@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/tealang/tea-go/runtime"
-	"github.com/tealang/tea-go/stdlib/types"
+	"github.com/tealang/tea-go/runtime/types"
 )
 
 // Branch executes a list of conditionals until the active conditional executes successfully.

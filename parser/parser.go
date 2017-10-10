@@ -34,15 +34,15 @@ func New() *programParser {
 type programParser struct {
 }
 
-func (programParser) Parse(input []tokens.Token) (nodes.Node, error) {
-	seq, _, err := newSequenceParser(false).Parse(input)
+func (pp programParser) Parse(input []tokens.Token) (nodes.Node, error) {
+	seq, _, err := newSequenceParser(false).Parse(pp.clean(input))
 	if err != nil {
 		return nil, err
 	}
 	return seq, nil
 }
 
-func (programParser) CleanWhitespace(input []tokens.Token) []tokens.Token {
+func (programParser) clean(input []tokens.Token) []tokens.Token {
 	output := make([]tokens.Token, 0, len(input))
 	for _, tk := range input {
 		if tk.Type != tokens.Whitespace {

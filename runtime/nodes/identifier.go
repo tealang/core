@@ -37,8 +37,10 @@ func (i *Identifier) Eval(c *runtime.Context) (runtime.Value, error) {
 }
 
 func NewIdentifier(alias string) *Identifier {
-	return &Identifier{
+	ident := &Identifier{
 		BasicNode: NewBasic(),
 		Alias:     alias,
 	}
+	ident.Metadata["label"] = fmt.Sprintf("Identifier (alias=%s)", alias)
+	return ident
 }

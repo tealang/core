@@ -2,7 +2,7 @@ package nodes
 
 import (
 	"github.com/tealang/tea-go/runtime"
-	"github.com/tealang/tea-go/stdlib/types"
+	"github.com/tealang/tea-go/runtime/types"
 )
 
 type FunctionCall struct {

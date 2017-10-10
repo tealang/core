@@ -33,5 +33,7 @@ func (l *Loop) Eval(c *runtime.Context) (runtime.Value, error) {
 
 func NewLoop(condition, body Node) *Loop {
 	cond := NewConditional(condition, body)
-	return &Loop{*cond}
+	loop := &Loop{*cond}
+	loop.Metadata["label"] = "Loop"
+	return loop
 }

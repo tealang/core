@@ -1,6 +1,10 @@
 package nodes
 
-import "github.com/tealang/tea-go/runtime"
+import (
+	"fmt"
+
+	"github.com/tealang/tea-go/runtime"
+)
 
 // Operation calls an operator on the results of its children as arguments.
 type Operation struct {
@@ -34,9 +38,11 @@ func (o *Operation) Eval(c *runtime.Context) (runtime.Value, error) {
 }
 
 func NewOperation(symbol string, argCount int, args ...Node) *Operation {
-	return &Operation{
+	op := &Operation{
 		BasicNode: NewBasic(args...),
 		Symbol:    symbol,
 		ArgCount:  argCount,
 	}
+	op.Metadata["label"] = fmt.Sprintf("%s (%d)", symbol, argCount)
+	return op
 }

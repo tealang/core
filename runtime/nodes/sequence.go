@@ -1,6 +1,10 @@
 package nodes
 
-import "github.com/tealang/tea-go/runtime"
+import (
+	"fmt"
+
+	"github.com/tealang/tea-go/runtime"
+)
 
 // Sequence executes a list of nodes as long as the behavior is default.
 type Sequence struct {
@@ -13,15 +17,19 @@ func (Sequence) Name() string {
 }
 
 func (n *Sequence) Eval(c *runtime.Context) (runtime.Value, error) {
-	var parent *runtime.Namespace
+	var (
+		parent *runtime.Namespace
+		value  runtime.Value
+		err    error
+	)
+
 	if n.Substitute {
 		c.Namespace, parent = runtime.NewNamespace(c.Namespace), c.Namespace
 		defer func() { c.Namespace = parent }()
 	}
-
 	for _, node := range n.Childs {
 		c.Behavior = runtime.BehaviorDefault
-		value, err := node.Eval(c)
+		value, err = node.Eval(c)
 		if err != nil {
 			return value, err
 		}
@@ -30,12 +38,14 @@ func (n *Sequence) Eval(c *runtime.Context) (runtime.Value, error) {
 		}
 	}
 
-	return runtime.Value{}, nil
+	return value, nil
 }
 
 func NewSequence(substitute bool, childs ...Node) *Sequence {
-	return &Sequence{
+	seq := &Sequence{
 		BasicNode:  NewBasic(childs...),
 		Substitute: substitute,
 	}
+	seq.Metadata["label"] = fmt.Sprintf("Sequence (sub=%t)", substitute)
+	return seq
 }

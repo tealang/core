@@ -1,6 +1,10 @@
 package nodes
 
-import "github.com/tealang/tea-go/runtime"
+import (
+	"fmt"
+
+	"github.com/tealang/tea-go/runtime"
+)
 
 // Literal returns a constant value when evaluated.
 type Literal struct {
@@ -17,8 +21,10 @@ func (l *Literal) Eval(c *runtime.Context) (runtime.Value, error) {
 }
 
 func NewLiteral(value runtime.Value) *Literal {
-	return &Literal{
+	lit := &Literal{
 		BasicNode: NewBasic(),
 		Value:     value,
 	}
+	lit.Metadata["label"] = fmt.Sprintf("Literal (value=%s)", value)
+	return lit
 }

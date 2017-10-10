@@ -1,7 +1,11 @@
 // Package nodes provides an abstract syntax tree implementation for Tealang programs.
 package nodes
 
-import "github.com/tealang/tea-go/runtime"
+import (
+	"fmt"
+
+	"github.com/tealang/tea-go/runtime"
+)
 
 // Node is a tree node within an abstract syntax tree.
 type Node interface {
@@ -11,12 +15,23 @@ type Node interface {
 	Name() string
 	AddFront(child Node)
 	AddBack(child Node)
+	Graphviz(uid string) []string
 }
 
 // BasicNode provides a basic functionality for a new node.
 type BasicNode struct {
 	Childs   []Node
 	Metadata map[string]string
+}
+
+func (n *BasicNode) Graphviz(uid string) []string {
+	lines := []string{fmt.Sprintf("%s [label=\"%s\"]", uid, n.Metadata["label"])}
+	for i, c := range n.Childs {
+		id := fmt.Sprintf("%sn%d", uid, i)
+		lines = append(lines, c.Graphviz(id)...)
+		lines = append(lines, fmt.Sprintf("%s -> %s", uid, id))
+	}
+	return lines
 }
 
 func (n *BasicNode) Has(tag string) (string, bool) {

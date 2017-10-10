@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/tealang/tea-go/runtime/nodes"
-	"github.com/tealang/tea-go/stdlib/types"
+	"github.com/tealang/tea-go/runtime/types"
 
 	"github.com/tealang/tea-go/runtime"
 )
