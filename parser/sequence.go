@@ -16,12 +16,14 @@ type sequenceParser struct {
 
 func (sp *sequenceParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	var (
-		index = 0
-		seq   = nodes.NewSequence(sp.Substitute)
+		index, size = 0, len(input)
+		seq         = nodes.NewSequence(sp.Substitute)
+		active      tokens.Token
 	)
-	for ; index < len(input); index++ {
+	for ; index < size; index++ {
 		requireEndStatement := true
-		active := input[index]
+		active = input[index]
+
 		switch active.Type {
 		case tokens.RightBlock:
 			return seq, index, nil
@@ -62,6 +64,8 @@ func (sp *sequenceParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 				seq.AddBack(term)
 				index += n
 			}
+		case nil:
+			return seq, index, nil
 		default:
 			term, n, err := newTermParser().Parse(input[index:])
 			if err != nil {
