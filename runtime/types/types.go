@@ -7,8 +7,10 @@ import (
 )
 
 var (
-	Any, Bool, Function *runtime.Datatype
-	True, False         runtime.Value
+	Any, Bool, Function    *runtime.Datatype
+	Number, Integer, Float *runtime.Datatype
+	String                 *runtime.Datatype
+	True, False            runtime.Value
 )
 
 func init() {
@@ -27,6 +29,24 @@ func init() {
 				return "null"
 			}
 			return fmt.Sprintf("any<%s>", v.Type.Format(v))
+		},
+	}
+	Number = &runtime.Datatype{
+		Name:   "number",
+		Parent: Any,
+	}
+	Integer = &runtime.Datatype{
+		Name:   "int",
+		Parent: Number,
+		Format: func(v runtime.Value) string {
+			return fmt.Sprintf("int<%d>", v.Data)
+		},
+	}
+	Float = &runtime.Datatype{
+		Name:   "float",
+		Parent: Number,
+		Format: func(v runtime.Value) string {
+			return fmt.Sprintf("float<%f>", v.Data)
 		},
 	}
 	Function = &runtime.Datatype{
@@ -55,7 +75,6 @@ func init() {
 			return fmt.Sprintf("bool<%t>", v.Data)
 		},
 	}
-
 	True = runtime.Value{
 		Type:     Bool,
 		Data:     true,
