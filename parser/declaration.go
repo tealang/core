@@ -82,7 +82,7 @@ func (dp *declarationParser) CollectAliases(input []tokens.Token) error {
 				return ParseException{"Unexpected operator"}
 			}
 		default:
-			return ParseException{"Unexpected token"}
+			return newUnexpectedTokenException(active.Type)
 		}
 	}
 	return nil
