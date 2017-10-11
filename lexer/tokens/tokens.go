@@ -85,6 +85,7 @@ var (
 		RightParentheses,
 		Operator,
 		Whitespace,
+		Separator,
 		Number,
 		Identifier,
 		String,
