@@ -79,6 +79,19 @@ func init() {
 		Format: func(v runtime.Value) string {
 			return fmt.Sprintf("string<'%s'>", v.Data)
 		},
+		Cast: func(v runtime.Value) (runtime.Value, error) {
+			switch v.Type {
+			case nil:
+				return runtime.Value{
+					Type: String,
+					Data: "",
+				}, nil
+			case String:
+				return v, nil
+			default:
+				return runtime.Value{}, runtime.ExplicitCastException{From: v.Type, To: String}
+			}
+		},
 	}
 	Function = &runtime.Datatype{
 		Name:   "func",
