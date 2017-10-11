@@ -10,3 +10,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - New lexer implementation supporting operators, identifiers, numbers, strings and more
 - Basic command line interface for REPL-style user interactions
 - Put MIT License, a README file and a CHANGELOG in the repository
+- Support for variable declarations, calculation terms and function calls
