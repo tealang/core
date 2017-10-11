@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"fmt"
-
 	"github.com/tealang/tea-go/lexer/tokens"
 	"github.com/tealang/tea-go/runtime"
 	"github.com/tealang/tea-go/runtime/nodes"
@@ -91,7 +89,7 @@ func (sp *sequenceParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 		sp.statement = true
 		sp.active = sp.input[sp.index]
 
-		fmt.Printf("[%d:%d] %s\n", sp.index, sp.size, sp.active)
+		//fmt.Printf("[%d:%d] %s\n", sp.index, sp.size, sp.active)
 		switch sp.active.Type {
 		case nil, tokens.RightBlock:
 			return sp.sequence, sp.index, nil
