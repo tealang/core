@@ -1,6 +1,8 @@
 package nodes
 
 import (
+	"fmt"
+
 	"github.com/tealang/tea-go/runtime"
 	"github.com/tealang/tea-go/runtime/types"
 )
@@ -42,8 +44,10 @@ func (call *FunctionCall) Eval(c *runtime.Context) (runtime.Value, error) {
 }
 
 func NewFunctionCall(alias string, args ...Node) *FunctionCall {
-	return &FunctionCall{
+	call := &FunctionCall{
 		BasicNode: NewBasic(args...),
 		Alias:     alias,
 	}
+	call.Metadata["label"] = fmt.Sprintf("Call (name='%s')", alias)
+	return call
 }
