@@ -9,14 +9,16 @@ import (
 )
 
 var (
-	printString   runtime.Signature
-	printFunction runtime.Function
-	print         runtime.Value
-	printSep      runtime.Signature
+	printSignature runtime.Signature
+	printFunction  runtime.Function
+	Print          runtime.Value
+	meowSignature  runtime.Signature
+	meowFunction   runtime.Function
+	Meow           runtime.Value
 )
 
 func init() {
-	printString = runtime.Signature{
+	printSignature = runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name: "text",
@@ -29,7 +31,7 @@ func init() {
 			return runtime.Value{}, nil
 		}),
 	}
-	printSep = runtime.Signature{
+	meowSignature = runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name: "separator",
@@ -45,15 +47,26 @@ func init() {
 			},
 		},
 		Function: nodes.NewAdapter(func(c *runtime.Context) (runtime.Value, error) {
-			fmt.Println("meow")
-			return runtime.Value{}, nil
+			return runtime.Value{
+				Type: types.String,
+				Data: "meow",
+			}, nil
 		}),
 	}
-	printFunction = runtime.Function{
-		Signatures: []runtime.Signature{printSep, printString},
+	meowFunction = runtime.Function{
+		Signatures: []runtime.Signature{meowSignature},
 		Source:     nil,
 	}
-	print = runtime.Value{
+	Meow = runtime.Value{
+		Name: "meow",
+		Type: types.Function,
+		Data: meowFunction,
+	}
+	printFunction = runtime.Function{
+		Signatures: []runtime.Signature{printSignature},
+		Source:     nil,
+	}
+	Print = runtime.Value{
 		Name: "print",
 		Type: types.Function,
 		Data: printFunction,
@@ -61,5 +74,6 @@ func init() {
 }
 
 func Load(c *runtime.Context) {
-	c.Namespace.Store(print)
+	c.Namespace.Store(Print)
+	c.Namespace.Store(Meow)
 }
