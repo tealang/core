@@ -7,6 +7,7 @@ import (
 	"github.com/tealang/tea-go/lexer"
 	"github.com/tealang/tea-go/parser"
 	"github.com/tealang/tea-go/runtime"
+	"github.com/tealang/tea-go/runtime/functions"
 	"github.com/tealang/tea-go/runtime/operators"
 	"github.com/tealang/tea-go/runtime/types"
 )
@@ -27,7 +28,10 @@ func (r *Instance) Interpret(input string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return output.String(), nil
+	if output.Type != nil {
+		return output.String(), nil
+	}
+	return "", nil
 }
 
 func (r *Instance) Stop() {
@@ -38,6 +42,7 @@ func New() *Instance {
 	ctx := runtime.NewContext()
 	operators.Load(ctx)
 	types.Load(ctx)
+	functions.Load(ctx)
 	return &Instance{
 		Active:  true,
 		Context: ctx,
