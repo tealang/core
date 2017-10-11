@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"fmt"
-
 	"github.com/tealang/tea-go/lexer/tokens"
 	"github.com/tealang/tea-go/runtime/nodes"
 )
@@ -16,6 +14,7 @@ const (
 	continueController = "continue"
 )
 
+// Parser provides an interface for token parsing.
 type Parser interface {
 	// Parse generates an abstract syntax tree from the given list of tokens.
 	// It returns the generated tree node, the parsed token offset and in the case of a failure,
@@ -23,14 +22,7 @@ type Parser interface {
 	Parse(input []tokens.Token) (nodes.Node, int, error)
 }
 
-type ParseException struct {
-	Message string
-}
-
-func (p ParseException) Error() string {
-	return fmt.Sprintf("ParseException: %s", p.Message)
-}
-
+// New instantiates a new program parser.
 func New() *programParser {
 	return &programParser{}
 }
