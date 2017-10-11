@@ -1,6 +1,9 @@
 package repl
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/tealang/tea-go/lexer"
 	"github.com/tealang/tea-go/parser"
 	"github.com/tealang/tea-go/runtime"
@@ -10,8 +13,9 @@ import (
 )
 
 type Instance struct {
-	Context *runtime.Context
-	Active  bool
+	Context  *runtime.Context
+	Active   bool
+	Graphviz bool
 }
 
 func (r *Instance) Interpret(input string) (string, error) {
@@ -20,10 +24,12 @@ func (r *Instance) Interpret(input string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	// fmt.Println("digraph G {\n", strings.Join(ast.Graphviz("head"), "\n"), "}")
 	output, err := ast.Eval(r.Context)
 	if err != nil {
 		return "", err
+	}
+	if r.Graphviz {
+		return fmt.Sprintf("digraph G {\n%s\n}", strings.Join(ast.Graphviz("head"), "\n")), nil
 	}
 	if output.Type != nil {
 		return output.String(), nil
@@ -35,13 +41,14 @@ func (r *Instance) Stop() {
 	r.Active = false
 }
 
-func New() *Instance {
+func New(graphviz bool) *Instance {
 	ctx := runtime.NewContext()
 	operators.Load(ctx)
 	types.Load(ctx)
 	functions.Load(ctx)
 	return &Instance{
-		Active:  true,
-		Context: ctx,
+		Active:   true,
+		Context:  ctx,
+		Graphviz: graphviz,
 	}
 }
