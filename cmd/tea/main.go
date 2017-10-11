@@ -3,6 +3,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"os"
 	"strings"
@@ -13,14 +14,16 @@ import (
 const (
 	welcomeText = `Tealang v0.1-alpha
 Copyright 2017 Lennart Espe. All rights reserved.`
-	replSymbol = ">>> "
+	replSymbol = "> "
 )
 
 func main() {
+	graphviz := flag.Bool("g", false, "Enable GraphViz visualization mode")
+	flag.Parse()
 	fmt.Println(welcomeText)
 
 	reader := bufio.NewReader(os.Stdin)
-	ui := repl.New()
+	ui := repl.New(*graphviz)
 
 	for ui.Active {
 		fmt.Print(replSymbol)
