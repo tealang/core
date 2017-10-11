@@ -10,18 +10,21 @@ operator /?(a, b: int): bool {
     return a % b == 0;
 }
 
-for each _, v in map([1..100], func(i) {
-    if (i /? 15) {
-        return "FizzBuzz";
-    } else if (i /? 3) {
-        return "Fizz";
+for (var i = 0; i < 100; i++) {
+    var a, b: string;
+    if (i /? 3) {
+        a = "Fizz";
     } else if (i /? 5) {
-        return "Buzz";
-    } else {
-        return i: string;
+        b = "Buzz";
     }
-} {
-    io.println(v);
+    match (var v = a + b) {
+    case "" => {
+        io.println(i);
+    }
+    default => {
+        io.println(v);
+    }
+    }
 }
 ```
 
