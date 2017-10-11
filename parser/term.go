@@ -24,10 +24,12 @@ func newTermParser() *termParser {
 		operators: newItemStack(),
 	}
 	tp.handlers = map[*tokens.TokenType]func() error{
-		tokens.Identifier: tp.handleIdentifier,
-		tokens.String:     tp.handleString,
-		tokens.Number:     tp.handleNumber,
-		tokens.Operator:   tp.handleOperator,
+		tokens.Identifier:       tp.handleIdentifier,
+		tokens.String:           tp.handleString,
+		tokens.Number:           tp.handleNumber,
+		tokens.Operator:         tp.handleOperator,
+		tokens.LeftParentheses:  tp.handleLeftParentheses,
+		tokens.RightParentheses: tp.handleRightParentheses,
 	}
 	return tp
 }
@@ -36,6 +38,8 @@ type termParser struct {
 	output, operators      *itemStack
 	active, previous, next tokens.Token
 	handlers               map[*tokens.TokenType]func() error
+	index, size            int
+	input                  []tokens.Token
 }
 
 func (termParser) binding(item termItem) bool {
@@ -98,6 +102,12 @@ func (tp *termParser) handleIdentifier() error {
 	case nullLiteral:
 		tp.output.Push(tp.itemFromActive(nodes.NewLiteral(runtime.Value{})))
 	default:
+		if tp.next.Type == tokens.LeftParentheses {
+			alias := tp.active.Value
+			tp.fetch(true)
+			tp.operators.Push(tp.itemFromActive(nodes.NewFunctionCall(alias)))
+			return nil
+		}
 		tp.output.Push(tp.itemFromActive(nodes.NewIdentifier(tp.active.Value)))
 	}
 	return nil
@@ -164,22 +174,65 @@ func (tp *termParser) handleOperator() error {
 	return nil
 }
 
+func (tp *termParser) handleLeftParentheses() error {
+	tp.operators.Push(tp.itemFromActive(nil))
+	return nil
+}
+
+func (tp *termParser) handleRightParentheses() error {
+	for !tp.operators.Empty() && tp.operators.Peek().Value.Type != tokens.LeftParentheses {
+		top := tp.operators.Peek()
+		fmt.Println(top)
+		tp.operators.Pop()
+		for i := 0; i < tp.argCount(top); i++ {
+			if tp.output.Empty() {
+				return ParseException{"Missing operands"}
+			}
+			top.Node.AddFront(tp.output.Peek().Node)
+			tp.output.Pop()
+		}
+		tp.output.Push(top)
+	}
+	if tp.operators.Empty() {
+		return ParseException{"Missing closing bracket"}
+	} else if tp.operators.Peek().Node != nil {
+		top := tp.operators.Peek()
+		if tp.previous.Type != tokens.LeftParentheses && !tp.output.Empty() {
+			top.Node.AddBack(tp.output.Peek().Node)
+			tp.output.Pop()
+		}
+		tp.output.Push(top)
+	}
+	tp.operators.Pop()
+	return nil
+}
+
+func (tp *termParser) fetch(incr bool) {
+	if incr {
+		tp.index++
+	}
+	tp.active = tp.input[tp.index]
+	if tp.index > 0 {
+		tp.previous = tp.input[tp.index-1]
+	} else {
+		tp.previous = tokens.Token{}
+	}
+	if tp.index < tp.size-1 {
+		tp.next = tp.input[tp.index+1]
+	} else {
+		tp.next = tokens.Token{}
+	}
+}
+
 func (tp *termParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	tp.operators.Clear()
 	tp.output.Clear()
 
-	var (
-		index, size = 0, len(input)
-	)
+	tp.input = input
+	tp.index, tp.size = 0, len(input)
 parser:
-	for ; index < size; index++ {
-		tp.active = input[index]
-		if index > 0 {
-			tp.previous = input[index-1]
-		}
-		if index < size-1 {
-			tp.next = input[index+1]
-		}
+	for ; tp.index < tp.size; tp.index++ {
+		tp.fetch(false)
 
 		fmt.Println("------------------------------")
 		fmt.Println("ACTIVE", tp.active, "PREVIOUS", tp.previous, "NEXT", tp.next)
@@ -188,13 +241,13 @@ parser:
 		fmt.Println("------------------------------")
 
 		switch tp.active.Type {
-		case tokens.Statement:
+		case tokens.Statement, tokens.RightBlock, tokens.LeftBlock:
 			break parser
-		case tokens.LeftParentheses:
-			tp.operators.Push(tp.itemFromActive(nil))
-		case tokens.RightParentheses:
+		case tokens.Separator:
 			for !tp.operators.Empty() && tp.operators.Peek().Value.Type != tokens.LeftParentheses {
 				top := tp.operators.Peek()
+				fmt.Println("SEP", top)
+				tp.operators.Pop()
 				for i := 0; i < tp.argCount(top); i++ {
 					if tp.output.Empty() {
 						return nil, 0, ParseException{"Missing operands"}
@@ -204,10 +257,13 @@ parser:
 				}
 				tp.output.Push(top)
 			}
-			if tp.operators.Peek().Value.Type != tokens.LeftParentheses {
-				return nil, 0, ParseException{"Missing closing bracket"}
+			if tp.operators.Empty() {
+				return tp.output.Peek().Node, tp.index, nil
+			} else if tp.operators.Peek().Node != nil {
+				top := tp.operators.Peek()
+				top.Node.AddBack(tp.output.Peek().Node)
+				tp.output.Pop()
 			}
-			tp.operators.Pop()
 		default:
 			handler, ok := tp.handlers[tp.active.Type]
 			if !ok {
@@ -237,7 +293,14 @@ parser:
 		}
 	}
 
-	return tp.output.Peek().Node, index, nil
+	fmt.Println("------------------------------")
+	fmt.Println("END OF TERM")
+	fmt.Println("OPERATORS", tp.operators)
+	fmt.Println("OUTPUT", tp.output)
+	fmt.Println("------------------------------")
+	fmt.Println(tp.output.Peek().Node)
+
+	return tp.output.Peek().Node, tp.index, nil
 }
 
 type termItem struct {
@@ -246,7 +309,10 @@ type termItem struct {
 }
 
 func (item termItem) String() string {
-	return fmt.Sprintf("[=%s, previous %s, next %s, node = %v]", item.Value, item.Previous, item.Next, item.Node.Name())
+	if item.Node == nil {
+		return fmt.Sprintf("[=%s, %s <- -> %s]", item.Value, item.Previous.Value, item.Next.Value)
+	}
+	return fmt.Sprintf("[=%s, %s <- -> %s, n = %v]", item.Value, item.Previous.Value, item.Next.Value, item.Node.Name())
 }
 
 func newItemStack() *itemStack {
