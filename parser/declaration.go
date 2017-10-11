@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"fmt"
-
 	"github.com/tealang/tea-go/lexer/tokens"
 	"github.com/tealang/tea-go/runtime"
 	"github.com/tealang/tea-go/runtime/nodes"
@@ -58,7 +56,7 @@ func (dp *declarationParser) CollectAliases(input []tokens.Token) error {
 		if err != nil {
 			return err
 		}
-		fmt.Println(active, dp.Index)
+		//fmt.Println(active, dp.Index)
 		switch active.Type {
 		case tokens.Identifier:
 			if dp.ExpectTypeInformation {
@@ -101,7 +99,7 @@ func (dp *declarationParser) StoreDefaultValues(input []tokens.Token) error {
 func (dp *declarationParser) CollectAssignedValues(input []tokens.Token) error {
 	iteration := 0
 	for ; dp.Index < len(input); dp.Index++ {
-		fmt.Println(dp.Index)
+		//fmt.Println(dp.Index)
 		term, offset, err := newTermParser().Parse(input[dp.Index:])
 		if err != nil {
 			return err

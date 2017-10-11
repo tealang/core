@@ -182,7 +182,7 @@ func (tp *termParser) handleLeftParentheses() error {
 func (tp *termParser) handleRightParentheses() error {
 	for !tp.operators.Empty() && tp.operators.Peek().Value.Type != tokens.LeftParentheses {
 		top := tp.operators.Peek()
-		fmt.Println(top)
+		// fmt.Println(top)
 		tp.operators.Pop()
 		for i := 0; i < tp.argCount(top); i++ {
 			if tp.output.Empty() {
@@ -234,11 +234,13 @@ parser:
 	for ; tp.index < tp.size; tp.index++ {
 		tp.fetch(false)
 
-		fmt.Println("------------------------------")
-		fmt.Println("ACTIVE", tp.active, "PREVIOUS", tp.previous, "NEXT", tp.next)
-		fmt.Println("OPERATORS", tp.operators)
-		fmt.Println("OUTPUT", tp.output)
-		fmt.Println("------------------------------")
+		/*
+			fmt.Println("------------------------------")
+			fmt.Println("ACTIVE", tp.active, "PREVIOUS", tp.previous, "NEXT", tp.next)
+			fmt.Println("OPERATORS", tp.operators)
+			fmt.Println("OUTPUT", tp.output)
+			fmt.Println("------------------------------")
+		*/
 
 		switch tp.active.Type {
 		case tokens.Statement, tokens.RightBlock, tokens.LeftBlock:
@@ -246,7 +248,7 @@ parser:
 		case tokens.Separator:
 			for !tp.operators.Empty() && tp.operators.Peek().Value.Type != tokens.LeftParentheses {
 				top := tp.operators.Peek()
-				fmt.Println("SEP", top)
+				// fmt.Println("SEP", top)
 				tp.operators.Pop()
 				for i := 0; i < tp.argCount(top); i++ {
 					if tp.output.Empty() {
@@ -293,12 +295,13 @@ parser:
 		}
 	}
 
+	/*j
 	fmt.Println("------------------------------")
 	fmt.Println("END OF TERM")
 	fmt.Println("OPERATORS", tp.operators)
 	fmt.Println("OUTPUT", tp.output)
 	fmt.Println("------------------------------")
-	fmt.Println(tp.output.Peek().Node)
+	*/
 
 	return tp.output.Peek().Node, tp.index, nil
 }

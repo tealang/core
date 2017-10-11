@@ -1,9 +1,6 @@
 package repl
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/tealang/tea-go/lexer"
 	"github.com/tealang/tea-go/parser"
 	"github.com/tealang/tea-go/runtime"
@@ -23,7 +20,7 @@ func (r *Instance) Interpret(input string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fmt.Println("digraph G {\n", strings.Join(ast.Graphviz("head"), "\n"), "}")
+	// fmt.Println("digraph G {\n", strings.Join(ast.Graphviz("head"), "\n"), "}")
 	output, err := ast.Eval(r.Context)
 	if err != nil {
 		return "", err
