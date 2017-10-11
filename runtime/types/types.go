@@ -21,7 +21,7 @@ func init() {
 		Cast: func(v runtime.Value) (runtime.Value, error) {
 			return runtime.Value{
 				Type: Any,
-				Data: v,
+				Data: v.Data,
 			}, nil
 		},
 		Format: func(v runtime.Value) string {
