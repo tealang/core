@@ -10,11 +10,11 @@ func (c ConstantException) Error() string {
 	return fmt.Sprintf("ConstantException: %s can not be changed", c.Alias)
 }
 
-type RuntimeException struct {
+type Exception struct {
 	Message string
 }
 
-func (c RuntimeException) Error() string {
+func (c Exception) Error() string {
 	return fmt.Sprintf("RuntimeException: %s", c.Message)
 }
 

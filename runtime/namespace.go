@@ -25,7 +25,7 @@ func (datatype *Datatype) Alias() string {
 }
 
 func (datatype *Datatype) Update(item SearchItem) (SearchItem, error) {
-	return item, RuntimeException{"Datatypes cannot be overriden"}
+	return item, Exception{"Datatypes cannot be overriden"}
 }
 
 // KindOf checks if this datatype is of the same kind as the given datatype.

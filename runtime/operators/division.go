@@ -28,7 +28,7 @@ func loadDivision(c *runtime.Context) {
 				b         = identB.(runtime.Value)
 			)
 			if b.Data.(float64) == 0.0 {
-				return runtime.Value{}, runtime.RuntimeException{Message: "Cannot divide by 0"}
+				return runtime.Value{}, runtime.Exception{Message: "Cannot divide by 0"}
 			}
 			return runtime.Value{
 				Type: types.Float,
@@ -58,7 +58,7 @@ func loadDivision(c *runtime.Context) {
 				b         = identB.(runtime.Value)
 			)
 			if b.Data.(int64) == 0 {
-				return runtime.Value{}, runtime.RuntimeException{Message: "Cannot divide by 0"}
+				return runtime.Value{}, runtime.Exception{Message: "Cannot divide by 0"}
 			}
 			return runtime.Value{
 				Type: types.Integer,

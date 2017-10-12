@@ -38,7 +38,7 @@ func TestRuntimeException_Error(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := RuntimeException{
+			c := Exception{
 				Message: tt.fields.Message,
 			}
 			if got := c.Error(); got != tt.want {
