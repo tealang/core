@@ -19,5 +19,13 @@ func newParseException(message string) ParseException {
 }
 
 func newUnexpectedTokenException(t *tokens.TokenType) ParseException {
-	return newParseException(fmt.Sprintf("UnexpectedTokenException: Did not expect token %s", t.Name))
+	return newParseException(fmt.Sprintf("Did not expect token %s", t.Name))
+}
+
+func newMissingOperatorException() ParseException {
+	return newParseException(fmt.Sprintf("Missing operator"))
+}
+
+func newMissingOperandsException(expected, got int) ParseException {
+	return newParseException(fmt.Sprintf("Missing operands, expected %d, got %d", expected, got))
 }
