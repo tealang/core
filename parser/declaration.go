@@ -99,14 +99,13 @@ func (dp *declarationParser) StoreDefaultValues(input []tokens.Token) error {
 func (dp *declarationParser) CollectAssignedValues(input []tokens.Token) error {
 	iteration := 0
 	for ; dp.Index < len(input); dp.Index++ {
-		//fmt.Println(dp.Index)
 		term, offset, err := newTermParser().Parse(input[dp.Index:])
 		if err != nil {
 			return err
 		}
 		dp.Index += offset
 		if iteration < len(dp.Casts) {
-			term = nodes.NewTypecast(dp.Casts[iteration])
+			term = nodes.NewTypecast(dp.Casts[iteration], term)
 			iteration++
 		}
 		dp.Declaration.AddBack(term)
