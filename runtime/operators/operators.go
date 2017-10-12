@@ -7,4 +7,5 @@ import (
 func Load(c *runtime.Context) {
 	loadAddition(c)
 	loadSubtraction(c)
+	loadMultiplication(c)
 }
