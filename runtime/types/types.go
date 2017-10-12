@@ -25,18 +25,14 @@ func init() {
 			}, nil
 		},
 		Format: func(v runtime.Value) string {
-			v, ok := v.Data.(runtime.Value)
-			if !ok {
-				return "null"
-			}
-			return fmt.Sprintf("any<%s>", v.Type.Format(v))
+			return fmt.Sprintf("any<%s>", v.Data)
 		},
 	}
 	Integer = &runtime.Datatype{
 		Name:   "int",
 		Parent: Any,
 		Format: func(v runtime.Value) string {
-			return fmt.Sprintf("int<%d>", v.Data)
+			return fmt.Sprint(v.Data)
 		},
 		Cast: func(v runtime.Value) (runtime.Value, error) {
 			switch v.Type {
@@ -44,6 +40,15 @@ func init() {
 				return runtime.Value{
 					Type: Integer,
 					Data: int64(0),
+				}, nil
+			case Any:
+				i, ok := v.Data.(int64)
+				if !ok {
+					return runtime.Value{}, runtime.ExplicitCastException{From: Any, To: Integer}
+				}
+				return runtime.Value{
+					Type: Integer,
+					Data: i,
 				}, nil
 			case Integer:
 				return v, nil
@@ -70,14 +75,27 @@ func init() {
 		Name:   "float",
 		Parent: Any,
 		Format: func(v runtime.Value) string {
-			return fmt.Sprintf("float<%f>", v.Data)
+			return fmt.Sprint(v.Data)
+		},
+		Cast: func(v runtime.Value) (runtime.Value, error) {
+			switch v.Type {
+			case nil:
+				return runtime.Value{
+					Type: Float,
+					Data: 0.0,
+				}, nil
+			case Float:
+				return v, nil
+			default:
+				return runtime.Value{}, runtime.ExplicitCastException{From: v.Type, To: Float}
+			}
 		},
 	}
 	String = &runtime.Datatype{
 		Name:   "string",
 		Parent: Any,
 		Format: func(v runtime.Value) string {
-			return fmt.Sprintf("string<'%s'>", v.Data)
+			return fmt.Sprintf(`"%s"`, v.Data)
 		},
 		Cast: func(v runtime.Value) (runtime.Value, error) {
 			switch v.Type {
@@ -123,7 +141,7 @@ func init() {
 			}
 		},
 		Format: func(v runtime.Value) string {
-			return fmt.Sprintf("bool<%t>", v.Data)
+			return fmt.Sprint(v.Data)
 		},
 	}
 	True = runtime.Value{
