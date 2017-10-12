@@ -17,17 +17,17 @@ func NewTokenMatcher(expr string) TokenMatcher {
 	}
 }
 
-type TokenType struct {
+type Type struct {
 	Name  string
 	Match TokenMatcher
 }
 
-func (tt TokenType) String() string {
+func (tt Type) String() string {
 	return tt.Name
 }
 
 type Token struct {
-	Type  *TokenType
+	Type  *Type
 	Value string
 }
 
@@ -36,51 +36,51 @@ func (t Token) String() string {
 }
 
 var (
-	LeftParentheses = &TokenType{
+	LeftParentheses = &Type{
 		Name:  "leftParentheses",
 		Match: NewTokenMatcher(`^\($`),
 	}
-	RightParentheses = &TokenType{
+	RightParentheses = &Type{
 		Name:  "rightParentheses",
 		Match: NewTokenMatcher(`^\)$`),
 	}
-	Operator = &TokenType{
+	Operator = &Type{
 		Name:  "operator",
 		Match: NewTokenMatcher(`^([+\-*/=:<>!%^&|]|([+\-*/^%<>=!]=)|([|^]\|)|(&&))$`),
 	}
-	Whitespace = &TokenType{
+	Whitespace = &Type{
 		Name:  "whitespace",
 		Match: NewTokenMatcher(`^\s+$`),
 	}
-	Number = &TokenType{
+	Number = &Type{
 		Name:  "number",
 		Match: NewTokenMatcher(`^\-?[0-9]+(\.[0-9]*)?$`),
 	}
-	Identifier = &TokenType{
+	Identifier = &Type{
 		Name:  "identifier",
 		Match: NewTokenMatcher(`^(#|[a-zA-Z_])+([0-9a-zA-Z_]+)?$`),
 	}
-	String = &TokenType{
+	String = &Type{
 		Name:  "string",
 		Match: NewTokenMatcher(`^"(\\(["abfnrtv])?|[^\n\r"])*"?$`),
 	}
-	Statement = &TokenType{
+	Statement = &Type{
 		Name:  "statement",
 		Match: NewTokenMatcher(`^;$`),
 	}
-	Separator = &TokenType{
+	Separator = &Type{
 		Name:  "separator",
 		Match: NewTokenMatcher(`^,$`),
 	}
-	RightBlock = &TokenType{
+	RightBlock = &Type{
 		Name:  "rightBlock",
 		Match: NewTokenMatcher(`^}$`),
 	}
-	LeftBlock = &TokenType{
+	LeftBlock = &Type{
 		Name:  "leftBlock",
 		Match: NewTokenMatcher(`^{$`),
 	}
-	AllTypes = []*TokenType{
+	AllTypes = []*Type{
 		LeftParentheses,
 		RightParentheses,
 		Operator,
@@ -95,7 +95,7 @@ var (
 	}
 )
 
-func FindMatch(value string) *TokenType {
+func FindMatch(value string) *Type {
 	for _, tt := range AllTypes {
 		if tt.Match(value) {
 			return tt

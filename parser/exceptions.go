@@ -18,7 +18,7 @@ func newParseException(message string) ParseException {
 	return ParseException{message}
 }
 
-func newUnexpectedTokenException(t *tokens.TokenType) ParseException {
+func newUnexpectedTokenException(t *tokens.Type) ParseException {
 	return newParseException(fmt.Sprintf("Did not expect token %s", t.Name))
 }
 

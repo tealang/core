@@ -8,7 +8,7 @@ import (
 
 func newSequenceParser(substitute bool) *sequenceParser {
 	sp := &sequenceParser{substitute: substitute}
-	sp.handlers = map[*tokens.TokenType]func() error{
+	sp.handlers = map[*tokens.Type]func() error{
 		tokens.LeftBlock:  sp.handleLeftBlock,
 		tokens.Identifier: sp.handleIdentifier,
 	}
@@ -22,7 +22,7 @@ type sequenceParser struct {
 	sequence    *nodes.Sequence
 	active      tokens.Token
 	input       []tokens.Token
-	handlers    map[*tokens.TokenType]func() error
+	handlers    map[*tokens.Type]func() error
 }
 
 func (sp *sequenceParser) handleLeftBlock() error {

@@ -23,7 +23,7 @@ func newTermParser() *termParser {
 		output:    newItemStack(),
 		operators: newItemStack(),
 	}
-	tp.handlers = map[*tokens.TokenType]func() error{
+	tp.handlers = map[*tokens.Type]func() error{
 		tokens.Identifier:       tp.handleIdentifier,
 		tokens.String:           tp.handleString,
 		tokens.Number:           tp.handleNumber,
@@ -37,7 +37,7 @@ func newTermParser() *termParser {
 type termParser struct {
 	output, operators      *itemStack
 	active, previous, next tokens.Token
-	handlers               map[*tokens.TokenType]func() error
+	handlers               map[*tokens.Type]func() error
 	index, size            int
 	input                  []tokens.Token
 }
