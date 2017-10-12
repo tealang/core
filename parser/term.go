@@ -46,12 +46,19 @@ func (termParser) binding(item termItem) bool {
 	switch item.Value.Value {
 	case "^":
 		return true
-	default:
-		return false
+	case "+", "-":
+		return item.Previous.Type != tokens.Number
 	}
+	return false
 }
 
 func (termParser) argCount(item termItem) int {
+	switch item.Value.Value {
+	case "+", "-":
+		if item.Previous.Type != tokens.Number {
+			return 1
+		}
+	}
 	return 2
 }
 
@@ -65,7 +72,12 @@ func (termParser) priority(item termItem) int {
 		return 6
 	case "*", "/":
 		return 5
-	case "+", "-", ":":
+	case "+", "-":
+		if item.Previous.Type != tokens.Number {
+			return 9
+		}
+		return 4
+	case ":":
 		return 4
 	case "%":
 		return 3
@@ -152,10 +164,11 @@ func (tp *termParser) handleOperator() error {
 	item.Node = nodes.NewOperation(tp.active.Value, tp.argCount(item))
 	for !tp.operators.Empty() {
 		top := tp.operators.Peek()
+		tp.operators.Pop()
 		if top.Value.Type != tokens.Operator {
 			break
 		}
-		if tp.priority(top) >= tp.priority(item) {
+		if tp.priority(top) < tp.priority(item) {
 			break
 		}
 		if tp.binding(top) {
@@ -163,7 +176,7 @@ func (tp *termParser) handleOperator() error {
 		}
 		for i := 0; i < tp.argCount(top); i++ {
 			if tp.output.Empty() {
-				return ParseException{"Missing operands"}
+				return newMissingOperandsException(tp.argCount(top), i)
 			}
 			top.Node.AddFront(tp.output.Peek().Node)
 			tp.output.Pop()
@@ -182,7 +195,6 @@ func (tp *termParser) handleLeftParentheses() error {
 func (tp *termParser) handleRightParentheses() error {
 	for !tp.operators.Empty() && tp.operators.Peek().Value.Type != tokens.LeftParentheses {
 		top := tp.operators.Peek()
-		// fmt.Println(top)
 		tp.operators.Pop()
 		for i := 0; i < tp.argCount(top); i++ {
 			if tp.output.Empty() {
@@ -248,7 +260,6 @@ parser:
 		case tokens.Separator:
 			for !tp.operators.Empty() && tp.operators.Peek().Value.Type != tokens.LeftParentheses {
 				top := tp.operators.Peek()
-				// fmt.Println("SEP", top)
 				tp.operators.Pop()
 				for i := 0; i < tp.argCount(top); i++ {
 					if tp.output.Empty() {
