@@ -234,6 +234,10 @@ func (ns *Namespace) Update(item SearchItem) error {
 
 // Store puts the search item in a search space in this namespace.
 func (ns *Namespace) Store(item SearchItem) error {
+	_, ok := ns.Storage[item.SearchSpace()][item.Alias()]
+	if ok {
+		return StoreExistsException{item.Alias()}
+	}
 	ns.Storage[item.SearchSpace()][item.Alias()] = item
 	return nil
 }
