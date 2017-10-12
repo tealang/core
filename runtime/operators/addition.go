@@ -7,6 +7,33 @@ import (
 )
 
 func loadAddition(c *runtime.Context) {
+	joinString := runtime.Signature{
+		Expected: []runtime.Value{
+			{
+				Name:     "a",
+				Type:     types.String,
+				Constant: true,
+			},
+			{
+				Name:     "b",
+				Type:     types.String,
+				Constant: true,
+			},
+		},
+		Function: nodes.NewAdapter(func(c *runtime.Context) (runtime.Value, error) {
+			var (
+				identA, _ = c.Namespace.Find(runtime.SearchIdentifier, "a")
+				identB, _ = c.Namespace.Find(runtime.SearchIdentifier, "b")
+				a         = identA.(runtime.Value)
+				b         = identB.(runtime.Value)
+			)
+			return runtime.Value{
+				Type: types.String,
+				Data: a.Data.(string) + b.Data.(string),
+			}, nil
+		}),
+		Returns: runtime.Value{Type: types.String},
+	}
 	plusFloat := runtime.Signature{
 		Expected: []runtime.Value{
 			{
@@ -103,6 +130,7 @@ func loadAddition(c *runtime.Context) {
 	}
 	addFunction := runtime.Function{
 		Signatures: []runtime.Signature{
+			joinString,
 			addInteger,
 			addFloat,
 			plusFloat,
