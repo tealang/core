@@ -42,27 +42,37 @@ type termParser struct {
 	input                  []tokens.Token
 }
 
-func (termParser) binding(item termItem) bool {
+func (tp *termParser) binding(item termItem) bool {
 	switch item.Value.Value {
 	case "^":
 		return true
 	case "+", "-":
-		return item.Previous.Type != tokens.Number && item.Next.Type == tokens.Number
+		if tp.isUnaryOperator(item) {
+			return true
+		}
 	}
 	return false
 }
 
-func (termParser) argCount(item termItem) int {
-	switch item.Value.Value {
-	case "+", "-":
-		if item.Previous.Type != tokens.Number && item.Next.Type == tokens.Number {
-			return 1
-		}
+func (tp *termParser) argCount(item termItem) int {
+	if tp.isUnaryOperator(item) {
+		return 1
 	}
 	return 2
 }
 
-func (termParser) priority(item termItem) int {
+func (termParser) isUnaryOperator(item termItem) bool {
+	switch item.Value.Value {
+	case "+", "-":
+		switch item.Previous.Type {
+		case nil, tokens.Operator:
+			return true
+		}
+	}
+	return false
+}
+
+func (tp *termParser) priority(item termItem) int {
 	switch item.Value.Value {
 	case "&", "|":
 		return 8
@@ -73,7 +83,7 @@ func (termParser) priority(item termItem) int {
 	case "*", "/":
 		return 5
 	case "+", "-":
-		if item.Previous.Type != tokens.Number && item.Next.Type == tokens.Number {
+		if tp.isUnaryOperator(item) {
 			return 9
 		}
 		return 4
