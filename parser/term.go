@@ -47,7 +47,7 @@ func (termParser) binding(item termItem) bool {
 	case "^":
 		return true
 	case "+", "-":
-		return item.Previous.Type != tokens.Number
+		return item.Previous.Type != tokens.Number && item.Next.Type == tokens.Number
 	}
 	return false
 }
@@ -55,7 +55,7 @@ func (termParser) binding(item termItem) bool {
 func (termParser) argCount(item termItem) int {
 	switch item.Value.Value {
 	case "+", "-":
-		if item.Previous.Type != tokens.Number {
+		if item.Previous.Type != tokens.Number && item.Next.Type == tokens.Number {
 			return 1
 		}
 	}
@@ -73,7 +73,7 @@ func (termParser) priority(item termItem) int {
 	case "*", "/":
 		return 5
 	case "+", "-":
-		if item.Previous.Type != tokens.Number {
+		if item.Previous.Type != tokens.Number && item.Next.Type == tokens.Number {
 			return 9
 		}
 		return 4
