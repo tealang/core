@@ -20,12 +20,28 @@ func Test_sequenceParser_Parse(t *testing.T) {
 			1,
 		},
 		{
+			"Statement",
+			[]tokens.Token{
+				{Type: tokens.Statement},
+			},
+			1,
+		},
+		{
 			"Empty block",
 			[]tokens.Token{
 				{Type: tokens.LeftBlock},
 				{Type: tokens.RightBlock},
 			},
 			2,
+		},
+		{
+			"Empty block with semicolon",
+			[]tokens.Token{
+				{Type: tokens.LeftBlock},
+				{Type: tokens.Statement},
+				{Type: tokens.RightBlock},
+			},
+			3,
 		},
 	}
 	for _, tt := range tests {
