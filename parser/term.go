@@ -164,7 +164,6 @@ func (tp *termParser) handleOperator() error {
 	item.Node = nodes.NewOperation(tp.active.Value, tp.argCount(item))
 	for !tp.operators.Empty() {
 		top := tp.operators.Peek()
-		tp.operators.Pop()
 		if top.Value.Type != tokens.Operator {
 			break
 		}
@@ -174,6 +173,7 @@ func (tp *termParser) handleOperator() error {
 		if tp.binding(top) {
 			break
 		}
+		tp.operators.Pop()
 		for i := 0; i < tp.argCount(top); i++ {
 			if tp.output.Empty() {
 				return newMissingOperandsException(tp.argCount(top), i)
@@ -246,13 +246,11 @@ parser:
 	for ; tp.index < tp.size; tp.index++ {
 		tp.fetch(false)
 
-		/*
-			fmt.Println("------------------------------")
-			fmt.Println("ACTIVE", tp.active, "PREVIOUS", tp.previous, "NEXT", tp.next)
-			fmt.Println("OPERATORS", tp.operators)
-			fmt.Println("OUTPUT", tp.output)
-			fmt.Println("------------------------------")
-		*/
+		fmt.Println("------------------------------")
+		fmt.Println("ACTIVE", tp.active, "PREVIOUS", tp.previous, "NEXT", tp.next)
+		fmt.Println("OPERATORS", tp.operators)
+		fmt.Println("OUTPUT", tp.output)
+		fmt.Println("------------------------------")
 
 		switch tp.active.Type {
 		case tokens.Statement, tokens.RightBlock, tokens.LeftBlock:
@@ -306,13 +304,11 @@ parser:
 		}
 	}
 
-	/*j
 	fmt.Println("------------------------------")
 	fmt.Println("END OF TERM")
 	fmt.Println("OPERATORS", tp.operators)
 	fmt.Println("OUTPUT", tp.output)
 	fmt.Println("------------------------------")
-	*/
 
 	return tp.output.Peek().Node, tp.index, nil
 }
