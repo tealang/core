@@ -41,6 +41,23 @@ func (sp *sequenceParser) inputSegment(offset int) []tokens.Token {
 	return sp.input[sp.index+offset:]
 }
 
+func (sp *sequenceParser) checkForAssignment() bool {
+	for i := sp.index; i < sp.size; i++ {
+		sp.active = sp.input[i]
+		switch sp.active.Type {
+		case tokens.Identifier, tokens.Separator:
+		case tokens.Operator:
+			if sp.active.Value != "=" {
+				return false
+			}
+			return true
+		default:
+			return false
+		}
+	}
+	return false
+}
+
 func (sp *sequenceParser) handleIdentifier() error {
 	switch sp.active.Value {
 	case variableKeyword, constantKeyword:
@@ -64,7 +81,16 @@ func (sp *sequenceParser) handleIdentifier() error {
 		sp.sequence.AddBack(nodes.NewController(runtime.BehaviorContinue))
 		sp.index++
 	default:
-		return sp.handleTerm()
+		if sp.checkForAssignment() {
+			stmt, n, err := newAssignmentParser().Parse(sp.inputSegment(0))
+			if err != nil {
+				return err
+			}
+			sp.sequence.AddBack(stmt)
+			sp.index += n
+		} else {
+			return sp.handleTerm()
+		}
 	}
 	return nil
 }
