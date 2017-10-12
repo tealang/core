@@ -20,11 +20,17 @@ func (a *Assignment) Eval(c *runtime.Context) (runtime.Value, error) {
 		value runtime.Value
 		err   error
 	)
-	for i, n := range a.Childs {
-		value, err = n.Eval(c)
+	// Step 1: generate values
+	results := make([]runtime.Value, len(a.Childs))
+	for i, node := range a.Childs {
+		value, err = node.Eval(c)
 		if err != nil {
 			return runtime.Value{}, err
 		}
+		results[i] = value
+	}
+	// Step 2: store them
+	for i, value := range results {
 		if err = c.Namespace.Update(value.Rename(a.Alias[i])); err != nil {
 			return runtime.Value{}, err
 		}
