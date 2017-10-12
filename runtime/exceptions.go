@@ -113,3 +113,11 @@ type StoreException struct {
 func (c StoreException) Error() string {
 	return fmt.Sprintf("StoreException: Cannot store %s in namespace", c.Item)
 }
+
+type StoreExistsException struct {
+	Alias string
+}
+
+func (c StoreExistsException) Error() string {
+	return fmt.Sprintf("StoreExistsException: Alias %s already exists in this namespace", c.Alias)
+}
