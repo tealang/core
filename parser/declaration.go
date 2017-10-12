@@ -9,7 +9,6 @@ import (
 type declarationParser struct {
 	ExpectTypeInformation bool
 	ExpectAssignment      bool
-	StopCollectingAlias   bool
 	Casts                 []string
 	Declaration           *nodes.Declaration
 	Index                 int
@@ -27,7 +26,6 @@ func (dp *declarationParser) Fetch(input []tokens.Token) (tokens.Token, error) {
 		return tokens.Token{}, ParseException{"Reached unexpected end of tokens"}
 	}
 	tk := input[dp.Index]
-	dp.Index++
 	return tk, nil
 }
 
@@ -47,11 +45,12 @@ func (dp *declarationParser) ParseConstantState(input []tokens.Token) error {
 	default:
 		return ParseException{"Unknown identifier state descriptor"}
 	}
+	dp.Index++
 	return nil
 }
 
 func (dp *declarationParser) CollectAliases(input []tokens.Token) error {
-	for !dp.StopCollectingAlias && dp.Index < len(input) {
+	for !dp.ExpectAssignment && dp.Index < len(input) {
 		active, err := dp.Fetch(input)
 		if err != nil {
 			return err
@@ -68,20 +67,20 @@ func (dp *declarationParser) CollectAliases(input []tokens.Token) error {
 			}
 			dp.ExpectTypeInformation = false
 		case tokens.Statement:
-			dp.StopCollectingAlias = true
+			return nil
 		case tokens.Separator:
 		case tokens.Operator:
 			if active.Value == ":" {
 				dp.ExpectTypeInformation = true
 			} else if active.Value == "=" {
 				dp.ExpectAssignment = true
-				dp.StopCollectingAlias = true
 			} else {
 				return ParseException{"Unexpected operator"}
 			}
 		default:
 			return newUnexpectedTokenException(active.Type)
 		}
+		dp.Index++
 	}
 	return nil
 }
@@ -109,6 +108,11 @@ func (dp *declarationParser) CollectAssignedValues(input []tokens.Token) error {
 			iteration++
 		}
 		dp.Declaration.AddBack(term)
+
+		// reached end of statement
+		if dp.Index < len(input) && input[dp.Index].Type == tokens.Statement {
+			return nil
+		}
 	}
 	return nil
 }
