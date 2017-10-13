@@ -44,7 +44,7 @@ type termParser struct {
 
 func (tp *termParser) binding(item termItem) bool {
 	switch item.Value.Value {
-	case "^":
+	case "^", "!":
 		return true
 	case "+", "-":
 		if tp.isUnaryOperator(item) {
@@ -68,6 +68,8 @@ func (termParser) isUnaryOperator(item termItem) bool {
 		case nil, tokens.Operator:
 			return true
 		}
+	case "!":
+		return true
 	}
 	return false
 }
