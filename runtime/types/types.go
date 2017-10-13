@@ -20,8 +20,9 @@ func init() {
 		Parent: nil,
 		Cast: func(v runtime.Value) (runtime.Value, error) {
 			return runtime.Value{
-				Type: Any,
-				Data: v.Data,
+				Type:     Any,
+				Typeflag: v.Type,
+				Data:     v.Data,
 			}, nil
 		},
 		Format: func(v runtime.Value) string {
@@ -82,7 +83,12 @@ func init() {
 			case nil:
 				return runtime.Value{
 					Type: Float,
-					Data: 0.0,
+					Data: float64(0),
+				}, nil
+			case Integer:
+				return runtime.Value{
+					Type: Float,
+					Data: float64(v.Data.(int64)),
 				}, nil
 			case Float:
 				return v, nil
