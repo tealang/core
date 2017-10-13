@@ -46,6 +46,7 @@ func (datatype *Datatype) String() string {
 // Value of a given datatype stored data associated with a name.
 type Value struct {
 	Type      *Datatype
+	Typeflag  *Datatype
 	Data      interface{}
 	Name      string
 	Constant  bool
@@ -55,6 +56,7 @@ type Value struct {
 func (v Value) Rechange(constant bool) Value {
 	return Value{
 		Type:      v.Type,
+		Typeflag:  v.Type,
 		Data:      v.Data,
 		Name:      v.Name,
 		Constant:  constant,
@@ -65,6 +67,7 @@ func (v Value) Rechange(constant bool) Value {
 func (v Value) Rename(alias string) Value {
 	return Value{
 		Type:      v.Type,
+		Typeflag:  v.Type,
 		Data:      v.Data,
 		Name:      alias,
 		Constant:  v.Constant,
