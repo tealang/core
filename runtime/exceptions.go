@@ -121,3 +121,19 @@ type StoreExistsException struct {
 func (c StoreExistsException) Error() string {
 	return fmt.Sprintf("StoreExistsException: Alias %s already exists in this namespace", c.Alias)
 }
+
+type NotApplicableException struct {
+	Operation string
+	Types     []*Datatype
+}
+
+func (c NotApplicableException) Error() string {
+	return fmt.Sprintf("NotApplicableException: Operation %s is not applicable to %s", c.Operation, c.Types)
+}
+
+func NewNotApplicableException(op string, types ...*Datatype) error {
+	return NotApplicableException{
+		Operation: op,
+		Types:     types,
+	}
+}
