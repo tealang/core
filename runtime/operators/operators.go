@@ -6,4 +6,5 @@ import (
 
 func Load(c *runtime.Context) {
 	LoadBasicMath(c)
+	LoadLogical(c)
 }
