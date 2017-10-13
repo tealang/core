@@ -8,17 +8,47 @@ import (
 	"github.com/tealang/tea-go/runtime/types"
 )
 
-var (
-	printSignature runtime.Signature
-	printFunction  runtime.Function
-	Print          runtime.Value
-	meowSignature  runtime.Signature
-	meowFunction   runtime.Function
-	Meow           runtime.Value
-)
+func loadTypeOf(c *runtime.Context) {
+	typeOfSignature := runtime.Signature{
+		Expected: []runtime.Value{
+			{
+				Name: "data",
+				Type: types.Any,
+			},
+		},
+		Function: nodes.NewAdapter(func(c *runtime.Context) (runtime.Value, error) {
+			item, _ := c.Namespace.Find(runtime.SearchIdentifier, "data")
+			value := item.(runtime.Value)
+			if value.Typeflag != nil {
+				return runtime.Value{
+					Type: types.String,
+					Data: value.Typeflag.Name,
+				}, nil
+			}
+			return runtime.Value{
+				Type: types.String,
+				Data: value.Type.Name,
+			}, nil
+		}),
+		Returns: runtime.Value{
+			Type: types.String,
+		},
+	}
+	typeOfFunction := runtime.Function{
+		Signatures: []runtime.Signature{typeOfSignature},
+		Source:     nil,
+	}
+	typeof := runtime.Value{
+		Type:     types.Function,
+		Data:     typeOfFunction,
+		Name:     "typeOf",
+		Constant: true,
+	}
+	c.Namespace.Store(typeof)
+}
 
-func init() {
-	printSignature = runtime.Signature{
+func loadPrint(c *runtime.Context) {
+	printSignature := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name: "text",
@@ -31,49 +61,19 @@ func init() {
 			return runtime.Value{}, nil
 		}),
 	}
-	meowSignature = runtime.Signature{
-		Expected: []runtime.Value{
-			{
-				Name: "separator",
-				Type: types.String,
-			},
-			{
-				Name: "values",
-				Type: types.Any,
-			},
-			{
-				Name: "x",
-				Type: types.Any,
-			},
-		},
-		Function: nodes.NewAdapter(func(c *runtime.Context) (runtime.Value, error) {
-			return runtime.Value{
-				Type: types.String,
-				Data: "meow",
-			}, nil
-		}),
-	}
-	meowFunction = runtime.Function{
-		Signatures: []runtime.Signature{meowSignature},
-		Source:     nil,
-	}
-	Meow = runtime.Value{
-		Name: "meow",
-		Type: types.Function,
-		Data: meowFunction,
-	}
-	printFunction = runtime.Function{
+	printFunction := runtime.Function{
 		Signatures: []runtime.Signature{printSignature},
 		Source:     nil,
 	}
-	Print = runtime.Value{
+	print := runtime.Value{
 		Name: "print",
 		Type: types.Function,
 		Data: printFunction,
 	}
+	c.Namespace.Store(print)
 }
 
 func Load(c *runtime.Context) {
-	c.Namespace.Store(Print)
-	c.Namespace.Store(Meow)
+	loadPrint(c)
+	loadTypeOf(c)
 }
