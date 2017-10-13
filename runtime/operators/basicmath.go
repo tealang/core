@@ -21,7 +21,7 @@ func loadMultiplication(c *runtime.Context) {
 				return runtime.Value{}, err
 			}
 		} else if b.Type == types.Float {
-			a, err = a.Type.Cast(b)
+			a, err = b.Type.Cast(b)
 			if err != nil {
 				return runtime.Value{}, err
 			}
@@ -135,7 +135,7 @@ func loadDivision(c *runtime.Context) {
 				return runtime.Value{}, err
 			}
 		} else if b.Type == types.Float {
-			a, err = a.Type.Cast(b)
+			a, err = b.Type.Cast(b)
 			if err != nil {
 				return runtime.Value{}, err
 			}
@@ -285,7 +285,7 @@ func loadAddition(c *runtime.Context) {
 				return runtime.Value{}, err
 			}
 		} else if b.Type == types.Float {
-			a, err = a.Type.Cast(b)
+			a, err = b.Type.Cast(b)
 			if err != nil {
 				return runtime.Value{}, err
 			}
@@ -482,7 +482,7 @@ func loadSubtraction(c *runtime.Context) {
 				return runtime.Value{}, err
 			}
 		} else if b.Type == types.Float {
-			a, err = a.Type.Cast(b)
+			a, err = b.Type.Cast(b)
 			if err != nil {
 				return runtime.Value{}, err
 			}
