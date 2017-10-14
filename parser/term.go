@@ -12,12 +12,6 @@ import (
 	"github.com/tealang/tea-go/runtime/nodes"
 )
 
-type functionCallParser struct{}
-
-func (functionCallParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
-	return nil, 0, nil
-}
-
 func newTermParser() *termParser {
 	tp := &termParser{
 		output:    newItemStack(),
