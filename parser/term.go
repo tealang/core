@@ -87,12 +87,14 @@ func (tp *termParser) priority(item termItem) int {
 		return 4
 	case "%":
 		return 3
-	case "<", ">", ">=", "<=", "=>", "=<", "!=", "==":
+	case "<", ">", ">=", "<=", "=<", "!=", "==":
 		return 2
 	case "&&", "||", "^|":
 		return 1
-	default:
+	case "=>":
 		return 0
+	default:
+		return -1
 	}
 }
 
