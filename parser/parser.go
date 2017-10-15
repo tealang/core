@@ -6,12 +6,14 @@ import (
 )
 
 const (
-	constantKeyword    = "let"
-	variableKeyword    = "var"
-	returnController   = "return"
-	breakController    = "break"
-	defaultController  = "default"
-	continueController = "continue"
+	constantKeyword = "let"
+	variableKeyword = "var"
+	returnKeyword   = "return"
+	breakKeyword    = "break"
+	defaultKeyword  = "default"
+	continueKeyword = "continue"
+	ifKeyword       = "if"
+	elseKeyword     = "else"
 )
 
 // Parser provides an interface for token parsing.
