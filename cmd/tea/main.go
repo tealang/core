@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"strings"
 
@@ -12,29 +13,42 @@ import (
 )
 
 const (
-	welcomeText = `Tealang v0.1-alpha
+	welcomeText = `Tealang v0.1.0-alpha
 Copyright 2017 Lennart Espe. All rights reserved.`
 	replSymbol = "> "
 )
 
 func main() {
+	interactive := flag.Bool("i", false, "Start in interactive mode")
 	graphviz := flag.Bool("g", false, "Enable GraphViz visualization mode")
 	flag.Parse()
-	fmt.Println(welcomeText)
 
+	env := repl.New(*graphviz)
+	if filename := flag.Arg(0); filename != "" {
+		code, err := ioutil.ReadFile(filename)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+		env.Interpret(string(code))
+	} else {
+		*interactive = true
+		fmt.Println(welcomeText)
+	}
+
+	if !*interactive {
+		return
+	}
 	reader := bufio.NewReader(os.Stdin)
-	ui := repl.New(*graphviz)
-
-	for ui.Active {
+	for env.Active {
 		fmt.Print(replSymbol)
 		input, err := reader.ReadString('\n')
 		if err != nil {
-			ui.Stop()
+			env.Stop()
 		} else {
-			output, err := ui.Interpret(strings.TrimRight(input, "\n"))
+			output, err := env.Interpret(strings.TrimRight(input, "\n"))
 			if err != nil {
-				fmt.Printf("Failed to execute: %v\n", err)
-			} else {
+				fmt.Println(err)
+			} else if output != "" {
 				fmt.Println(output)
 			}
 		}
