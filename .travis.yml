@@ -1,4 +1,4 @@
 language: go
-script: ./test.sh
+script: ./.codecov.sh
 after_success:
 - bash <(curl -s https://codecov.io/bash)
