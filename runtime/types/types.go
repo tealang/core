@@ -26,6 +26,9 @@ func init() {
 			}, nil
 		},
 		Format: func(v runtime.Value) string {
+			if v.Typeflag != nil {
+				return v.Typeflag.Format(v)
+			}
 			return fmt.Sprintf("any<%s>", v.Data)
 		},
 	}
@@ -101,7 +104,7 @@ func init() {
 		Name:   "string",
 		Parent: Any,
 		Format: func(v runtime.Value) string {
-			return fmt.Sprintf(`"%s"`, v.Data)
+			return fmt.Sprintf(`%s`, v.Data)
 		},
 		Cast: func(v runtime.Value) (runtime.Value, error) {
 			switch v.Type {
