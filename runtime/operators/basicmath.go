@@ -253,7 +253,7 @@ func loadAddition(c *runtime.Context) {
 			},
 			{
 				Name:     "b",
-				Type:     types.String,
+				Type:     types.Any,
 				Constant: true,
 			},
 		},
@@ -266,7 +266,7 @@ func loadAddition(c *runtime.Context) {
 			)
 			return runtime.Value{
 				Type: types.String,
-				Data: a.Data.(string) + b.Data.(string),
+				Data: a.Data.(string) + b.String(),
 			}, nil
 		}),
 		Returns: runtime.Value{Type: types.String},
