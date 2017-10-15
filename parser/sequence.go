@@ -67,19 +67,27 @@ func (sp *sequenceParser) handleIdentifier() error {
 		}
 		sp.sequence.AddBack(stmt)
 		sp.index += n
-	case returnController:
+	case returnKeyword:
 		stmt, n, err := newReturnParser().Parse(sp.inputSegment(0))
 		if err != nil {
 			return err
 		}
 		sp.sequence.AddBack(stmt)
 		sp.index += n
-	case breakController:
+	case breakKeyword:
 		sp.sequence.AddBack(nodes.NewController(runtime.BehaviorBreak))
 		sp.index++
-	case continueController:
+	case continueKeyword:
 		sp.sequence.AddBack(nodes.NewController(runtime.BehaviorContinue))
 		sp.index++
+	case ifKeyword:
+		stmt, n, err := newBranchParser().Parse(sp.inputSegment(0))
+		if err != nil {
+			return err
+		}
+		sp.sequence.AddBack(stmt)
+		sp.index += n
+		sp.statement = false
 	default:
 		if sp.checkForAssignment() {
 			stmt, n, err := newAssignmentParser().Parse(sp.inputSegment(0))
