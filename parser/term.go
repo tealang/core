@@ -170,15 +170,12 @@ func (tp *termParser) handleNumber() error {
 func (tp *termParser) handleOperator() error {
 	item := tp.itemFromActive(nil)
 	item.Node = nodes.NewOperation(tp.active.Value, tp.argCount(item))
-	for !tp.operators.Empty() {
+	for !tp.operators.Empty() && !tp.binding(item) {
 		top := tp.operators.Peek()
 		if top.Value.Type != tokens.Operator {
 			break
 		}
 		if tp.priority(top) < tp.priority(item) {
-			break
-		}
-		if tp.binding(top) {
 			break
 		}
 		tp.operators.Pop()
