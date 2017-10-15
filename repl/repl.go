@@ -24,12 +24,12 @@ func (r *Instance) Interpret(input string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if r.Graphviz {
+		return fmt.Sprintf("digraph G {\n%s\n}", strings.Join(ast.Graphviz("head"), "\n")), nil
+	}
 	output, err := ast.Eval(r.Context)
 	if err != nil {
 		return "", err
-	}
-	if r.Graphviz {
-		return fmt.Sprintf("digraph G {\n%s\n}", strings.Join(ast.Graphviz("head"), "\n")), nil
 	}
 	if output.Type != nil {
 		return output.String(), nil
