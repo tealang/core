@@ -33,6 +33,8 @@ func NewBranch(childs ...*Conditional) *Branch {
 	for _, c := range childs {
 		branch.AddBack(c)
 	}
+	branch.Metadata["label"] = "Branch"
+	branch.Metadata["shape"] = "diamond"
 	return branch
 }
 
@@ -76,7 +78,10 @@ func (cd *Conditional) Eval(c *runtime.Context) (runtime.Value, error) {
 }
 
 func NewConditional(condition, body Node) *Conditional {
-	return &Conditional{
+	cond := &Conditional{
 		NewBasic(condition, body),
 	}
+	cond.Metadata["label"] = "Conditional"
+	cond.Metadata["shape"] = "parallelogram"
+	return cond
 }
