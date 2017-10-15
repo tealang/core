@@ -29,7 +29,10 @@ func main() {
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
-		env.Interpret(string(code))
+		_, err = env.Interpret(string(code))
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
 	} else {
 		*interactive = true
 		fmt.Println(welcomeText)
