@@ -1,4 +1,4 @@
-# tea-go
+# tea-go [![Build Status](https://travis-ci.org/tealang/tea-go.svg?branch=master)](https://travis-ci.org/tealang/tea-go) [![Go Report Card](https://goreportcard.com/badge/github.com/tealang/tea-go)](https://goreportcard.com/report/github.com/tealang/tea-go)  [![codecov](https://codecov.io/gh/tealang/tea-go/branch/master/graph/badge.svg)](https://codecov.io/gh/tealang/tea-go)
 
 Welcome to the repository of *tea-go*, the Go implementation of the Tealang runtime. **It is NOT compatible to the Python implementation in some aspects due to further language changes. This project is heavily work-in-progress, do not use in any production environment.**
 
