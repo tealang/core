@@ -60,9 +60,7 @@ func (cd *Conditional) Name() string {
 }
 
 func (cd *Conditional) Eval(c *runtime.Context) (runtime.Value, error) {
-	condition := cd.Childs[0]
-	body := cd.Childs[1]
-
+	condition, body := cd.Childs[0], cd.Childs[1]
 	value, err := condition.Eval(c)
 	if err != nil {
 		return value, err
