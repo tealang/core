@@ -24,6 +24,7 @@ func newTermParser() *termParser {
 		tokens.Operator:         tp.handleOperator,
 		tokens.LeftParentheses:  tp.handleLeftParentheses,
 		tokens.RightParentheses: tp.handleRightParentheses,
+		tokens.Separator:        tp.handleSeparator,
 	}
 	return tp
 }
@@ -31,6 +32,7 @@ func newTermParser() *termParser {
 type termParser struct {
 	output, operators      *itemStack
 	active, previous, next tokens.Token
+	keepParsing            bool
 	handlers               map[*tokens.Type]func() error
 	index, size            int
 	input                  []tokens.Token
@@ -192,6 +194,29 @@ func (tp *termParser) handleOperator() error {
 	return nil
 }
 
+func (tp *termParser) handleSeparator() error {
+	for !tp.operators.Empty() && tp.operators.Peek().Value.Type != tokens.LeftParentheses {
+		top := tp.operators.Peek()
+		tp.operators.Pop()
+		for i := 0; i < tp.argCount(top); i++ {
+			if tp.output.Empty() {
+				return ParseException{"Missing operands"}
+			}
+			top.Node.AddFront(tp.output.Peek().Node)
+			tp.output.Pop()
+		}
+		tp.output.Push(top)
+	}
+	if tp.operators.Empty() {
+		tp.keepParsing = false
+	} else if tp.operators.Peek().Node != nil {
+		top := tp.operators.Peek()
+		top.Node.AddBack(tp.output.Peek().Node)
+		tp.output.Pop()
+	}
+	return nil
+}
+
 func (tp *termParser) handleLeftParentheses() error {
 	tp.operators.Push(tp.itemFromActive(nil))
 	return nil
@@ -245,10 +270,11 @@ func (tp *termParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	tp.operators.Clear()
 	tp.output.Clear()
 
+	tp.keepParsing = true
 	tp.input = input
 	tp.index, tp.size = 0, len(input)
 parser:
-	for ; tp.index < tp.size; tp.index++ {
+	for ; tp.index < tp.size && tp.keepParsing; tp.index++ {
 		tp.fetch(false)
 
 		/*
@@ -262,26 +288,6 @@ parser:
 		switch tp.active.Type {
 		case tokens.Statement, tokens.RightBlock, tokens.LeftBlock:
 			break parser
-		case tokens.Separator:
-			for !tp.operators.Empty() && tp.operators.Peek().Value.Type != tokens.LeftParentheses {
-				top := tp.operators.Peek()
-				tp.operators.Pop()
-				for i := 0; i < tp.argCount(top); i++ {
-					if tp.output.Empty() {
-						return nil, 0, ParseException{"Missing operands"}
-					}
-					top.Node.AddFront(tp.output.Peek().Node)
-					tp.output.Pop()
-				}
-				tp.output.Push(top)
-			}
-			if tp.operators.Empty() {
-				return tp.output.Peek().Node, tp.index, nil
-			} else if tp.operators.Peek().Node != nil {
-				top := tp.operators.Peek()
-				top.Node.AddBack(tp.output.Peek().Node)
-				tp.output.Pop()
-			}
 		default:
 			handler, ok := tp.handlers[tp.active.Type]
 			if !ok {
