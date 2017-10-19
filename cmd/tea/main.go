@@ -5,7 +5,6 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -18,43 +17,46 @@ Copyright 2017 Lennart Espe. All rights reserved.`
 	replSymbol = "> "
 )
 
+var (
+	interactiveMode, graphvizMode bool
+)
+
 func main() {
-	interactive := flag.Bool("i", false, "Start in interactive mode")
-	graphviz := flag.Bool("g", false, "Enable GraphViz visualization mode")
+	flag.BoolVar(&interactiveMode, "i", false, "Start in interactive mode")
+	flag.BoolVar(&graphvizMode, "g", false, "Enable GraphViz visualization mode")
 	flag.Parse()
 
-	env := repl.New(*graphviz)
+	env := repl.New(repl.Config{
+		OutputGraph: graphvizMode,
+	})
 	if filename := flag.Arg(0); filename != "" {
-		code, err := ioutil.ReadFile(filename)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-		}
-		_, err = env.Interpret(string(code))
+		err := env.Load(filename)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
 	} else {
-		*interactive = true
-		fmt.Println(welcomeText)
+		interactiveMode = true
+		fmt.Fprintln(os.Stdout, welcomeText)
 	}
 
-	if !*interactive {
+	if !interactiveMode {
 		return
 	}
+
 	reader := bufio.NewReader(os.Stdin)
-	for env.Active {
-		fmt.Print(replSymbol)
+	for env.IsActive() {
+		fmt.Fprint(os.Stdout, replSymbol)
 		input, err := reader.ReadString('\n')
 		if err != nil {
 			env.Stop()
 		} else {
 			output, err := env.Interpret(strings.TrimRight(input, "\n"))
 			if err != nil {
-				fmt.Println(err)
+				fmt.Fprintln(os.Stderr, err)
 			} else if output != "" {
-				fmt.Println(output)
+				fmt.Fprintln(os.Stdout, output)
 			}
 		}
 	}
-	fmt.Println()
+	fmt.Fprintln(os.Stdout)
 }
