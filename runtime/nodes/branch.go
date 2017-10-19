@@ -22,7 +22,7 @@ func (b *Branch) Eval(c *runtime.Context) (runtime.Value, error) {
 		if err == nil {
 			return value, nil
 		} else if _, ok := err.(ConditionalException); !ok {
-			return value, err
+			return runtime.Value{}, err
 		}
 	}
 	return runtime.Value{}, nil
@@ -65,13 +65,13 @@ func (cd *Conditional) Eval(c *runtime.Context) (runtime.Value, error) {
 	condition, body := cd.Childs[0], cd.Childs[1]
 	value, err := condition.Eval(c)
 	if err != nil {
-		return value, err
+		return runtime.Value{}, err
 	}
 	if value.Type != types.Bool {
-		return value, ConditionalTypeException{value.Type}
+		return runtime.Value{}, ConditionalTypeException{value.Type}
 	}
 	if !value.Data.(bool) {
-		return value, ConditionalException{}
+		return runtime.Value{}, ConditionalException{}
 	}
 
 	return c.Substitute(body.Eval)
