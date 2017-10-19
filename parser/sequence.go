@@ -25,6 +25,7 @@ type sequenceParser struct {
 	handlers    map[*tokens.Type]func() error
 }
 
+// handleLeftBlock generates a subsequence that runs in a substitute namespace.
 func (sp *sequenceParser) handleLeftBlock() error {
 	item, n, err := newSequenceParser(true).Parse(sp.inputSegment(1))
 	if err != nil {
@@ -37,6 +38,7 @@ func (sp *sequenceParser) handleLeftBlock() error {
 	return nil
 }
 
+// inputSegment generates a slice of the active input sequence.
 func (sp *sequenceParser) inputSegment(offset int) []tokens.Token {
 	return sp.input[sp.index+offset:]
 }
