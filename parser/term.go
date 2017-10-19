@@ -236,7 +236,9 @@ func (tp *termParser) handleRightParentheses() error {
 		tp.output.Push(top)
 	}
 	if tp.operators.Empty() {
-		return ParseException{"Missing closing bracket"}
+		// ignore closing bracket
+		tp.keepParsing = false
+		return nil
 	} else if tp.operators.Peek().Node != nil {
 		top := tp.operators.Peek()
 		if tp.previous.Type != tokens.LeftParentheses && !tp.output.Empty() {
