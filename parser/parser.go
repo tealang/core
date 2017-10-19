@@ -15,6 +15,7 @@ const (
 	ifKeyword       = "if"
 	elseKeyword     = "else"
 	forKeyword      = "for"
+	functionKeyword = "func"
 )
 
 // Parser provides an interface for token parsing.
