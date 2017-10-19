@@ -6,8 +6,8 @@ import (
 	"github.com/tealang/tea-go/runtime/nodes"
 )
 
-func newSequenceParser(substitute bool) *sequenceParser {
-	sp := &sequenceParser{substitute: substitute}
+func newSequenceParser(substitute bool, cap int) *sequenceParser {
+	sp := &sequenceParser{substitute: substitute, cap: cap}
 	sp.handlers = map[*tokens.Type]func() error{
 		tokens.LeftBlock:  sp.handleLeftBlock,
 		tokens.Identifier: sp.handleIdentifier,
@@ -16,18 +16,18 @@ func newSequenceParser(substitute bool) *sequenceParser {
 }
 
 type sequenceParser struct {
-	substitute  bool
-	statement   bool
-	index, size int
-	sequence    *nodes.Sequence
-	active      tokens.Token
-	input       []tokens.Token
-	handlers    map[*tokens.Type]func() error
+	substitute       bool
+	statement        bool
+	index, size, cap int
+	sequence         *nodes.Sequence
+	active           tokens.Token
+	input            []tokens.Token
+	handlers         map[*tokens.Type]func() error
 }
 
 // handleLeftBlock generates a subsequence that runs in a substitute namespace.
 func (sp *sequenceParser) handleLeftBlock() error {
-	item, n, err := newSequenceParser(true).Parse(sp.inputSegment(1))
+	item, n, err := newSequenceParser(true, 0).Parse(sp.inputSegment(1))
 	if err != nil {
 		return err
 	}
@@ -90,6 +90,14 @@ func (sp *sequenceParser) handleIdentifier() error {
 		sp.sequence.AddBack(stmt)
 		sp.index += n
 		sp.statement = false
+	case forKeyword:
+		stmt, n, err := newLoopParser().Parse(sp.inputSegment(0))
+		if err != nil {
+			return err
+		}
+		sp.sequence.AddBack(stmt)
+		sp.index += n
+		sp.statement = false
 	default:
 		if sp.checkForAssignment() {
 			stmt, n, err := newAssignmentParser().Parse(sp.inputSegment(0))
@@ -137,6 +145,9 @@ func (sp *sequenceParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 			if err := handler(); err != nil {
 				return sp.sequence, sp.index, err
 			}
+		}
+		if sp.cap != 0 && len(sp.sequence.Childs) >= sp.cap {
+			return sp.sequence, sp.index, nil
 		}
 		if sp.index < sp.size && sp.statement {
 			if sp.input[sp.index].Type != tokens.Statement {

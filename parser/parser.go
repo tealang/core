@@ -14,6 +14,7 @@ const (
 	continueKeyword = "continue"
 	ifKeyword       = "if"
 	elseKeyword     = "else"
+	forKeyword      = "for"
 )
 
 // Parser provides an interface for token parsing.
@@ -33,7 +34,7 @@ type programParser struct {
 }
 
 func (pp programParser) Parse(input []tokens.Token) (nodes.Node, error) {
-	seq, _, err := newSequenceParser(false).Parse(pp.clean(input))
+	seq, _, err := newSequenceParser(false, 0).Parse(pp.clean(input))
 	if err != nil {
 		return nil, err
 	}

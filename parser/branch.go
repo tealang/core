@@ -19,7 +19,7 @@ func (bp *branchParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 		}
 		// skip offset
 		bp.index += n + 1
-		stmt, n, err := newSequenceParser(false).Parse(input[bp.index+1:])
+		stmt, n, err := newSequenceParser(false, 0).Parse(input[bp.index+1:])
 		if err != nil {
 			return bp.branch, bp.index, err
 		}
@@ -37,7 +37,7 @@ func (bp *branchParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	// add else if needed
 	if input[bp.index].Type == tokens.LeftBlock {
 		// must substitute, not encapsulated in conditional
-		stmt, n, err := newSequenceParser(true).Parse(input[bp.index+1:])
+		stmt, n, err := newSequenceParser(true, 0).Parse(input[bp.index+1:])
 		if err != nil {
 			return bp.branch, bp.index, err
 		}
