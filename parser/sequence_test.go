@@ -46,7 +46,7 @@ func Test_sequenceParser_Parse(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sp := newSequenceParser(false)
+			sp := newSequenceParser(false, 0)
 			_, got, err := sp.Parse(tt.input)
 			if err != nil {
 				t.Errorf("sequenceParser.Parse() got unexpected error %v", err)
