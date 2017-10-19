@@ -2,6 +2,7 @@ package repl
 
 import (
 	"fmt"
+	"io/ioutil"
 	"strings"
 
 	"github.com/tealang/tea-go/lexer"
@@ -12,10 +13,35 @@ import (
 	"github.com/tealang/tea-go/runtime/types"
 )
 
+type Config struct {
+	OutputGraph bool
+}
+
 type Instance struct {
-	Context  *runtime.Context
-	Active   bool
-	Graphviz bool
+	context *runtime.Context
+	active  bool
+	cfg     Config
+}
+
+const (
+	graphvizFormat = "digraph G {\n%s\n}"
+	graphvizItem   = "head"
+)
+
+func (r *Instance) IsActive() bool {
+	return r.active
+}
+
+func (r *Instance) Load(file string) error {
+	code, err := ioutil.ReadFile(file)
+	if err != nil {
+		return err
+	}
+	_, err = r.Interpret(string(code))
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r *Instance) Interpret(input string) (string, error) {
@@ -24,10 +50,10 @@ func (r *Instance) Interpret(input string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if r.Graphviz {
-		return fmt.Sprintf("digraph G {\n%s\n}", strings.Join(ast.Graphviz("head"), "\n")), nil
+	if r.cfg.OutputGraph {
+		return fmt.Sprintf(graphvizFormat, strings.Join(ast.Graphviz(graphvizItem), "\n")), nil
 	}
-	output, err := ast.Eval(r.Context)
+	output, err := ast.Eval(r.context)
 	if err != nil {
 		return "", err
 	}
@@ -38,17 +64,20 @@ func (r *Instance) Interpret(input string) (string, error) {
 }
 
 func (r *Instance) Stop() {
-	r.Active = false
+	r.active = false
 }
 
-func New(graphviz bool) *Instance {
+func New(cfg Config) *Instance {
 	ctx := runtime.NewContext()
+
+	// load language runtime
 	operators.Load(ctx)
 	types.Load(ctx)
 	functions.Load(ctx)
+
 	return &Instance{
-		Active:   true,
-		Context:  ctx,
-		Graphviz: graphviz,
+		active:  true,
+		context: ctx,
+		cfg:     cfg,
 	}
 }
