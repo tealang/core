@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/tealang/tea-go/runtime"
+	"github.com/tealang/tea-go/runtime/nodes"
 	"github.com/tealang/tea-go/runtime/types"
 )
 
@@ -85,7 +86,7 @@ func (literal *FunctionLiteral) Eval(c *runtime.Context) (runtime.Value, error) 
 	}, nil
 }
 
-func NewFunctionLiteral(body, returns *Typecast, args ...*Typecast) *FunctionLiteral {
+func NewFunctionLiteral(body nodes.Node, returns *Typecast, args ...*Typecast) *FunctionLiteral {
 	return &FunctionLiteral{
 		BasicNode: NewBasic(body),
 		Returns:   returns,
