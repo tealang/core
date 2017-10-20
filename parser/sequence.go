@@ -82,6 +82,14 @@ func (sp *sequenceParser) handleIdentifier() error {
 	case continueKeyword:
 		sp.sequence.AddBack(nodes.NewController(runtime.BehaviorContinue))
 		sp.index++
+	case functionKeyword:
+		stmt, n, err := newFunctionParser(false).Parse(sp.inputSegment(0))
+		if err != nil {
+			return err
+		}
+		sp.sequence.AddBack(stmt)
+		sp.index += n
+		sp.statement = false
 	case ifKeyword:
 		stmt, n, err := newBranchParser().Parse(sp.inputSegment(0))
 		if err != nil {
