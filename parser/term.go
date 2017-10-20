@@ -100,12 +100,6 @@ func (tp *termParser) priority(item termItem) int {
 	}
 }
 
-const (
-	trueLiteral  = "true"
-	falseLiteral = "false"
-	nullLiteral  = "null"
-)
-
 func (tp *termParser) itemFromActive(node nodes.Node) termItem {
 	return termItem{
 		Value:    tp.active,
@@ -117,12 +111,19 @@ func (tp *termParser) itemFromActive(node nodes.Node) termItem {
 
 func (tp *termParser) handleIdentifier() error {
 	switch tp.active.Value {
-	case trueLiteral:
+	case trueKeyword:
 		tp.output.Push(tp.itemFromActive(nodes.NewLiteral(types.True)))
-	case falseLiteral:
+	case falseKeyword:
 		tp.output.Push(tp.itemFromActive(nodes.NewLiteral(types.False)))
-	case nullLiteral:
+	case nullKeyword:
 		tp.output.Push(tp.itemFromActive(nodes.NewLiteral(runtime.Value{})))
+	case functionKeyword:
+		literal, n, err := newFunctionParser(true).Parse(tp.input[tp.index:])
+		if err != nil {
+			return err
+		}
+		tp.index += n
+		tp.output.Push(tp.itemFromActive(literal))
 	default:
 		if tp.next.Type == tokens.LeftParentheses {
 			alias := tp.active.Value
