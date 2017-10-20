@@ -23,6 +23,7 @@ func init() {
 				Type:     Any,
 				Typeflag: v.Type,
 				Data:     v.Data,
+				Name:     v.Name,
 			}, nil
 		},
 		Format: func(v runtime.Value) string {
@@ -44,6 +45,7 @@ func init() {
 				return runtime.Value{
 					Type: Integer,
 					Data: int64(0),
+					Name: v.Name,
 				}, nil
 			case Any:
 				i, ok := v.Data.(int64)
@@ -53,6 +55,7 @@ func init() {
 				return runtime.Value{
 					Type: Integer,
 					Data: i,
+					Name: v.Name,
 				}, nil
 			case Integer:
 				return v, nil
@@ -60,6 +63,7 @@ func init() {
 				return runtime.Value{
 					Type: Integer,
 					Data: int64(v.Data.(float64)),
+					Name: v.Name,
 				}, nil
 			case String:
 				i, err := strconv.Atoi(v.Data.(string))
@@ -69,6 +73,7 @@ func init() {
 				return runtime.Value{
 					Type: Integer,
 					Data: i,
+					Name: v.Name,
 				}, nil
 			default:
 				return runtime.Value{}, runtime.ExplicitCastException{From: v.Type, To: Integer}
@@ -87,11 +92,13 @@ func init() {
 				return runtime.Value{
 					Type: Float,
 					Data: float64(0),
+					Name: v.Name,
 				}, nil
 			case Integer:
 				return runtime.Value{
 					Type: Float,
 					Data: float64(v.Data.(int64)),
+					Name: v.Name,
 				}, nil
 			case Float:
 				return v, nil
@@ -112,6 +119,7 @@ func init() {
 				return runtime.Value{
 					Type: String,
 					Data: "",
+					Name: v.Name,
 				}, nil
 			case String:
 				return v, nil
@@ -143,6 +151,7 @@ func init() {
 			case nil:
 				return runtime.Value{
 					Type: Bool,
+					Name: v.Name,
 					Data: false,
 				}, nil
 			default:
