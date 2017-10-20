@@ -64,7 +64,7 @@ func (termParser) isUnaryOperator(item termItem) bool {
 		case nil, tokens.Operator:
 			return true
 		}
-	case "!":
+	case "!", ":":
 		return true
 	}
 	return false
@@ -172,7 +172,12 @@ func (tp *termParser) handleNumber() error {
 
 func (tp *termParser) handleOperator() error {
 	item := tp.itemFromActive(nil)
-	item.Node = nodes.NewOperation(tp.active.Value, tp.argCount(item))
+	if tp.active.Value != ":" || tp.next.Type != tokens.Identifier {
+		item.Node = nodes.NewOperation(tp.active.Value, tp.argCount(item))
+	} else {
+		item.Node = nodes.NewTypecast(tp.next.Value)
+		tp.fetch(true)
+	}
 	for !tp.operators.Empty() && !tp.binding(item) {
 		top := tp.operators.Peek()
 		if top.Value.Type != tokens.Operator {
