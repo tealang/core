@@ -13,6 +13,11 @@ type Declaration struct {
 	Constant bool
 }
 
+func (a *Declaration) Graphviz(uid string) []string {
+	a.Metadata["label"] = fmt.Sprintf("Declaration (alias=%s, constant=%t)", a.Alias, a.Constant)
+	return a.BasicNode.Graphviz(uid)
+}
+
 func (Declaration) Name() string {
 	return "Declaration"
 }
@@ -44,21 +49,13 @@ func (a *Declaration) Eval(c *runtime.Context) (runtime.Value, error) {
 }
 
 func NewMultiDeclaration(alias []string, constant bool, values ...Node) *Declaration {
-	decl := &Declaration{
+	return &Declaration{
 		BasicNode: NewBasic(values...),
 		Alias:     alias,
 		Constant:  constant,
 	}
-	decl.Metadata["label"] = fmt.Sprintf("Declaration (alias=%v, constant=%t)", alias, constant)
-	return decl
 }
 
 func NewDeclaration(alias string, constant bool, value Node) *Declaration {
-	decl := &Declaration{
-		BasicNode: NewBasic(value),
-		Alias:     []string{alias},
-		Constant:  constant,
-	}
-	decl.Metadata["label"] = fmt.Sprintf("Declaration (alias=%v, constant=%t)", alias, constant)
-	return decl
+	return NewMultiDeclaration([]string{alias}, constant, value)
 }

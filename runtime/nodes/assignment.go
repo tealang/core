@@ -1,6 +1,10 @@
 package nodes
 
-import "github.com/tealang/tea-go/runtime"
+import (
+	"fmt"
+
+	"github.com/tealang/tea-go/runtime"
+)
 
 // Assignment assigns one or multiple existing variables a new value (for each variable).
 type Assignment struct {
@@ -10,6 +14,11 @@ type Assignment struct {
 
 func (Assignment) Name() string {
 	return "Assignment"
+}
+
+func (a *Assignment) Graphviz(uid string) []string {
+	a.Metadata["label"] = fmt.Sprintf("Assignment (%s)", a.Alias)
+	return a.BasicNode.Graphviz(uid)
 }
 
 func (a *Assignment) Eval(c *runtime.Context) (runtime.Value, error) {
@@ -46,8 +55,5 @@ func NewMultiAssignment(alias []string, values ...Node) *Assignment {
 }
 
 func NewAssignment(alias string, value Node) *Assignment {
-	return &Assignment{
-		BasicNode: NewBasic(value),
-		Alias:     []string{alias},
-	}
+	return NewMultiAssignment([]string{alias}, value)
 }
