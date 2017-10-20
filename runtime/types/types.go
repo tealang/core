@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/tealang/tea-go/runtime"
+	"github.com/tealang/core/runtime"
 )
 
 var (

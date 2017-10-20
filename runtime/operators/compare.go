@@ -1,9 +1,9 @@
 package operators
 
 import (
-	"github.com/tealang/tea-go/runtime"
-	"github.com/tealang/tea-go/runtime/nodes"
-	"github.com/tealang/tea-go/runtime/types"
+	"github.com/tealang/core/runtime"
+	"github.com/tealang/core/runtime/nodes"
+	"github.com/tealang/core/runtime/types"
 )
 
 func loadGreaterEqual(c *runtime.Context) {

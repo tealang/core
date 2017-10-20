@@ -1,6 +1,6 @@
 package lexer
 
-import "github.com/tealang/tea-go/lexer/tokens"
+import "github.com/tealang/core/lexer/tokens"
 
 // Lex converts the input into a series of tokens.
 func Lex(input string) []tokens.Token {

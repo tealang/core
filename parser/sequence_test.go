@@ -3,7 +3,7 @@ package parser
 import (
 	"testing"
 
-	"github.com/tealang/tea-go/lexer/tokens"
+	"github.com/tealang/core/lexer/tokens"
 )
 
 func Test_sequenceParser_Parse(t *testing.T) {

@@ -4,7 +4,7 @@ package nodes
 import (
 	"fmt"
 
-	"github.com/tealang/tea-go/runtime"
+	"github.com/tealang/core/runtime"
 )
 
 // Node is a tree node within an abstract syntax tree.

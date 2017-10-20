@@ -1,7 +1,7 @@
 package parser
 
-import "github.com/tealang/tea-go/lexer/tokens"
-import "github.com/tealang/tea-go/runtime/nodes"
+import "github.com/tealang/core/lexer/tokens"
+import "github.com/tealang/core/runtime/nodes"
 
 type assignmentParser struct {
 	index, size int

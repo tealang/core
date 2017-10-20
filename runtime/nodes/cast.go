@@ -1,6 +1,6 @@
 package nodes
 
-import "github.com/tealang/tea-go/runtime"
+import "github.com/tealang/core/runtime"
 
 // Typecast casts a value to a specific type.
 type Typecast struct {

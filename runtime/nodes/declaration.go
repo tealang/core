@@ -3,7 +3,7 @@ package nodes
 import (
 	"fmt"
 
-	"github.com/tealang/tea-go/runtime"
+	"github.com/tealang/core/runtime"
 )
 
 // Declaration stores one or multiple initialized variables in the active namespace.

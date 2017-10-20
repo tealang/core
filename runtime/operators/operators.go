@@ -1,7 +1,7 @@
 package operators
 
 import (
-	"github.com/tealang/tea-go/runtime"
+	"github.com/tealang/core/runtime"
 )
 
 func Load(c *runtime.Context) {

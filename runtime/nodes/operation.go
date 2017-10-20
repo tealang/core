@@ -3,7 +3,7 @@ package nodes
 import (
 	"fmt"
 
-	"github.com/tealang/tea-go/runtime"
+	"github.com/tealang/core/runtime"
 )
 
 // Operation calls an operator on the results of its children as arguments.

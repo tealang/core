@@ -5,11 +5,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/tealang/tea-go/runtime"
-	"github.com/tealang/tea-go/runtime/types"
+	"github.com/tealang/core/runtime"
+	"github.com/tealang/core/runtime/types"
 
-	"github.com/tealang/tea-go/lexer/tokens"
-	"github.com/tealang/tea-go/runtime/nodes"
+	"github.com/tealang/core/lexer/tokens"
+	"github.com/tealang/core/runtime/nodes"
 )
 
 func newTermParser() *termParser {

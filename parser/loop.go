@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"github.com/tealang/tea-go/lexer/tokens"
-	"github.com/tealang/tea-go/runtime/nodes"
+	"github.com/tealang/core/lexer/tokens"
+	"github.com/tealang/core/runtime/nodes"
 )
 
 type loopParser struct {

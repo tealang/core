@@ -3,7 +3,7 @@ package nodes
 import (
 	"fmt"
 
-	"github.com/tealang/tea-go/runtime"
+	"github.com/tealang/core/runtime"
 )
 
 // Literal returns a constant value when evaluated.

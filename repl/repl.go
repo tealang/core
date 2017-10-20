@@ -5,12 +5,12 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/tealang/tea-go/lexer"
-	"github.com/tealang/tea-go/parser"
-	"github.com/tealang/tea-go/runtime"
-	"github.com/tealang/tea-go/runtime/functions"
-	"github.com/tealang/tea-go/runtime/operators"
-	"github.com/tealang/tea-go/runtime/types"
+	"github.com/tealang/core/lexer"
+	"github.com/tealang/core/parser"
+	"github.com/tealang/core/runtime"
+	"github.com/tealang/core/runtime/functions"
+	"github.com/tealang/core/runtime/operators"
+	"github.com/tealang/core/runtime/types"
 )
 
 type Config struct {

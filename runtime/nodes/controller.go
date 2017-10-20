@@ -1,6 +1,6 @@
 package nodes
 
-import "github.com/tealang/tea-go/runtime"
+import "github.com/tealang/core/runtime"
 
 // Controller executes a range of statements and modifies the current context behavior before returning..
 type Controller struct {

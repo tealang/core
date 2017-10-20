@@ -3,7 +3,7 @@ package nodes
 import (
 	"fmt"
 
-	"github.com/tealang/tea-go/runtime"
+	"github.com/tealang/core/runtime"
 )
 
 // Sequence executes a list of nodes as long as the behavior is default.

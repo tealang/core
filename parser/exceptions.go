@@ -3,7 +3,7 @@ package parser
 import (
 	"fmt"
 
-	"github.com/tealang/tea-go/lexer/tokens"
+	"github.com/tealang/core/lexer/tokens"
 )
 
 type ParseException struct {

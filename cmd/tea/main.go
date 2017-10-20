@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/tealang/tea-go/repl"
+	"github.com/tealang/core/repl"
 )
 
 const (

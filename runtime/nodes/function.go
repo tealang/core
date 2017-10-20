@@ -3,8 +3,8 @@ package nodes
 import (
 	"fmt"
 
-	"github.com/tealang/tea-go/runtime"
-	"github.com/tealang/tea-go/runtime/types"
+	"github.com/tealang/core/runtime"
+	"github.com/tealang/core/runtime/types"
 )
 
 type FunctionCall struct {
