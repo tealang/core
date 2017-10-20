@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/tealang/tea-go/runtime"
-	"github.com/tealang/tea-go/runtime/nodes"
 	"github.com/tealang/tea-go/runtime/types"
 )
 
@@ -41,7 +40,12 @@ func (call *FunctionCall) Eval(c *runtime.Context) (runtime.Value, error) {
 		}
 		values[i] = v
 	}
-	return callable.Eval(c, values)
+	result, err := callable.Eval(c, values)
+	if err != nil {
+		return runtime.Value{}, err
+	}
+	c.Behavior = runtime.BehaviorDefault
+	return result, nil
 }
 
 func NewFunctionCall(alias string, args ...Node) *FunctionCall {
@@ -61,7 +65,7 @@ type FunctionLiteral struct {
 
 func (literal *FunctionLiteral) Eval(c *runtime.Context) (runtime.Value, error) {
 	// load arg types
-	args := make([]runtime.Value, len(literal.Childs)-1)
+	args := make([]runtime.Value, len(literal.Args))
 	for i, arg := range literal.Args {
 		value, err := arg.Eval(c)
 		if err != nil {
@@ -86,10 +90,24 @@ func (literal *FunctionLiteral) Eval(c *runtime.Context) (runtime.Value, error) 
 	}, nil
 }
 
-func NewFunctionLiteral(body nodes.Node, returns *Typecast, args ...*Typecast) *FunctionLiteral {
-	return &FunctionLiteral{
+func (Literal *FunctionLiteral) Name() string {
+	return "FunctionLiteral"
+}
+
+func NewFunctionLiteral(body Node, returns *Typecast, args ...*Typecast) *FunctionLiteral {
+	lit := &FunctionLiteral{
 		BasicNode: NewBasic(body),
 		Returns:   returns,
 		Args:      args,
 	}
+	types := make([]string, len(args))
+	for i, a := range args {
+		types[i] = a.Alias
+	}
+	if returns != nil {
+		lit.Metadata["label"] = fmt.Sprintf("Function <%s> -> %s", types, returns.Alias)
+	} else {
+		lit.Metadata["label"] = fmt.Sprintf("Function <%s>", types)
+	}
+	return lit
 }
