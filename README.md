@@ -4,26 +4,26 @@ Welcome to the repository of *tea-go*, the Go implementation of the Tealang runt
 
 ## How does FizzBuzz look?
 ```tea
-use io;
+import std.io;
 
 operator /?(a, b: int): bool {
     return a % b == 0;
 }
 
-for (var i = 0; i < 100; i++) {
+for var i = 0; i < 100; i++ {
     var a, b: string;
-    if (i /? 3) {
+    if i /? 3 {
         a = "Fizz";
-    } else if (i /? 5) {
+    } else if i /? 5 {
         b = "Buzz";
     }
-    match (var v = a + b) {
-    case "" => {
-        io.println(i);
-    }
-    default => {
-        io.println(v);
-    }
+    match let v = a + b {
+        case "" => {
+            io.println(i);
+        }
+        default => {
+            io.println(v);
+        }
     }
 }
 ```
