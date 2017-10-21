@@ -16,6 +16,7 @@ const (
 	elseKeyword     = "else"
 	forKeyword      = "for"
 	functionKeyword = "func"
+	operatorKeyword = "operator"
 	trueKeyword     = "true"
 	falseKeyword    = "false"
 	nullKeyword     = "null"
