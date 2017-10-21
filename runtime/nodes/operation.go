@@ -34,7 +34,12 @@ func (o *Operation) Eval(c *runtime.Context) (runtime.Value, error) {
 		}
 		args[i] = v
 	}
-	return op.Eval(c, args)
+	result, err := op.Eval(c, args)
+	if err != nil {
+		return runtime.Value{}, err
+	}
+	c.Behavior = runtime.BehaviorDefault
+	return result, nil
 }
 
 func NewOperation(symbol string, argCount int, args ...Node) *Operation {
