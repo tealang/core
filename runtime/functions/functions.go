@@ -8,7 +8,7 @@ import (
 	"github.com/tealang/core/runtime/types"
 )
 
-func loadTypeOf(c *runtime.Context) {
+func loadTypeof(c *runtime.Context) {
 	typeOfSignature := runtime.Signature{
 		Expected: []runtime.Value{
 			{
@@ -41,7 +41,7 @@ func loadTypeOf(c *runtime.Context) {
 	typeof := runtime.Value{
 		Type:     types.Function,
 		Data:     typeOfFunction,
-		Name:     "typeOf",
+		Name:     "typeof",
 		Constant: true,
 	}
 	c.Namespace.Store(typeof)
@@ -75,5 +75,5 @@ func loadPrint(c *runtime.Context) {
 
 func Load(c *runtime.Context) {
 	loadPrint(c)
-	loadTypeOf(c)
+	loadTypeof(c)
 }
