@@ -90,6 +90,14 @@ func (sp *sequenceParser) handleIdentifier() error {
 		sp.sequence.AddBack(stmt)
 		sp.index += n
 		sp.statement = false
+	case operatorKeyword:
+		stmt, n, err := newOperatorParser().Parse(sp.inputSegment(0))
+		if err != nil {
+			return err
+		}
+		sp.sequence.AddBack(stmt)
+		sp.index += n
+		sp.statement = false
 	case ifKeyword:
 		stmt, n, err := newBranchParser().Parse(sp.inputSegment(0))
 		if err != nil {
