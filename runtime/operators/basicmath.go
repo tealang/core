@@ -6,6 +6,41 @@ import (
 	"github.com/tealang/core/runtime/types"
 )
 
+func loadRemainder(c *runtime.Context) {
+	adapter := nodes.NewAdapter(func(c *runtime.Context) (runtime.Value, error) {
+		var (
+			identA, _ = c.Namespace.Find(runtime.SearchIdentifier, "a")
+			identB, _ = c.Namespace.Find(runtime.SearchIdentifier, "b")
+			a         = identA.(runtime.Value)
+			b         = identB.(runtime.Value)
+		)
+		if b.Data.(int64) == 0 {
+			return runtime.Value{}, runtime.Exception{Message: "Cannot divide by 0"}
+		}
+		return runtime.Value{
+			Type: types.Integer,
+			Data: a.Data.(int64) % b.Data.(int64),
+		}, nil
+	})
+	remInteger := runtime.NewSignature(runtime.Value{Type: types.Integer}, adapter, []runtime.Value{
+		{
+			Type: types.Integer,
+			Name: "a",
+		},
+		{
+			Type: types.Integer,
+			Name: "b",
+		},
+	})
+	remFunction := runtime.NewFunction(nil, remInteger)
+	remOperator := runtime.Operator{
+		Symbol:   "%",
+		Function: remFunction,
+		Constant: true,
+	}
+	c.Namespace.Store(remOperator)
+}
+
 func loadMultiplication(c *runtime.Context) {
 	adapter := nodes.NewAdapter(func(c *runtime.Context) (runtime.Value, error) {
 		var (
@@ -589,4 +624,5 @@ func LoadBasicMath(c *runtime.Context) {
 	loadDivision(c)
 	loadMultiplication(c)
 	loadSubtraction(c)
+	loadRemainder(c)
 }
