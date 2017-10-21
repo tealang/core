@@ -6,20 +6,118 @@ import (
 	"github.com/tealang/core/runtime/nodes"
 )
 
+type parameterizedSequenceParser struct {
+	active      tokens.Token
+	index, size int
+	input       []tokens.Token
+	args        []*nodes.Typecast
+	returns     *nodes.Typecast
+	body        nodes.Node
+}
+
+func (sp *parameterizedSequenceParser) fetch() tokens.Token {
+	if sp.index >= sp.size {
+		return tokens.Token{}
+	}
+	sp.active = sp.input[sp.index]
+	sp.index++
+	return sp.active
+}
+
+func (sp *parameterizedSequenceParser) collectArgs() error {
+	if sp.fetch().Type != tokens.LeftParentheses {
+		return newUnexpectedTokenException(sp.active.Type)
+	}
+
+	var (
+		activeArg  nodes.Node
+		expectType bool
+	)
+	for sp.index < sp.size && sp.fetch().Type != tokens.RightParentheses {
+		switch sp.active.Type {
+		case tokens.Identifier:
+			if activeArg != nil {
+				if expectType {
+					sp.args = append(sp.args, nodes.NewTypecast(sp.active.Value, activeArg))
+					expectType = false
+				} else {
+					return newUnexpectedTokenException(sp.active.Type)
+				}
+			} else {
+				if !expectType {
+					activeArg = nodes.NewLiteral(runtime.Value{
+						Name: sp.active.Value,
+					})
+				} else {
+					return newUnexpectedTokenException(sp.active.Type)
+				}
+			}
+		case tokens.Operator:
+			if sp.active.Value != ":" {
+				return newUnexpectedTokenException(sp.active.Type)
+			}
+			expectType = true
+		case tokens.Separator:
+			if activeArg == nil {
+				return newUnexpectedTokenException(sp.active.Type)
+			}
+			activeArg = nil
+		default:
+			return newUnexpectedTokenException(sp.active.Type)
+		}
+	}
+	if sp.active.Type != tokens.RightParentheses {
+		return newParseException("Reached unexpected end of program")
+	}
+	sp.fetch()
+
+	if sp.active.Type == tokens.Operator && sp.active.Value == ":" {
+		if sp.fetch().Type != tokens.Identifier {
+			return newUnexpectedTokenException(sp.active.Type)
+		}
+		sp.returns = nodes.NewTypecast(sp.active.Value, nodes.NewLiteral(runtime.Value{}))
+		sp.index++
+	}
+
+	return nil
+}
+
+func (sp *parameterizedSequenceParser) collectBody() error {
+	stmt, n, err := newSequenceParser(false, 0).Parse(sp.input[sp.index:])
+	if err != nil {
+		return err
+	}
+	sp.index += n + 1
+	sp.body = stmt
+	return nil
+}
+func (sp *parameterizedSequenceParser) Parse(input []tokens.Token) ([]*nodes.Typecast, nodes.Node, *nodes.Typecast, int, error) {
+	sp.index, sp.size = 0, len(input)
+	sp.input = input
+	if err := sp.collectArgs(); err != nil {
+		return nil, nil, nil, sp.index, err
+	}
+	if err := sp.collectBody(); err != nil {
+		return nil, nil, nil, sp.index, err
+	}
+	return sp.args, sp.body, sp.returns, sp.index, nil
+}
+
+func newParameterizedSequenceParser() *parameterizedSequenceParser {
+	return &parameterizedSequenceParser{args: make([]*nodes.Typecast, 0)}
+}
+
 type functionParser struct {
 	active      tokens.Token
 	index, size int
 	input       []tokens.Token
 	literal     bool
-	args        []*nodes.Typecast
-	returns     *nodes.Typecast
-	body        nodes.Node
 	alias       string
 }
 
 func (fp *functionParser) assignAlias() error {
 	if fp.fetch().Type != tokens.Identifier {
-		return newUnexpectedTokenException(fp.input[fp.index].Type)
+		return newParseException("Expected function name")
 	}
 	fp.alias = fp.active.Value
 	return nil
@@ -34,74 +132,6 @@ func (fp *functionParser) fetch() tokens.Token {
 	return fp.active
 }
 
-func (fp *functionParser) collectArgs() error {
-	if fp.fetch().Type != tokens.LeftParentheses {
-		return newUnexpectedTokenException(fp.active.Type)
-	}
-
-	var (
-		activeArg  nodes.Node
-		expectType bool
-	)
-	for fp.index < fp.size && fp.fetch().Type != tokens.RightParentheses {
-		switch fp.active.Type {
-		case tokens.Identifier:
-			if activeArg != nil {
-				if expectType {
-					fp.args = append(fp.args, nodes.NewTypecast(fp.active.Value, activeArg))
-					expectType = false
-				} else {
-					return newUnexpectedTokenException(fp.active.Type)
-				}
-			} else {
-				if !expectType {
-					activeArg = nodes.NewLiteral(runtime.Value{
-						Name: fp.active.Value,
-					})
-				} else {
-					return newUnexpectedTokenException(fp.active.Type)
-				}
-			}
-		case tokens.Operator:
-			if fp.active.Value != ":" {
-				return newUnexpectedTokenException(fp.active.Type)
-			}
-			expectType = true
-		case tokens.Separator:
-			if activeArg == nil {
-				return newUnexpectedTokenException(fp.active.Type)
-			}
-			activeArg = nil
-		default:
-			return newUnexpectedTokenException(fp.active.Type)
-		}
-	}
-	if fp.active.Type != tokens.RightParentheses {
-		return newParseException("Reached unexpected end of program")
-	}
-	fp.fetch()
-
-	if fp.active.Type == tokens.Operator && fp.active.Value == ":" {
-		if fp.fetch().Type != tokens.Identifier {
-			return newUnexpectedTokenException(fp.active.Type)
-		}
-		fp.returns = nodes.NewTypecast(fp.active.Value, nodes.NewLiteral(runtime.Value{}))
-		fp.index++
-	}
-
-	return nil
-}
-
-func (fp *functionParser) collectBody() error {
-	stmt, n, err := newSequenceParser(false, 0).Parse(fp.input[fp.index:])
-	if err != nil {
-		return err
-	}
-	fp.index += n + 1
-	fp.body = stmt
-	return nil
-}
-
 func (fp *functionParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	fp.index, fp.size = 1, len(input)
 	fp.input = input
@@ -111,13 +141,12 @@ func (fp *functionParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 			return nil, fp.index, err
 		}
 	}
-	if err := fp.collectArgs(); err != nil {
+	args, body, returns, n, err := newParameterizedSequenceParser().Parse(input[fp.index:])
+	if err != nil {
 		return nil, fp.index, err
 	}
-	if err := fp.collectBody(); err != nil {
-		return nil, fp.index, err
-	}
-	literal := nodes.NewFunctionLiteral(fp.body, fp.returns, fp.args...)
+	fp.index += n
+	literal := nodes.NewFunctionLiteral(body, returns, args...)
 	if fp.literal {
 		return literal, fp.index, nil
 	}
@@ -125,5 +154,5 @@ func (fp *functionParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 }
 
 func newFunctionParser(literal bool) *functionParser {
-	return &functionParser{literal: literal, args: []*nodes.Typecast{}}
+	return &functionParser{literal: literal}
 }
