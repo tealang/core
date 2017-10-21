@@ -30,24 +30,27 @@ func (sp *parameterizedSequenceParser) collectArgs() error {
 	}
 
 	var (
-		activeArg  nodes.Node
+		activeArgs []nodes.Node
 		expectType bool
 	)
 	for sp.index < sp.size && sp.fetch().Type != tokens.RightParentheses {
 		switch sp.active.Type {
 		case tokens.Identifier:
-			if activeArg != nil {
+			if activeArgs != nil {
 				if expectType {
-					sp.args = append(sp.args, nodes.NewTypecast(sp.active.Value, activeArg))
+					for _, arg := range activeArgs {
+						sp.args = append(sp.args, nodes.NewTypecast(sp.active.Value, arg))
+					}
+					activeArgs = nil
 					expectType = false
 				} else {
-					return newUnexpectedTokenException(sp.active.Type)
+					activeArgs = append(activeArgs, nodes.NewLiteral(runtime.Value{Name: sp.active.Value}))
 				}
 			} else {
 				if !expectType {
-					activeArg = nodes.NewLiteral(runtime.Value{
-						Name: sp.active.Value,
-					})
+					activeArgs = []nodes.Node{
+						nodes.NewLiteral(runtime.Value{Name: sp.active.Value}),
+					}
 				} else {
 					return newUnexpectedTokenException(sp.active.Type)
 				}
@@ -58,10 +61,6 @@ func (sp *parameterizedSequenceParser) collectArgs() error {
 			}
 			expectType = true
 		case tokens.Separator:
-			if activeArg == nil {
-				return newUnexpectedTokenException(sp.active.Type)
-			}
-			activeArg = nil
 		default:
 			return newUnexpectedTokenException(sp.active.Type)
 		}
