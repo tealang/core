@@ -214,7 +214,7 @@ func (ns *Namespace) Find(space SearchSpace, alias string) (SearchItem, error) {
 		if ns.Parent != nil {
 			return ns.Parent.Find(space, alias)
 		}
-		return nil, errors.Errorf("item %s not found in namespace", item.Alias())
+		return nil, errors.Errorf("item %s not found in namespace", alias)
 	}
 	return item, nil
 }
