@@ -7,8 +7,11 @@ type ContextBehavior int
 const (
 	// BehaviorDefault is the normal behavior.
 	BehaviorDefault ContextBehavior = iota
+	// BehaviorContinue skips the body of the loop.
 	BehaviorContinue
+	// BehaviorBreak breaks the loop.
 	BehaviorBreak
+	// BehaviorReturn cancels the running sequence up to function level.
 	BehaviorReturn
 )
 

@@ -20,14 +20,17 @@ type Datatype struct {
 	Format Formatter
 }
 
+// SearchSpace returns the Datatype search space.
 func (Datatype) SearchSpace() SearchSpace {
 	return SearchDatatype
 }
 
+// Alias returns the datatypes name.
 func (datatype *Datatype) Alias() string {
 	return datatype.Name
 }
 
+// Update fails.
 func (datatype *Datatype) Update(item SearchItem) (SearchItem, error) {
 	return item, errors.Errorf("datatype %s can not be updated", datatype.Name)
 }
@@ -57,6 +60,7 @@ type Value struct {
 	Reference bool
 }
 
+// Rechange turns a (constant/variable) value into a (constant/variable) value.
 func (v Value) Rechange(constant bool) Value {
 	return Value{
 		Type:      v.Type,
@@ -68,6 +72,7 @@ func (v Value) Rechange(constant bool) Value {
 	}
 }
 
+// Rename changes the values name.
 func (v Value) Rename(alias string) Value {
 	return Value{
 		Type:      v.Type,
@@ -79,6 +84,7 @@ func (v Value) Rename(alias string) Value {
 	}
 }
 
+// VariableString generates a representation in the variable declaration format.
 func (v Value) VariableString() string {
 	if v.Type == nil {
 		return ":null"
@@ -143,20 +149,24 @@ func (v Value) Update(item SearchItem) (SearchItem, error) {
 	return v, nil
 }
 
+// Operator is a function with an associated operation symbol.
 type Operator struct {
 	Function
 	Symbol   string
 	Constant bool
 }
 
+// SearchSpace returns the operator search space.
 func (Operator) SearchSpace() SearchSpace {
 	return SearchOperator
 }
 
+// Alias returns the operators symbol.
 func (o Operator) Alias() string {
 	return o.Symbol
 }
 
+// Update changes the function and state of the operator.
 func (o Operator) Update(item SearchItem) (SearchItem, error) {
 	if o.Constant {
 		return o, errors.Errorf("operator %s can not be changed", o.Symbol)

@@ -7,16 +7,19 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Evaluable can be executed and results in a value.
 type Evaluable interface {
 	Eval(c *Context) (Value, error)
 }
 
+// Signature stores a function signature consisting of arguments, return value and function body.
 type Signature struct {
 	Expected []Value
 	Function Evaluable
 	Returns  Value
 }
 
+// Match checks if the arguments match to the signature.
 func (sign Signature) Match(args []Value) ([]Value, error) {
 	expected, got := len(sign.Expected), len(args)
 	if expected < got {
@@ -56,6 +59,7 @@ func (sign Signature) String() string {
 	return fmt.Sprintf("(%s)", strings.Join(items, ","))
 }
 
+// NewSignature creates a new signature.
 func NewSignature(returns Value, executes Evaluable, args []Value) Signature {
 	return Signature{
 		Returns:  returns,
@@ -64,11 +68,13 @@ func NewSignature(returns Value, executes Evaluable, args []Value) Signature {
 	}
 }
 
+// Function is a collection of signatures with a common source namespace.
 type Function struct {
 	Signatures []Signature
 	Source     *Namespace
 }
 
+// Eval executes the function, searching and executing a matching signature.
 func (f Function) Eval(c *Context, args []Value) (Value, error) {
 	for _, sign := range f.Signatures {
 		matched, err := sign.Match(args)
@@ -101,6 +107,7 @@ func (f Function) String() string {
 	return fmt.Sprintf("{%s}", strings.Join(items, ";"))
 }
 
+// NewFunction creates a new function using the given source namespace and signatures.
 func NewFunction(source *Namespace, signatures ...Signature) Function {
 	return Function{
 		Source:     source,
