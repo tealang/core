@@ -54,12 +54,12 @@ func loadMultiplication(c *runtime.Context) {
 		if a.Type == types.Float {
 			b, err = a.Type.Cast(b)
 			if err != nil {
-				return runtime.Value{}, err
+				return runtime.Value{}, errors.Wrap(err, "could not multiply")
 			}
 		} else if b.Type == types.Float {
 			a, err = b.Type.Cast(b)
 			if err != nil {
-				return runtime.Value{}, err
+				return runtime.Value{}, errors.Wrap(err, "could not multiply")
 			}
 		}
 		switch a.Type {
@@ -168,12 +168,12 @@ func loadDivision(c *runtime.Context) {
 		if a.Type == types.Float {
 			b, err = a.Type.Cast(b)
 			if err != nil {
-				return runtime.Value{}, err
+				return runtime.Value{}, errors.Wrap(err, "could not divide")
 			}
 		} else if b.Type == types.Float {
 			a, err = b.Type.Cast(b)
 			if err != nil {
-				return runtime.Value{}, err
+				return runtime.Value{}, errors.Wrap(err, "could not divide")
 			}
 		}
 		switch a.Type {
@@ -318,12 +318,12 @@ func loadAddition(c *runtime.Context) {
 		if a.Type == types.Float {
 			b, err = a.Type.Cast(b)
 			if err != nil {
-				return runtime.Value{}, err
+				return runtime.Value{}, errors.Wrap(err, "could not add")
 			}
 		} else if b.Type == types.Float {
 			a, err = b.Type.Cast(b)
 			if err != nil {
-				return runtime.Value{}, err
+				return runtime.Value{}, errors.Wrap(err, "could not add")
 			}
 		}
 		switch a.Type {
@@ -515,12 +515,12 @@ func loadSubtraction(c *runtime.Context) {
 		if a.Type == types.Float {
 			b, err = a.Type.Cast(b)
 			if err != nil {
-				return runtime.Value{}, err
+				return runtime.Value{}, errors.Wrap(err, "could not subtract")
 			}
 		} else if b.Type == types.Float {
 			a, err = b.Type.Cast(b)
 			if err != nil {
-				return runtime.Value{}, err
+				return runtime.Value{}, errors.Wrap(err, "could not subtract")
 			}
 		}
 		switch a.Type {

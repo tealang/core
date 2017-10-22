@@ -36,14 +36,14 @@ func (a *Declaration) Eval(c *runtime.Context) (runtime.Value, error) {
 	for i, node := range a.Childs {
 		value, err = node.Eval(c)
 		if err != nil {
-			return runtime.Value{}, err
+			return runtime.Value{}, errors.Wrap(err, "failed declaring values")
 		}
 		results[i] = value
 	}
 	// Step 2: store them
 	for i, value := range results {
 		if err = c.Namespace.Store(value.Rename(a.Alias[i]).Rechange(a.Constant)); err != nil {
-			return runtime.Value{}, err
+			return runtime.Value{}, errors.Wrap(err, "failed declaring values")
 		}
 	}
 	return value, nil

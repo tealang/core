@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"github.com/pkg/errors"
 	"github.com/tealang/core/lexer/tokens"
 	"github.com/tealang/core/runtime/nodes"
 )
@@ -36,7 +37,7 @@ func Parse(input []tokens.Token) (nodes.Node, int, error) {
 
 	seq, n, err := newSequenceParser(false, 0).Parse(cleaned)
 	if err != nil {
-		return nil, n, err
+		return nil, n, errors.Wrap(err, "error while parsing")
 	}
 	return seq, n, nil
 }

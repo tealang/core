@@ -70,7 +70,7 @@ func (literal *FunctionLiteral) buildSignature(c *runtime.Context) (runtime.Sign
 	for i, arg := range literal.Args {
 		value, err := arg.Eval(c)
 		if err != nil {
-			return runtime.Signature{}, err
+			return runtime.Signature{}, errors.Wrap(err, "could not build signature")
 		}
 		args[i] = value
 	}
@@ -79,7 +79,7 @@ func (literal *FunctionLiteral) buildSignature(c *runtime.Context) (runtime.Sign
 	if literal.Returns != nil {
 		value, err := literal.Returns.Eval(c)
 		if err != nil {
-			return runtime.Signature{}, err
+			return runtime.Signature{}, errors.Wrap(err, "failed generating return type")
 		}
 		returns = value
 	}
@@ -90,7 +90,7 @@ func (literal *FunctionLiteral) buildSignature(c *runtime.Context) (runtime.Sign
 func (literal *FunctionLiteral) Eval(c *runtime.Context) (runtime.Value, error) {
 	signature, err := literal.buildSignature(c)
 	if err != nil {
-		return runtime.Value{}, err
+		return runtime.Value{}, errors.Wrap(err, "failed evaluating function literal")
 	}
 	function := runtime.NewFunction(c.Namespace, signature)
 	return runtime.Value{

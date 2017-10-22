@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"github.com/pkg/errors"
 	"github.com/tealang/core/lexer/tokens"
 	"github.com/tealang/core/runtime/nodes"
 )
@@ -23,7 +24,7 @@ func (op *operatorParser) fetch() tokens.Token {
 
 func (op *operatorParser) assignSymbol() error {
 	if op.fetch().Type != tokens.Operator {
-		return newUnexpectedTokenException(op.input[op.index])
+		return errors.Errorf("expected operator symbol, got %s", op.active.Type)
 	}
 	op.symbol = op.active.Value
 	return nil
@@ -34,14 +35,14 @@ func (op *operatorParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	op.input = input
 
 	if op.fetch().Type != tokens.Identifier && op.active.Value != operatorKeyword {
-		return nil, op.index, newParseException("Expected operator keyword")
+		return nil, op.index, errors.New("expected operator keyword")
 	}
 	if err := op.assignSymbol(); err != nil {
-		return nil, op.index, err
+		return nil, op.index, errors.Wrap(err, "failed to parse operator")
 	}
 	args, body, returns, n, err := newParameterizedSequenceParser().Parse(input[op.index:])
 	if err != nil {
-		return nil, op.index, err
+		return nil, op.index, errors.Wrap(err, "failed to parse body")
 	}
 	op.index += n
 	return nodes.NewOperatorDefinition(op.symbol, body, returns, args...), op.index, nil

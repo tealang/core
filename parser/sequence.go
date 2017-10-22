@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"github.com/pkg/errors"
 	"github.com/tealang/core/lexer/tokens"
 	"github.com/tealang/core/runtime"
 	"github.com/tealang/core/runtime/nodes"
@@ -159,7 +160,7 @@ func (sp *sequenceParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 				handler = sp.handleTerm
 			}
 			if err := handler(); err != nil {
-				return sp.sequence, sp.index, err
+				return sp.sequence, sp.index, errors.Wrap(err, "failed handling sequence token")
 			}
 		}
 		if sp.cap != 0 && len(sp.sequence.Childs) >= sp.cap {
@@ -167,7 +168,7 @@ func (sp *sequenceParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 		}
 		if sp.index < sp.size && sp.statement {
 			if sp.input[sp.index].Type != tokens.Statement {
-				return sp.sequence, sp.index, Exception{"Expected end statement"}
+				return sp.sequence, sp.index, errors.New("expected end statement")
 			}
 			sp.index++
 		}

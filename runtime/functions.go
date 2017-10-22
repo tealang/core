@@ -20,7 +20,7 @@ type Signature struct {
 func (sign Signature) Match(args []Value) ([]Value, error) {
 	expected, got := len(sign.Expected), len(args)
 	if expected < got {
-		return nil, errors.Errorf("unknown signature, expected %d args, got %d", expected, got)
+		return nil, errors.Errorf("too many args, expected %d args, got %d", expected, got)
 	}
 
 	matched := make([]Value, expected)
@@ -31,11 +31,13 @@ func (sign Signature) Match(args []Value) ([]Value, error) {
 			}
 			casted, err := sign.Expected[i].Type.Cast(args[i])
 			if err != nil {
-				return nil, err
+				return nil, errors.Wrap(err, "signature not matching")
 			}
 			matched[i] = casted
 		} else if sign.Expected[i].Data != nil {
 			matched[i], _ = sign.Expected[i].Type.Cast(sign.Expected[i])
+		} else {
+			return nil, errors.Errorf("missing args, expected %d, got %d", expected, got)
 		}
 		matched[i].Name = sign.Expected[i].Name
 	}
@@ -80,9 +82,9 @@ func (f Function) Eval(c *Context, args []Value) (Value, error) {
 			}
 			value, err := sign.Function.Eval(c)
 			if err != nil {
-				return Value{}, err
+				return Value{}, errors.Wrap(err, "failed to evaluate")
 			}
-			if sign.Returns.Type != value.Type {
+			if sign.Returns.Type != nil && !value.Type.KindOf(sign.Returns.Type) {
 				return Value{}, errors.Errorf("expected return type %s, got %s", sign.Returns.Type, value.Type)
 			}
 			return value, nil

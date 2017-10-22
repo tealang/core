@@ -3,6 +3,7 @@ package nodes
 import (
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/tealang/core/runtime"
 )
 
@@ -31,7 +32,7 @@ func (n *Sequence) Eval(c *runtime.Context) (runtime.Value, error) {
 		c.Behavior = runtime.BehaviorDefault
 		value, err = node.Eval(c)
 		if err != nil {
-			return value, err
+			return value, errors.Wrap(err, "failed evaluating sequence")
 		}
 		if c.Behavior != runtime.BehaviorDefault {
 			break

@@ -3,6 +3,7 @@ package nodes
 import (
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/tealang/core/runtime"
 	"github.com/tealang/core/runtime/types"
 )
@@ -22,7 +23,7 @@ func (b *Branch) Eval(c *runtime.Context) (runtime.Value, error) {
 		if err == nil {
 			return value, nil
 		} else if _, ok := err.(ConditionalException); !ok {
-			return runtime.Value{}, err
+			return runtime.Value{}, errors.Wrap(err, "failed to execute condition")
 		}
 	}
 	return runtime.Value{}, nil
@@ -65,7 +66,7 @@ func (cd *Conditional) Eval(c *runtime.Context) (runtime.Value, error) {
 	condition, body := cd.Childs[0], cd.Childs[1]
 	value, err := condition.Eval(c)
 	if err != nil {
-		return runtime.Value{}, err
+		return runtime.Value{}, errors.Wrap(err, "failed evaluating conditional")
 	}
 	if value.Type != types.Bool {
 		return runtime.Value{}, ConditionalTypeException{value.Type}

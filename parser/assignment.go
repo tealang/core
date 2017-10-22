@@ -1,7 +1,10 @@
 package parser
 
-import "github.com/tealang/core/lexer/tokens"
-import "github.com/tealang/core/runtime/nodes"
+import (
+	"github.com/pkg/errors"
+	"github.com/tealang/core/lexer/tokens"
+	"github.com/tealang/core/runtime/nodes"
+)
 
 type assignmentParser struct {
 	index, size int
@@ -24,18 +27,18 @@ func (ap *assignmentParser) collectAliases() error {
 			break
 		case tokens.Operator:
 			if active.Value != "=" {
-				return newUnexpectedTokenException(active)
+				return errors.Errorf("expected assignment operator, got %s", active.Value)
 			}
 			collectAliases = false
 		case tokens.Identifier:
 			ap.assignment.Alias = append(ap.assignment.Alias, active.Value)
 		default:
-			return newUnexpectedTokenException(active)
+			return errors.Errorf("did not expect token %s", active.Type)
 		}
 		ap.index++
 	}
 	if collectAliases {
-		return Exception{"Expected assignment operator"}
+		return errors.New("expected assignment operator")
 	}
 	return nil
 }
@@ -61,11 +64,11 @@ func (ap *assignmentParser) Parse(input []tokens.Token) (nodes.Node, int, error)
 	ap.input = input
 
 	if err := ap.collectAliases(); err != nil {
-		return ap.assignment, ap.index, err
+		return ap.assignment, ap.index, errors.Wrap(err, "collecting aliases")
 	}
 
 	if err := ap.assignValues(); err != nil {
-		return ap.assignment, ap.index, err
+		return ap.assignment, ap.index, errors.Wrap(err, "assigning values")
 	}
 
 	return ap.assignment, ap.index, nil

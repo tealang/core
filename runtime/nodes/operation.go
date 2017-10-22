@@ -37,7 +37,7 @@ func (o *Operation) Eval(c *runtime.Context) (runtime.Value, error) {
 	}
 	result, err := op.Eval(c, args)
 	if err != nil {
-		return runtime.Value{}, errors.Wrap(err, "operation failed")
+		return runtime.Value{}, errors.Wrap(err, "operation "+o.Symbol+" failed")
 	}
 	c.Behavior = runtime.BehaviorDefault
 	return result, nil

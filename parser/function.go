@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"github.com/pkg/errors"
 	"github.com/tealang/core/lexer/tokens"
 	"github.com/tealang/core/runtime"
 	"github.com/tealang/core/runtime/nodes"
@@ -26,7 +27,7 @@ func (sp *parameterizedSequenceParser) fetch() tokens.Token {
 
 func (sp *parameterizedSequenceParser) collectArgs() error {
 	if sp.fetch().Type != tokens.LeftParentheses {
-		return newUnexpectedTokenException(sp.active)
+		return errors.Errorf("did expect left parentheses, got %s", sp.active.Type)
 	}
 
 	var (
@@ -52,27 +53,27 @@ func (sp *parameterizedSequenceParser) collectArgs() error {
 						nodes.NewLiteral(runtime.Value{Name: sp.active.Value}),
 					}
 				} else {
-					return newUnexpectedTokenException(sp.active)
+					return errors.New("did not expect identifier")
 				}
 			}
 		case tokens.Operator:
 			if sp.active.Value != ":" {
-				return newUnexpectedTokenException(sp.active)
+				return errors.Errorf("expected typecast operator, got %s", sp.active.Value)
 			}
 			expectType = true
 		case tokens.Separator:
 		default:
-			return newUnexpectedTokenException(sp.active)
+			return errors.Errorf("did not expect token %s", sp.active.Type)
 		}
 	}
 	if sp.active.Type != tokens.RightParentheses {
-		return newParseException("Reached unexpected end of program")
+		return errors.New("expected right parentheses, reached unexpected end of program")
 	}
 	sp.fetch()
 
 	if sp.active.Type == tokens.Operator && sp.active.Value == ":" {
 		if sp.fetch().Type != tokens.Identifier {
-			return newUnexpectedTokenException(sp.active)
+			return errors.Errorf("expected results cast, got %s", sp.active.Type)
 		}
 		sp.returns = nodes.NewTypecast(sp.active.Value, nodes.NewLiteral(runtime.Value{}))
 		sp.index++
@@ -94,10 +95,10 @@ func (sp *parameterizedSequenceParser) Parse(input []tokens.Token) ([]*nodes.Typ
 	sp.index, sp.size = 0, len(input)
 	sp.input = input
 	if err := sp.collectArgs(); err != nil {
-		return nil, nil, nil, sp.index, err
+		return nil, nil, nil, sp.index, errors.Wrap(err, "failed collecting args")
 	}
 	if err := sp.collectBody(); err != nil {
-		return nil, nil, nil, sp.index, err
+		return nil, nil, nil, sp.index, errors.Wrap(err, "failed parsing body")
 	}
 	return sp.args, sp.body, sp.returns, sp.index, nil
 }
@@ -116,7 +117,7 @@ type functionParser struct {
 
 func (fp *functionParser) assignAlias() error {
 	if fp.fetch().Type != tokens.Identifier {
-		return newParseException("Expected function name")
+		return errors.Errorf("expected function alias, got %s", fp.active.Type)
 	}
 	fp.alias = fp.active.Value
 	return nil
@@ -137,12 +138,12 @@ func (fp *functionParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	if !fp.literal {
 		err := fp.assignAlias()
 		if err != nil {
-			return nil, fp.index, err
+			return nil, fp.index, errors.Wrap(err, "failed to parse function")
 		}
 	}
 	args, body, returns, n, err := newParameterizedSequenceParser().Parse(input[fp.index:])
 	if err != nil {
-		return nil, fp.index, err
+		return nil, fp.index, errors.Wrap(err, "failed to parse function")
 	}
 	fp.index += n
 	literal := nodes.NewFunctionLiteral(body, returns, args...)

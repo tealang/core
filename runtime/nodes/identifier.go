@@ -3,6 +3,7 @@ package nodes
 import (
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/tealang/core/runtime"
 )
 
@@ -26,7 +27,7 @@ func (Identifier) Name() string {
 func (i *Identifier) Eval(c *runtime.Context) (runtime.Value, error) {
 	item, err := c.Namespace.Find(runtime.SearchIdentifier, i.Alias)
 	if err != nil {
-		return runtime.Value{}, err
+		return runtime.Value{}, errors.Wrap(err, "failed evaluating identifier")
 	}
 	switch v := item.(type) {
 	case runtime.Value:

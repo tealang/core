@@ -190,7 +190,7 @@ func (tp *termParser) handleOperator() error {
 		tp.operators.Pop()
 		for i := 0; i < tp.argCount(top); i++ {
 			if tp.output.Empty() {
-				return newMissingOperandsException(tp.argCount(top), i)
+				return errors.Errorf("%s missing operands, expected %d, got %d", top.Value, tp.argCount(top), i)
 			}
 			top.Node.AddFront(tp.output.Peek().Node)
 			tp.output.Pop()
@@ -207,7 +207,7 @@ func (tp *termParser) handleSeparator() error {
 		tp.operators.Pop()
 		for i := 0; i < tp.argCount(top); i++ {
 			if tp.output.Empty() {
-				return Exception{"Missing operands"}
+				return errors.Errorf("%s missing operands, expected %d, got %d", top.Value, tp.argCount(top), i)
 			}
 			top.Node.AddFront(tp.output.Peek().Node)
 			tp.output.Pop()
@@ -235,7 +235,7 @@ func (tp *termParser) handleRightParentheses() error {
 		tp.operators.Pop()
 		for i := 0; i < tp.argCount(top); i++ {
 			if tp.output.Empty() {
-				return Exception{"Missing operands"}
+				return errors.Errorf("%s missing operands, expected %d, got %d", top.Value, tp.argCount(top), i)
 			}
 			top.Node.AddFront(tp.output.Peek().Node)
 			tp.output.Pop()
@@ -286,24 +286,16 @@ parser:
 	for ; tp.index < tp.size && tp.keepParsing; tp.index++ {
 		tp.fetch(false)
 
-		/*
-			fmt.Println("------------------------------")
-			fmt.Println("ACTIVE", tp.active, "PREVIOUS", tp.previous, "NEXT", tp.next)
-			fmt.Println("OPERATORS", tp.operators)
-			fmt.Println("OUTPUT", tp.output)
-			fmt.Println("------------------------------")
-		*/
-
 		switch tp.active.Type {
 		case tokens.Statement, tokens.RightBlock, tokens.LeftBlock:
 			break parser
 		default:
 			handler, ok := tp.handlers[tp.active.Type]
 			if !ok {
-				return nil, 0, Exception{"Unexpected token type"}
+				return nil, 0, errors.Errorf("did not expect token %s", tp.active.Type)
 			}
 			if err := handler(); err != nil {
-				return nil, 0, err
+				return nil, 0, errors.Wrap(err, "failed handling term token")
 			}
 		}
 	}
@@ -315,25 +307,16 @@ parser:
 		case tokens.Operator:
 			for i := 0; i < tp.argCount(top); i++ {
 				if tp.output.Empty() {
-					return nil, 0, Exception{"Missing operands"}
+					return nil, 0, errors.Errorf("%s missing operands, expected %d, got %d", top.Value, tp.argCount(top), i)
 				}
 				top.Node.AddFront(tp.output.Peek().Node)
 				tp.output.Pop()
 			}
 			tp.output.Push(top)
 		default:
-			return nil, 0, Exception{"Expected closing bracket"}
+			return nil, 0, errors.New("missing closing bracket")
 		}
 	}
-
-	/*
-		fmt.Println("------------------------------")
-		fmt.Println("END OF TERM")
-		fmt.Println("OPERATORS", tp.operators)
-		fmt.Println("OUTPUT", tp.output)
-		fmt.Println("------------------------------")
-	*/
-
 	return tp.output.Peek().Node, tp.index, nil
 }
 

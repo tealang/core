@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"github.com/pkg/errors"
 	"github.com/tealang/core/lexer/tokens"
 	"github.com/tealang/core/runtime/nodes"
 )
@@ -15,13 +16,13 @@ func (bp *branchParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	for input[bp.index].Value == ifKeyword {
 		condition, n, err := newTermParser().Parse(input[bp.index+1:])
 		if err != nil {
-			return bp.branch, bp.index, err
+			return bp.branch, bp.index, errors.Wrap(err, "can not parse condition")
 		}
 		// skip offset
 		bp.index += n + 1
 		stmt, n, err := newSequenceParser(false, 0).Parse(input[bp.index+1:])
 		if err != nil {
-			return bp.branch, bp.index, err
+			return bp.branch, bp.index, errors.Wrap(err, "can not parse body")
 		}
 		// skip right block and offset
 		bp.index += n + 2
@@ -39,7 +40,7 @@ func (bp *branchParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 		// must substitute, not encapsulated in conditional
 		stmt, n, err := newSequenceParser(true, 0).Parse(input[bp.index+1:])
 		if err != nil {
-			return bp.branch, bp.index, err
+			return bp.branch, bp.index, errors.Wrap(err, "can not parse else body")
 		}
 		bp.index += n + 2
 		bp.branch.AddBack(stmt)

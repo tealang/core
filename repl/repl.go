@@ -50,14 +50,14 @@ func (r *Instance) Interpret(input string) (string, error) {
 	tokens := lexer.Lex(input)
 	ast, _, err := parser.Parse(tokens)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "failed to interpret")
 	}
 	if r.cfg.OutputGraph {
 		return fmt.Sprintf(graphvizFormat, strings.Join(ast.Graphviz(graphvizItem), "\n")), nil
 	}
 	output, err := ast.Eval(r.context)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "failed to interpret")
 	}
 	if output.Type != nil {
 		return output.String(), nil

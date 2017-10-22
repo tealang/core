@@ -35,14 +35,14 @@ func (a *Assignment) Eval(c *runtime.Context) (runtime.Value, error) {
 	for i, node := range a.Childs {
 		value, err = node.Eval(c)
 		if err != nil {
-			return runtime.Value{}, err
+			return runtime.Value{}, errors.Wrap(err, "failed to assign values")
 		}
 		results[i] = value
 	}
 	// Step 2: store them
 	for i, value := range results {
 		if err = c.Namespace.Update(value.Rename(a.Alias[i])); err != nil {
-			return runtime.Value{}, err
+			return runtime.Value{}, errors.Wrap(err, "failed to assign values")
 		}
 	}
 	return value, nil

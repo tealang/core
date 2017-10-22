@@ -1,6 +1,9 @@
 package nodes
 
-import "github.com/tealang/core/runtime"
+import (
+	"github.com/pkg/errors"
+	"github.com/tealang/core/runtime"
+)
 
 // Controller executes a range of statements and modifies the current context behavior before returning..
 type Controller struct {
@@ -20,7 +23,7 @@ func (ctrl *Controller) Eval(c *runtime.Context) (runtime.Value, error) {
 	for _, n := range ctrl.Childs {
 		value, err = n.Eval(c)
 		if err != nil {
-			return value, err
+			return value, errors.Wrap(err, "failed evaluating controller")
 		}
 	}
 	c.Behavior = ctrl.Behavior
