@@ -1,6 +1,7 @@
 package operators
 
 import (
+	"github.com/pkg/errors"
 	"github.com/tealang/core/runtime"
 	"github.com/tealang/core/runtime/nodes"
 	"github.com/tealang/core/runtime/types"
@@ -18,12 +19,12 @@ func loadGreaterEqual(c *runtime.Context) {
 		if a.Type == types.Float {
 			b, err = a.Type.Cast(b)
 			if err != nil {
-				return runtime.Value{}, err
+				return runtime.Value{}, errors.Wrap(err, "can not compare")
 			}
 		} else if b.Type == types.Float {
 			a, err = b.Type.Cast(b)
 			if err != nil {
-				return runtime.Value{}, err
+				return runtime.Value{}, errors.Wrap(err, "can not compare")
 			}
 		}
 		switch a.Type {
@@ -38,7 +39,7 @@ func loadGreaterEqual(c *runtime.Context) {
 				Data: a.Data.(float64) >= b.Data.(float64),
 			}, nil
 		}
-		return runtime.Value{}, runtime.NewNotApplicableException("<", a.Type, b.Type)
+		return runtime.Value{}, errors.New("operator >= not applicable")
 	})
 	greaterEqualFloat := runtime.Signature{
 		Expected: []runtime.Value{
@@ -133,12 +134,12 @@ func loadSmallerEqual(c *runtime.Context) {
 		if a.Type == types.Float {
 			b, err = a.Type.Cast(b)
 			if err != nil {
-				return runtime.Value{}, err
+				return runtime.Value{}, errors.Wrap(err, "can not compare")
 			}
 		} else if b.Type == types.Float {
 			a, err = b.Type.Cast(b)
 			if err != nil {
-				return runtime.Value{}, err
+				return runtime.Value{}, errors.Wrap(err, "can not compare")
 			}
 		}
 		switch a.Type {
@@ -153,7 +154,7 @@ func loadSmallerEqual(c *runtime.Context) {
 				Data: a.Data.(float64) <= b.Data.(float64),
 			}, nil
 		}
-		return runtime.Value{}, runtime.NewNotApplicableException("<", a.Type, b.Type)
+		return runtime.Value{}, errors.New("operator <= not applicable")
 	})
 	smallerEqualFloat := runtime.Signature{
 		Expected: []runtime.Value{
@@ -248,12 +249,12 @@ func loadGreater(c *runtime.Context) {
 		if a.Type == types.Float {
 			b, err = a.Type.Cast(b)
 			if err != nil {
-				return runtime.Value{}, err
+				return runtime.Value{}, errors.Wrap(err, "can not compare")
 			}
 		} else if b.Type == types.Float {
 			a, err = b.Type.Cast(b)
 			if err != nil {
-				return runtime.Value{}, err
+				return runtime.Value{}, errors.Wrap(err, "can not compare")
 			}
 		}
 		switch a.Type {
@@ -268,7 +269,7 @@ func loadGreater(c *runtime.Context) {
 				Data: a.Data.(float64) > b.Data.(float64),
 			}, nil
 		}
-		return runtime.Value{}, runtime.NewNotApplicableException("<", a.Type, b.Type)
+		return runtime.Value{}, errors.New("operator > not applicable")
 	})
 	greaterFloat := runtime.Signature{
 		Expected: []runtime.Value{
@@ -363,12 +364,12 @@ func loadSmaller(c *runtime.Context) {
 		if a.Type == types.Float {
 			b, err = a.Type.Cast(b)
 			if err != nil {
-				return runtime.Value{}, err
+				return runtime.Value{}, errors.Wrap(err, "can not compare")
 			}
 		} else if b.Type == types.Float {
 			a, err = b.Type.Cast(b)
 			if err != nil {
-				return runtime.Value{}, err
+				return runtime.Value{}, errors.Wrap(err, "can not compare")
 			}
 		}
 		switch a.Type {
@@ -383,7 +384,7 @@ func loadSmaller(c *runtime.Context) {
 				Data: a.Data.(float64) < b.Data.(float64),
 			}, nil
 		}
-		return runtime.Value{}, runtime.NewNotApplicableException("<", a.Type, b.Type)
+		return runtime.Value{}, errors.New("operator < not applicable")
 	})
 	smallerFloatFloat := runtime.Signature{
 		Expected: []runtime.Value{
@@ -466,6 +467,7 @@ func loadSmaller(c *runtime.Context) {
 	c.Namespace.Store(smaller)
 }
 
+// LoadCompare loads comparison operators into the runtime context.
 func LoadCompare(c *runtime.Context) {
 	loadSmaller(c)
 	loadSmallerEqual(c)

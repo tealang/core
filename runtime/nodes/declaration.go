@@ -3,6 +3,7 @@ package nodes
 import (
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/tealang/core/runtime"
 )
 
@@ -24,7 +25,7 @@ func (Declaration) Name() string {
 
 func (a *Declaration) Eval(c *runtime.Context) (runtime.Value, error) {
 	if len(a.Childs) != len(a.Alias) {
-		return runtime.Value{}, runtime.AssignmentMismatchException{}
+		return runtime.Value{}, errors.Errorf("can not declare %d values and assign to %d names", len(a.Childs), len(a.Alias))
 	}
 	var (
 		value runtime.Value

@@ -1,6 +1,7 @@
 package operators
 
 import (
+	"github.com/pkg/errors"
 	"github.com/tealang/core/runtime"
 	"github.com/tealang/core/runtime/nodes"
 	"github.com/tealang/core/runtime/types"
@@ -15,7 +16,7 @@ func loadRemainder(c *runtime.Context) {
 			b         = identB.(runtime.Value)
 		)
 		if b.Data.(int64) == 0 {
-			return runtime.Value{}, runtime.Exception{Message: "Cannot divide by 0"}
+			return runtime.Value{}, errors.New("can not divide by 0")
 		}
 		return runtime.Value{
 			Type: types.Integer,
@@ -73,7 +74,7 @@ func loadMultiplication(c *runtime.Context) {
 				Data: a.Data.(float64) * b.Data.(float64),
 			}, nil
 		}
-		return runtime.Value{}, runtime.NewNotApplicableException("/", a.Type, b.Type)
+		return runtime.Value{}, errors.New("operation * not applicable")
 	})
 	mulFloat := runtime.Signature{
 		Expected: []runtime.Value{
@@ -179,7 +180,7 @@ func loadDivision(c *runtime.Context) {
 		case types.Integer:
 			bv := b.Data.(int64)
 			if bv == 0 {
-				return runtime.Value{}, runtime.Exception{Message: "Cannot divide by 0"}
+				return runtime.Value{}, errors.New("can not divide by 0")
 			}
 			return runtime.Value{
 				Type: types.Integer,
@@ -188,14 +189,14 @@ func loadDivision(c *runtime.Context) {
 		case types.Float:
 			bv := b.Data.(float64)
 			if bv == 0 {
-				return runtime.Value{}, runtime.Exception{Message: "Cannot divide by 0"}
+				return runtime.Value{}, errors.New("can not divide by 0")
 			}
 			return runtime.Value{
 				Type: types.Float,
 				Data: a.Data.(float64) / bv,
 			}, nil
 		}
-		return runtime.Value{}, runtime.NewNotApplicableException("/", a.Type, b.Type)
+		return runtime.Value{}, errors.New("operation / not applicable")
 	})
 	divFloat := runtime.Signature{
 		Expected: []runtime.Value{
@@ -337,7 +338,7 @@ func loadAddition(c *runtime.Context) {
 				Data: a.Data.(float64) + b.Data.(float64),
 			}, nil
 		}
-		return runtime.Value{}, runtime.NewNotApplicableException("/", a.Type, b.Type)
+		return runtime.Value{}, errors.New("operation + not applicable")
 	})
 	plusFloat := runtime.Signature{
 		Expected: []runtime.Value{
@@ -534,7 +535,7 @@ func loadSubtraction(c *runtime.Context) {
 				Data: a.Data.(float64) - b.Data.(float64),
 			}, nil
 		}
-		return runtime.Value{}, runtime.NewNotApplicableException("/", a.Type, b.Type)
+		return runtime.Value{}, errors.New("operator - not applicable")
 	})
 	subFloat := runtime.Signature{
 		Expected: []runtime.Value{
@@ -619,6 +620,7 @@ func loadSubtraction(c *runtime.Context) {
 	c.Namespace.Store(sub)
 }
 
+// LoadBasicMath loads basic math operators like addition and subtraction into the runtime context.
 func LoadBasicMath(c *runtime.Context) {
 	loadAddition(c)
 	loadDivision(c)

@@ -1,3 +1,4 @@
+// Package lexer provides a simple lexer that generates a discrete series of tokens from an input string.
 package lexer
 
 import "github.com/tealang/core/lexer/tokens"

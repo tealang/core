@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/pkg/errors"
 	"github.com/tealang/core/runtime"
 	"github.com/tealang/core/runtime/types"
 
@@ -120,7 +121,7 @@ func (tp *termParser) handleIdentifier() error {
 	case functionKeyword:
 		literal, n, err := newFunctionParser(true).Parse(tp.input[tp.index:])
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to parse function")
 		}
 		tp.index += n
 		tp.output.Push(tp.itemFromActive(literal))
@@ -149,7 +150,7 @@ func (tp *termParser) handleNumber() error {
 	if strings.Contains(tp.active.Value, ".") {
 		f, err := strconv.ParseFloat(tp.active.Value, 64)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to parse float literal")
 		}
 		tp.output.Push(tp.itemFromActive(nodes.NewLiteral(runtime.Value{
 			Type:     types.Float,
@@ -159,7 +160,7 @@ func (tp *termParser) handleNumber() error {
 	} else {
 		i, err := strconv.ParseInt(tp.active.Value, 10, 64)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to parse float literal")
 		}
 		tp.output.Push(tp.itemFromActive(nodes.NewLiteral(runtime.Value{
 			Type:     types.Integer,

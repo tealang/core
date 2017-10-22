@@ -1,6 +1,10 @@
 package runtime
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/pkg/errors"
+)
 
 // Formatter formats the given value in the datatype format.
 type Formatter func(v Value) string
@@ -25,7 +29,7 @@ func (datatype *Datatype) Alias() string {
 }
 
 func (datatype *Datatype) Update(item SearchItem) (SearchItem, error) {
-	return item, Exception{"Datatypes cannot be overriden"}
+	return item, errors.Errorf("datatype %s can not be updated", datatype.Name)
 }
 
 // KindOf checks if this datatype is of the same kind as the given datatype.
@@ -110,31 +114,28 @@ func (v Value) SearchSpace() SearchSpace {
 // Update sets the data of the value.
 func (v Value) Update(item SearchItem) (SearchItem, error) {
 	if v.Constant {
-		return v, ConstantException{v.Name}
+		return v, errors.Errorf("value %s can not be changed", v)
 	}
 	if v.SearchSpace() != item.SearchSpace() {
-		return v, SearchSpaceException{}
+		return v, errors.Errorf("item to update is from different search space")
 	}
 	c, ok := item.(Value)
 	if !ok {
-		return v, UnexpectedItemException{Expected: Value{}, Got: item}
+		return v, errors.Errorf("expected value item, got %s", item)
 	}
 	if !c.Type.KindOf(v.Type) {
-		return v, CastException{
-			From: c.Type,
-			To:   v.Type,
-		}
+		return v, errors.Errorf("can not assign type %s to %s", c.Type, v.Type)
 	}
 
 	if v.Reference {
 		if !c.Reference {
-			return v, ReferenceValueException{}
+			return v, errors.Errorf("value can not be assigned to reference %s", v.Name)
 		}
 		v.Data = c.Data
 	} else {
 		casted, err := v.Type.Cast(c)
 		if err != nil {
-			return v, err
+			return v, errors.Wrap(err, "could not update value")
 		}
 		v.Data = casted.Data
 	}
@@ -158,14 +159,14 @@ func (o Operator) Alias() string {
 
 func (o Operator) Update(item SearchItem) (SearchItem, error) {
 	if o.Constant {
-		return o, ConstantException{o.Symbol}
+		return o, errors.Errorf("operator %s can not be changed", o.Symbol)
 	}
 	if o.SearchSpace() != item.SearchSpace() {
-		return o, SearchSpaceException{}
+		return o, errors.Errorf("item to update is from different search space")
 	}
 	op, ok := item.(Operator)
 	if !ok {
-		return o, UnexpectedItemException{Operator{}, item}
+		return o, errors.Errorf("expected item operator, got %s", item)
 	}
 	o.Signatures = op.Signatures
 	return o, nil
@@ -213,7 +214,7 @@ func (ns *Namespace) Find(space SearchSpace, alias string) (SearchItem, error) {
 		if ns.Parent != nil {
 			return ns.Parent.Find(space, alias)
 		}
-		return nil, NamespaceException{alias}
+		return nil, errors.Errorf("item %s not found in namespace", item.Alias())
 	}
 	return item, nil
 }
@@ -223,13 +224,13 @@ func (ns *Namespace) Update(item SearchItem) error {
 	existing, ok := ns.Storage[item.SearchSpace()][item.Alias()]
 	if !ok {
 		if ns.Parent == nil {
-			return NamespaceException{item.Alias()}
+			return errors.Errorf("item %s not found in namespace", item.Alias())
 		}
 		return ns.Parent.Update(item)
 	}
 	existing, err := existing.Update(item)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "update failed")
 	}
 	ns.Storage[item.SearchSpace()][item.Alias()] = existing
 	return nil
@@ -239,7 +240,7 @@ func (ns *Namespace) Update(item SearchItem) error {
 func (ns *Namespace) Store(item SearchItem) error {
 	_, ok := ns.Storage[item.SearchSpace()][item.Alias()]
 	if ok {
-		return StoreExistsException{item.Alias()}
+		return errors.Errorf("item %s already exists in namespace", item.Alias())
 	}
 	ns.Storage[item.SearchSpace()][item.Alias()] = item
 	return nil

@@ -1,3 +1,4 @@
+// Package operators provides operator implementations required by the runtime specification.
 package operators
 
 import (
@@ -250,6 +251,7 @@ func loadLogicalAnd(c *runtime.Context) {
 	c.Namespace.Store(and)
 }
 
+// LoadLogical loads basic boolean logic operators into the runtime context.
 func LoadLogical(c *runtime.Context) {
 	loadNegation(c)
 	loadLogicalAnd(c)

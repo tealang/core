@@ -3,6 +3,7 @@ package nodes
 import (
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/tealang/core/runtime"
 	"github.com/tealang/core/runtime/types"
 )
@@ -19,30 +20,30 @@ func (FunctionCall) Name() string {
 func (call *FunctionCall) Eval(c *runtime.Context) (runtime.Value, error) {
 	item, err := c.Namespace.Find(runtime.SearchIdentifier, call.Alias)
 	if err != nil {
-		return runtime.Value{}, err
+		return runtime.Value{}, errors.Wrap(err, "undefined function")
 	}
 	value, ok := item.(runtime.Value)
 	if err != nil {
-		return runtime.Value{}, runtime.UnexpectedItemException{Expected: runtime.Value{}, Got: item}
+		return runtime.Value{}, errors.Errorf("expected value, got %s", item)
 	}
 	if !value.Type.KindOf(types.Function) {
-		return runtime.Value{}, runtime.UncallableTypeException{Type: value.Type}
+		return runtime.Value{}, errors.Errorf("can not call value of type %s", value.Type)
 	}
 	callable, ok := value.Data.(runtime.Function)
 	if !ok {
-		return runtime.Value{}, runtime.UncallableTypeException{Type: value.Type}
+		return runtime.Value{}, errors.Errorf("expected function, got %s", value.Data)
 	}
 	values := make([]runtime.Value, len(call.Childs))
 	for i, n := range call.Childs {
 		v, err := n.Eval(c)
 		if err != nil {
-			return runtime.Value{}, err
+			return runtime.Value{}, errors.Wrap(err, "can not call function")
 		}
 		values[i] = v
 	}
 	result, err := callable.Eval(c, values)
 	if err != nil {
-		return runtime.Value{}, err
+		return runtime.Value{}, errors.Wrap(err, "function call failed")
 	}
 	c.Behavior = runtime.BehaviorDefault
 	return result, nil
@@ -132,7 +133,7 @@ func (OperatorDefinition) Name() string {
 func (definition *OperatorDefinition) Eval(c *runtime.Context) (runtime.Value, error) {
 	signature, err := definition.buildSignature(c)
 	if err != nil {
-		return runtime.Value{}, err
+		return runtime.Value{}, errors.Wrap(err, "can not build signature")
 	}
 	function := runtime.NewFunction(c.Namespace, signature)
 	operator := runtime.Operator{
@@ -141,7 +142,7 @@ func (definition *OperatorDefinition) Eval(c *runtime.Context) (runtime.Value, e
 		Constant: true,
 	}
 	if err := c.Namespace.Store(operator); err != nil {
-		return runtime.Value{}, err
+		return runtime.Value{}, errors.Wrap(err, "can not store operator")
 	}
 	return runtime.Value{
 		Type: types.Function,

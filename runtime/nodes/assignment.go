@@ -3,6 +3,7 @@ package nodes
 import (
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/tealang/core/runtime"
 )
 
@@ -23,7 +24,7 @@ func (a *Assignment) Graphviz(uid string) []string {
 
 func (a *Assignment) Eval(c *runtime.Context) (runtime.Value, error) {
 	if len(a.Childs) != len(a.Alias) {
-		return runtime.Value{}, runtime.AssignmentMismatchException{}
+		return runtime.Value{}, errors.Errorf("can not assign %d values to %d names", len(a.Childs), len(a.Alias))
 	}
 	var (
 		value runtime.Value

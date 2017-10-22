@@ -3,6 +3,7 @@ package nodes
 import (
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/tealang/core/runtime"
 )
 
@@ -20,23 +21,23 @@ func (Operation) Name() string {
 func (o *Operation) Eval(c *runtime.Context) (runtime.Value, error) {
 	item, err := c.Namespace.Find(runtime.SearchOperator, o.Symbol)
 	if err != nil {
-		return runtime.Value{}, err
+		return runtime.Value{}, errors.Wrap(err, "undefined operator")
 	}
 	op, ok := item.(runtime.Operator)
 	if !ok {
-		return runtime.Value{}, runtime.UnexpectedItemException{Expected: runtime.Operator{}, Got: item}
+		return runtime.Value{}, errors.Errorf("expected operator, got item %s", item)
 	}
 	args := make([]runtime.Value, len(o.Childs))
 	for i, n := range o.Childs {
 		v, err := n.Eval(c)
 		if err != nil {
-			return runtime.Value{}, err
+			return runtime.Value{}, errors.Wrap(err, "could not execute operation")
 		}
 		args[i] = v
 	}
 	result, err := op.Eval(c, args)
 	if err != nil {
-		return runtime.Value{}, err
+		return runtime.Value{}, errors.Wrap(err, "operation failed")
 	}
 	c.Behavior = runtime.BehaviorDefault
 	return result, nil

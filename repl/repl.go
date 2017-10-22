@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"strings"
 
+	"github.com/pkg/errors"
 	"github.com/tealang/core/lexer"
 	"github.com/tealang/core/parser"
 	"github.com/tealang/core/runtime"
@@ -35,11 +36,11 @@ const (
 func (r *Instance) Load(file string) error {
 	code, err := ioutil.ReadFile(file)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "can not execute")
 	}
 	_, err = r.Interpret(string(code))
 	if err != nil {
-		return err
+		return errors.Wrap(err, "execution failed")
 	}
 	return nil
 }

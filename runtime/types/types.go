@@ -4,14 +4,20 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/pkg/errors"
 	"github.com/tealang/core/runtime"
 )
 
+// Default types defined by runtime.
 var (
 	Any, Bool, Function *runtime.Datatype
 	Integer, Float      *runtime.Datatype
 	String              *runtime.Datatype
-	True, False         runtime.Value
+)
+
+// Boolean values.
+var (
+	True, False runtime.Value
 )
 
 func init() {
@@ -47,16 +53,6 @@ func init() {
 					Data: int64(0),
 					Name: v.Name,
 				}, nil
-			case Any:
-				i, ok := v.Data.(int64)
-				if !ok {
-					return runtime.Value{}, runtime.ExplicitCastException{From: Any, To: Integer}
-				}
-				return runtime.Value{
-					Type: Integer,
-					Data: i,
-					Name: v.Name,
-				}, nil
 			case Integer:
 				return v, nil
 			case Float:
@@ -68,7 +64,7 @@ func init() {
 			case String:
 				i, err := strconv.Atoi(v.Data.(string))
 				if err != nil {
-					return runtime.Value{}, runtime.ExplicitCastException{From: String, To: Integer}
+					return runtime.Value{}, errors.Wrap(err, "can not cast string to int")
 				}
 				return runtime.Value{
 					Type: Integer,
@@ -76,7 +72,7 @@ func init() {
 					Name: v.Name,
 				}, nil
 			default:
-				return runtime.Value{}, runtime.ExplicitCastException{From: v.Type, To: Integer}
+				return runtime.Value{}, errors.Errorf("can not cast %s to int", v.Type)
 			}
 		},
 	}
@@ -103,7 +99,7 @@ func init() {
 			case Float:
 				return v, nil
 			default:
-				return runtime.Value{}, runtime.ExplicitCastException{From: v.Type, To: Float}
+				return runtime.Value{}, errors.Errorf("can not cast %s to float", v.Type)
 			}
 		},
 	}
@@ -124,7 +120,7 @@ func init() {
 			case String:
 				return v, nil
 			default:
-				return runtime.Value{}, runtime.ExplicitCastException{From: v.Type, To: String}
+				return runtime.Value{}, errors.Errorf("can not cast %s to string", v.Type)
 			}
 		},
 	}
@@ -135,7 +131,7 @@ func init() {
 			if v.Type == Function {
 				return v, nil
 			}
-			return runtime.Value{}, runtime.ExplicitCastException{From: v.Type, To: Bool}
+			return runtime.Value{}, errors.Errorf("can not cast %s to func", v.Type)
 		},
 		Format: func(v runtime.Value) string {
 			return fmt.Sprintf("func<%s>", v.Data)
@@ -155,7 +151,7 @@ func init() {
 					Data: false,
 				}, nil
 			default:
-				return runtime.Value{}, runtime.ExplicitCastException{From: v.Type, To: Bool}
+				return runtime.Value{}, errors.Errorf("can not cast %s to bool", v.Type)
 			}
 		},
 		Format: func(v runtime.Value) string {
