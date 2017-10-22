@@ -44,7 +44,7 @@ func main() {
 	}
 
 	reader := bufio.NewReader(os.Stdin)
-	for env.IsActive() {
+	for env.Active {
 		fmt.Fprint(os.Stdout, replSymbol)
 		input, err := reader.ReadString('\n')
 		if err != nil {

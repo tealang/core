@@ -1,3 +1,4 @@
+// Package repl provides a simple interactive runtime environment.
 package repl
 
 import (
@@ -13,13 +14,15 @@ import (
 	"github.com/tealang/core/runtime/types"
 )
 
+// Config stores the REPL instance configuration.
 type Config struct {
 	OutputGraph bool
 }
 
+// Instance is a REPL runtime instance.
 type Instance struct {
+	Active  bool
 	context *runtime.Context
-	active  bool
 	cfg     Config
 }
 
@@ -28,10 +31,7 @@ const (
 	graphvizItem   = "head"
 )
 
-func (r *Instance) IsActive() bool {
-	return r.active
-}
-
+// Load fetches a file from disk and evaluates it in the runtime instance.
 func (r *Instance) Load(file string) error {
 	code, err := ioutil.ReadFile(file)
 	if err != nil {
@@ -44,9 +44,10 @@ func (r *Instance) Load(file string) error {
 	return nil
 }
 
+// Interpret runs the given input program in the runtime instance.
 func (r *Instance) Interpret(input string) (string, error) {
 	tokens := lexer.Lex(input)
-	ast, err := parser.New().Parse(tokens)
+	ast, _, err := parser.Parse(tokens)
 	if err != nil {
 		return "", err
 	}
@@ -63,10 +64,12 @@ func (r *Instance) Interpret(input string) (string, error) {
 	return "", nil
 }
 
+// Stop kills the running instance.
 func (r *Instance) Stop() {
-	r.active = false
+	r.Active = false
 }
 
+// New instantiates a new REPL runtime instance.
 func New(cfg Config) *Instance {
 	ctx := runtime.NewContext()
 
@@ -76,7 +79,7 @@ func New(cfg Config) *Instance {
 	functions.Load(ctx)
 
 	return &Instance{
-		active:  true,
+		Active:  true,
 		context: ctx,
 		cfg:     cfg,
 	}
