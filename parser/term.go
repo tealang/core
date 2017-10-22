@@ -206,7 +206,7 @@ func (tp *termParser) handleSeparator() error {
 		tp.operators.Pop()
 		for i := 0; i < tp.argCount(top); i++ {
 			if tp.output.Empty() {
-				return ParseException{"Missing operands"}
+				return Exception{"Missing operands"}
 			}
 			top.Node.AddFront(tp.output.Peek().Node)
 			tp.output.Pop()
@@ -234,7 +234,7 @@ func (tp *termParser) handleRightParentheses() error {
 		tp.operators.Pop()
 		for i := 0; i < tp.argCount(top); i++ {
 			if tp.output.Empty() {
-				return ParseException{"Missing operands"}
+				return Exception{"Missing operands"}
 			}
 			top.Node.AddFront(tp.output.Peek().Node)
 			tp.output.Pop()
@@ -299,7 +299,7 @@ parser:
 		default:
 			handler, ok := tp.handlers[tp.active.Type]
 			if !ok {
-				return nil, 0, ParseException{"Unexpected token type"}
+				return nil, 0, Exception{"Unexpected token type"}
 			}
 			if err := handler(); err != nil {
 				return nil, 0, err
@@ -314,14 +314,14 @@ parser:
 		case tokens.Operator:
 			for i := 0; i < tp.argCount(top); i++ {
 				if tp.output.Empty() {
-					return nil, 0, ParseException{"Missing operands"}
+					return nil, 0, Exception{"Missing operands"}
 				}
 				top.Node.AddFront(tp.output.Peek().Node)
 				tp.output.Pop()
 			}
 			tp.output.Push(top)
 		default:
-			return nil, 0, ParseException{"Expected closing bracket"}
+			return nil, 0, Exception{"Expected closing bracket"}
 		}
 	}
 

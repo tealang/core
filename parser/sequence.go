@@ -167,7 +167,7 @@ func (sp *sequenceParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 		}
 		if sp.index < sp.size && sp.statement {
 			if sp.input[sp.index].Type != tokens.Statement {
-				return sp.sequence, sp.index, ParseException{"Expected end statement"}
+				return sp.sequence, sp.index, Exception{"Expected end statement"}
 			}
 			sp.index++
 		}

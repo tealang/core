@@ -37,7 +37,7 @@ func (lp *loopParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	lp.index += n
 
 	if input[lp.index].Type != tokens.LeftBlock {
-		return nil, lp.index, newUnexpectedTokenException(input[lp.index].Type)
+		return nil, lp.index, newUnexpectedTokenException(input[lp.index])
 	}
 	if len(head.Childs) != 3 {
 		return nil, lp.index, newParseException("Expected three-tier for-loop")

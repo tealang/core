@@ -6,26 +6,27 @@ import (
 	"github.com/tealang/core/lexer/tokens"
 )
 
-type ParseException struct {
+// Exception is a exception that occured while parsing the input.
+type Exception struct {
 	message string
 }
 
-func (p ParseException) Error() string {
-	return fmt.Sprintf("ParseException: %s", p.message)
+func (p Exception) Error() string {
+	return fmt.Sprintf("error while parsing: %s", p.message)
 }
 
-func newParseException(message string) ParseException {
-	return ParseException{message}
+func newParseException(message string) Exception {
+	return Exception{message}
 }
 
-func newUnexpectedTokenException(t *tokens.Type) ParseException {
-	return newParseException(fmt.Sprintf("Did not expect token %s", t.Name))
+func newUnexpectedTokenException(t tokens.Token) Exception {
+	return newParseException(fmt.Sprintf("did not expect token %s of type %s", t.Value, t.Type.Name))
 }
 
-func newMissingOperatorException() ParseException {
-	return newParseException(fmt.Sprintf("Missing operator"))
+func newMissingOperatorException() Exception {
+	return newParseException(fmt.Sprintf("missing operator"))
 }
 
-func newMissingOperandsException(expected, got int) ParseException {
-	return newParseException(fmt.Sprintf("Missing operands, expected %d, got %d", expected, got))
+func newMissingOperandsException(expected, got int) Exception {
+	return newParseException(fmt.Sprintf("not enough operands, expected %d, got %d", expected, got))
 }

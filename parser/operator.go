@@ -23,7 +23,7 @@ func (op *operatorParser) fetch() tokens.Token {
 
 func (op *operatorParser) assignSymbol() error {
 	if op.fetch().Type != tokens.Operator {
-		return newUnexpectedTokenException(op.input[op.index].Type)
+		return newUnexpectedTokenException(op.input[op.index])
 	}
 	op.symbol = op.active.Value
 	return nil

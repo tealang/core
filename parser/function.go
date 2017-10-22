@@ -26,7 +26,7 @@ func (sp *parameterizedSequenceParser) fetch() tokens.Token {
 
 func (sp *parameterizedSequenceParser) collectArgs() error {
 	if sp.fetch().Type != tokens.LeftParentheses {
-		return newUnexpectedTokenException(sp.active.Type)
+		return newUnexpectedTokenException(sp.active)
 	}
 
 	var (
@@ -52,17 +52,17 @@ func (sp *parameterizedSequenceParser) collectArgs() error {
 						nodes.NewLiteral(runtime.Value{Name: sp.active.Value}),
 					}
 				} else {
-					return newUnexpectedTokenException(sp.active.Type)
+					return newUnexpectedTokenException(sp.active)
 				}
 			}
 		case tokens.Operator:
 			if sp.active.Value != ":" {
-				return newUnexpectedTokenException(sp.active.Type)
+				return newUnexpectedTokenException(sp.active)
 			}
 			expectType = true
 		case tokens.Separator:
 		default:
-			return newUnexpectedTokenException(sp.active.Type)
+			return newUnexpectedTokenException(sp.active)
 		}
 	}
 	if sp.active.Type != tokens.RightParentheses {
@@ -72,7 +72,7 @@ func (sp *parameterizedSequenceParser) collectArgs() error {
 
 	if sp.active.Type == tokens.Operator && sp.active.Value == ":" {
 		if sp.fetch().Type != tokens.Identifier {
-			return newUnexpectedTokenException(sp.active.Type)
+			return newUnexpectedTokenException(sp.active)
 		}
 		sp.returns = nodes.NewTypecast(sp.active.Value, nodes.NewLiteral(runtime.Value{}))
 		sp.index++

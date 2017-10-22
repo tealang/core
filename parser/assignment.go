@@ -24,18 +24,18 @@ func (ap *assignmentParser) collectAliases() error {
 			break
 		case tokens.Operator:
 			if active.Value != "=" {
-				return newUnexpectedTokenException(active.Type)
+				return newUnexpectedTokenException(active)
 			}
 			collectAliases = false
 		case tokens.Identifier:
 			ap.assignment.Alias = append(ap.assignment.Alias, active.Value)
 		default:
-			return newUnexpectedTokenException(active.Type)
+			return newUnexpectedTokenException(active)
 		}
 		ap.index++
 	}
 	if collectAliases {
-		return ParseException{"Expected assignment operator"}
+		return Exception{"Expected assignment operator"}
 	}
 	return nil
 }

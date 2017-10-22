@@ -23,7 +23,7 @@ func newDeclarationParser() *declarationParser {
 
 func (dp *declarationParser) Fetch(input []tokens.Token) (tokens.Token, error) {
 	if dp.Index >= len(input) {
-		return tokens.Token{}, ParseException{"Reached unexpected end of tokens"}
+		return tokens.Token{}, Exception{"Reached unexpected end of tokens"}
 	}
 	tk := input[dp.Index]
 	return tk, nil
@@ -35,7 +35,7 @@ func (dp *declarationParser) ParseConstantState(input []tokens.Token) error {
 		return err
 	}
 	if descriptor.Type != tokens.Identifier {
-		return ParseException{"Identifier state descriptor is no keyword identifier"}
+		return Exception{"Identifier state descriptor is no keyword identifier"}
 	}
 	switch descriptor.Value {
 	case variableKeyword:
@@ -43,7 +43,7 @@ func (dp *declarationParser) ParseConstantState(input []tokens.Token) error {
 	case constantKeyword:
 		dp.Declaration.Constant = true
 	default:
-		return ParseException{"Unknown identifier state descriptor"}
+		return Exception{"Unknown identifier state descriptor"}
 	}
 	dp.Index++
 	return nil
@@ -75,10 +75,10 @@ func (dp *declarationParser) CollectAliases(input []tokens.Token) error {
 			} else if active.Value == "=" {
 				dp.ExpectAssignment = true
 			} else {
-				return ParseException{"Unexpected operator"}
+				return Exception{"Unexpected operator"}
 			}
 		default:
-			return newUnexpectedTokenException(active.Type)
+			return newUnexpectedTokenException(active)
 		}
 		dp.Index++
 	}
@@ -87,7 +87,7 @@ func (dp *declarationParser) CollectAliases(input []tokens.Token) error {
 
 func (dp *declarationParser) StoreDefaultValues(input []tokens.Token) error {
 	if len(dp.Casts) != len(dp.Declaration.Alias) {
-		return ParseException{"Required type information not found"}
+		return Exception{"Required type information not found"}
 	}
 	for _, t := range dp.Casts {
 		dp.Declaration.AddBack(nodes.NewTypecast(t, nodes.NewLiteral(runtime.Value{})))
