@@ -7,20 +7,22 @@ import (
 )
 
 const (
-	constantKeyword = "let"
-	variableKeyword = "var"
-	returnKeyword   = "return"
-	breakKeyword    = "break"
-	defaultKeyword  = "default"
-	continueKeyword = "continue"
-	ifKeyword       = "if"
-	elseKeyword     = "else"
-	forKeyword      = "for"
-	functionKeyword = "func"
-	operatorKeyword = "operator"
-	trueKeyword     = "true"
-	falseKeyword    = "false"
-	nullKeyword     = "null"
+	constantKeyword    = "let"
+	variableKeyword    = "var"
+	returnKeyword      = "return"
+	breakKeyword       = "break"
+	defaultKeyword     = "default"
+	continueKeyword    = "continue"
+	ifKeyword          = "if"
+	elseKeyword        = "else"
+	forKeyword         = "for"
+	functionKeyword    = "func"
+	operatorKeyword    = "operator"
+	trueKeyword        = "true"
+	falseKeyword       = "false"
+	nullKeyword        = "null"
+	castOperator       = ":"
+	assignmentOperator = "="
 )
 
 // Parse generates an abstract syntax tree from the given list of tokens.
