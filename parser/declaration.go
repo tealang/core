@@ -8,30 +8,30 @@ import (
 )
 
 type declarationParser struct {
-	ExpectTypeInformation bool
-	ExpectAssignment      bool
-	Casts                 []string
-	Declaration           *nodes.Declaration
-	Index                 int
+	assignment  bool
+	typecasts   []string
+	declaration *nodes.Declaration
+	index, size int
+	input       []tokens.Token
 }
 
 func newDeclarationParser() *declarationParser {
 	return &declarationParser{
-		Casts:       make([]string, 0),
-		Declaration: nodes.NewMultiDeclaration([]string{}, false),
+		typecasts:   make([]string, 0),
+		declaration: nodes.NewMultiDeclaration([]string{}, false),
 	}
 }
 
-func (dp *declarationParser) Fetch(input []tokens.Token) (tokens.Token, error) {
-	if dp.Index >= len(input) {
+func (dp *declarationParser) fetch() (tokens.Token, error) {
+	if dp.index >= dp.size {
 		return tokens.Token{}, errors.New("unexpected end of tokens while fetching")
 	}
-	tk := input[dp.Index]
+	tk := dp.input[dp.index]
 	return tk, nil
 }
 
-func (dp *declarationParser) ParseConstantState(input []tokens.Token) error {
-	descriptor, err := dp.Fetch(input)
+func (dp *declarationParser) parseMode() error {
+	descriptor, err := dp.fetch()
 	if err != nil {
 		return err
 	}
@@ -40,103 +40,106 @@ func (dp *declarationParser) ParseConstantState(input []tokens.Token) error {
 	}
 	switch descriptor.Value {
 	case variableKeyword:
-		dp.Declaration.Constant = false
+		dp.declaration.Constant = false
 	case constantKeyword:
-		dp.Declaration.Constant = true
+		dp.declaration.Constant = true
 	default:
 		return errors.New("state descriptor must be either let or var")
 	}
-	dp.Index++
+	dp.index++
 	return nil
 }
 
-func (dp *declarationParser) CollectAliases(input []tokens.Token) error {
-	for !dp.ExpectAssignment && dp.Index < len(input) {
-		active, err := dp.Fetch(input)
+func (dp *declarationParser) collectAliases() error {
+	nextTypeInfo := false
+	for !dp.assignment && dp.index < dp.size {
+		active, err := dp.fetch()
 		if err != nil {
 			return err
 		}
 		//fmt.Println(active, dp.Index)
 		switch active.Type {
 		case tokens.Identifier:
-			if dp.ExpectTypeInformation {
-				for len(dp.Casts) < len(dp.Declaration.Alias) {
-					dp.Casts = append(dp.Casts, active.Value)
+			if nextTypeInfo {
+				for len(dp.typecasts) < len(dp.declaration.Alias) {
+					dp.typecasts = append(dp.typecasts, active.Value)
 				}
 			} else {
-				dp.Declaration.Alias = append(dp.Declaration.Alias, active.Value)
+				dp.declaration.Alias = append(dp.declaration.Alias, active.Value)
 			}
-			dp.ExpectTypeInformation = false
+			nextTypeInfo = false
 		case tokens.Statement:
 			return nil
 		case tokens.Separator:
 		case tokens.Operator:
-			if active.Value == ":" {
-				dp.ExpectTypeInformation = true
-			} else if active.Value == "=" {
-				dp.ExpectAssignment = true
-			} else {
+			switch active.Value {
+			case castOperator:
+				nextTypeInfo = true
+			case assignmentOperator:
+				dp.assignment = true
+			default:
 				return errors.Errorf("did expect typecast or assignment operator, got %s", active.Value)
 			}
 		default:
 			return errors.Errorf("did not expect token %s", active.Type)
 		}
-		dp.Index++
+		dp.index++
 	}
 	return nil
 }
 
-func (dp *declarationParser) StoreDefaultValues(input []tokens.Token) error {
-	if len(dp.Casts) != len(dp.Declaration.Alias) {
-		return errors.Errorf("expected %d typecasts, got %d", len(dp.Declaration.Alias), len(dp.Casts))
+func (dp *declarationParser) assignDefaultValues() error {
+	if len(dp.typecasts) != len(dp.declaration.Alias) {
+		return errors.Errorf("expected %d typecasts, got %d", len(dp.declaration.Alias), len(dp.typecasts))
 	}
-	for _, t := range dp.Casts {
-		dp.Declaration.AddBack(nodes.NewTypecast(t, nodes.NewLiteral(runtime.Value{})))
+	for _, t := range dp.typecasts {
+		dp.declaration.AddBack(nodes.NewTypecast(t, nodes.NewLiteral(runtime.Value{})))
 	}
 	return nil
 }
 
-func (dp *declarationParser) CollectAssignedValues(input []tokens.Token) error {
-	iteration := 0
-	for ; dp.Index < len(input); dp.Index++ {
-		term, offset, err := newTermParser().Parse(input[dp.Index:])
+func (dp *declarationParser) assignValues() error {
+	for i := 0; i < len(dp.declaration.Alias); i++ {
+		term, n, err := newTermParser().Parse(dp.input[dp.index:])
 		if err != nil {
 			return err
 		}
-		dp.Index += offset
-		if iteration < len(dp.Casts) {
-			term = nodes.NewTypecast(dp.Casts[iteration], term)
-			iteration++
-		}
-		dp.Declaration.AddBack(term)
+		dp.index += n
 
-		// reached end of statement
-		if dp.Index < len(input) && input[dp.Index].Type == tokens.Statement {
-			return nil
+		if i < len(dp.typecasts) {
+			term = nodes.NewTypecast(dp.typecasts[i], term)
+		}
+		dp.declaration.AddBack(term)
+
+		if dp.index < dp.size && dp.input[dp.index].Type == tokens.Separator {
+			dp.index++
 		}
 	}
 	return nil
 }
 
 func (dp *declarationParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
-	if err := dp.ParseConstantState(input); err != nil {
+	dp.index, dp.size = 0, len(input)
+	dp.input = input
+
+	if err := dp.parseMode(); err != nil {
 		return nil, 0, errors.Wrap(err, "failed to parse state")
 	}
-	if err := dp.CollectAliases(input); err != nil {
+	if err := dp.collectAliases(); err != nil {
 		return nil, 0, errors.Wrap(err, "failed collecting alias")
 	}
 
 	// handle if there is no direct assignment
-	if !dp.ExpectAssignment {
-		if err := dp.StoreDefaultValues(input); err != nil {
+	if !dp.assignment {
+		if err := dp.assignDefaultValues(); err != nil {
 			return nil, 0, errors.Wrap(err, "could not assign null values")
 		}
-		return dp.Declaration, dp.Index, nil
+		return dp.declaration, dp.index, nil
 	}
 
 	// collect values
-	if err := dp.CollectAssignedValues(input); err != nil {
+	if err := dp.assignValues(); err != nil {
 		return nil, 0, errors.Wrap(err, "failed collecting values")
 	}
-	return dp.Declaration, dp.Index, nil
+	return dp.declaration, dp.index, nil
 }
