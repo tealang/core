@@ -8,15 +8,18 @@ import (
 	"github.com/tealang/core/runtime/types"
 )
 
+// FunctionCall calls a function with the evaluated children as parameters.
 type FunctionCall struct {
 	BasicNode
 	Alias string
 }
 
+// Name returns the name of the AST node.
 func (FunctionCall) Name() string {
 	return "FunctionCall"
 }
 
+// Eval calls the target function by first evaluating all its children and then feeding them as parameters to the function.
 func (call *FunctionCall) Eval(c *runtime.Context) (runtime.Value, error) {
 	item, err := c.Namespace.Find(runtime.SearchIdentifier, call.Alias)
 	if err != nil {
@@ -49,6 +52,7 @@ func (call *FunctionCall) Eval(c *runtime.Context) (runtime.Value, error) {
 	return result, nil
 }
 
+// NewFunctionCall constructs a new function call of the given function alias.
 func NewFunctionCall(alias string, args ...Node) *FunctionCall {
 	call := &FunctionCall{
 		BasicNode: NewBasic(args...),
@@ -58,6 +62,7 @@ func NewFunctionCall(alias string, args ...Node) *FunctionCall {
 	return call
 }
 
+// FunctionLiteral generates on evaluation a new function with parameters, return type and function body.
 type FunctionLiteral struct {
 	BasicNode
 	Args    []*Typecast
@@ -87,6 +92,7 @@ func (literal *FunctionLiteral) buildSignature(c *runtime.Context) (runtime.Sign
 	return signature, nil
 }
 
+// Eval executes the literal and generates a single-signature function value.
 func (literal *FunctionLiteral) Eval(c *runtime.Context) (runtime.Value, error) {
 	signature, err := literal.buildSignature(c)
 	if err != nil {
@@ -99,10 +105,12 @@ func (literal *FunctionLiteral) Eval(c *runtime.Context) (runtime.Value, error) 
 	}, nil
 }
 
+// Name returns the name of the AST node.
 func (FunctionLiteral) Name() string {
 	return "FunctionLiteral"
 }
 
+// NewFunctionLiteral constructs a new function literal from the given body, return type and parameters.
 func NewFunctionLiteral(body Node, returns *Typecast, args ...*Typecast) *FunctionLiteral {
 	lit := &FunctionLiteral{
 		BasicNode: NewBasic(body),
@@ -121,15 +129,18 @@ func NewFunctionLiteral(body Node, returns *Typecast, args ...*Typecast) *Functi
 	return lit
 }
 
+// OperatorDefinition is an extended function literal that also has a symbol associated to it.
 type OperatorDefinition struct {
 	FunctionLiteral
 	Symbol string
 }
 
+// Name returns the name of the AST node.
 func (OperatorDefinition) Name() string {
 	return "OperatorDefinition"
 }
 
+// Eval generates a function literal and stores in the context namespace as an operator.
 func (definition *OperatorDefinition) Eval(c *runtime.Context) (runtime.Value, error) {
 	signature, err := definition.buildSignature(c)
 	if err != nil {
@@ -150,6 +161,7 @@ func (definition *OperatorDefinition) Eval(c *runtime.Context) (runtime.Value, e
 	}, nil
 }
 
+// NewOperatorDefinition constructs a new operator defitinition with the associated symbol.
 func NewOperatorDefinition(symbol string, body Node, returns *Typecast, args ...*Typecast) *OperatorDefinition {
 	def := &OperatorDefinition{
 		FunctionLiteral: FunctionLiteral{

@@ -11,10 +11,12 @@ type Controller struct {
 	Behavior runtime.ContextBehavior
 }
 
+// Name returns the name of the AST node.
 func (Controller) Name() string {
 	return "Controller"
 }
 
+// Eval executes the controller by first evaluating all children, changing the behavior to the target behavior and then returning the last result.
 func (ctrl *Controller) Eval(c *runtime.Context) (runtime.Value, error) {
 	var (
 		value runtime.Value
@@ -30,6 +32,7 @@ func (ctrl *Controller) Eval(c *runtime.Context) (runtime.Value, error) {
 	return value, nil
 }
 
+// NewController constructs a new behavior controller.
 func NewController(behavior runtime.ContextBehavior) *Controller {
 	ctrl := &Controller{
 		BasicNode: NewBasic(),

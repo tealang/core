@@ -13,15 +13,18 @@ type Assignment struct {
 	Alias []string
 }
 
+// Name returns the name of the AST node.
 func (Assignment) Name() string {
 	return "Assignment"
 }
 
+// Graphviz generates a graph representation of the node.
 func (a *Assignment) Graphviz(uid string) []string {
 	a.Metadata["label"] = fmt.Sprintf("Assignment (%s)", a.Alias)
 	return a.BasicNode.Graphviz(uid)
 }
 
+// Eval executes the assignment by evaluating the value nodes and assigning the results to the values in the context namespace.
 func (a *Assignment) Eval(c *runtime.Context) (runtime.Value, error) {
 	if len(a.Childs) != len(a.Alias) {
 		return runtime.Value{}, errors.Errorf("can not assign %d values to %d names", len(a.Childs), len(a.Alias))
@@ -48,6 +51,7 @@ func (a *Assignment) Eval(c *runtime.Context) (runtime.Value, error) {
 	return value, nil
 }
 
+// NewMultiAssignment constructs a new tuple assignment.
 func NewMultiAssignment(alias []string, values ...Node) *Assignment {
 	return &Assignment{
 		BasicNode: NewBasic(values...),
@@ -55,6 +59,7 @@ func NewMultiAssignment(alias []string, values ...Node) *Assignment {
 	}
 }
 
+// NewAssignment constructs a new single-value assignment.
 func NewAssignment(alias string, value Node) *Assignment {
 	return NewMultiAssignment([]string{alias}, value)
 }

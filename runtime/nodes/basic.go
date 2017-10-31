@@ -24,6 +24,7 @@ type BasicNode struct {
 	Metadata map[string]string
 }
 
+// Graphviz generates a graphviz-compatible graph representation of this node and its children.
 func (n *BasicNode) Graphviz(uid string) []string {
 	lines := []string{fmt.Sprintf("%s [label=\"%s\" shape=%s]", uid, n.Metadata["label"], n.Metadata["shape"])}
 	for i, c := range n.Childs {
@@ -34,23 +35,28 @@ func (n *BasicNode) Graphviz(uid string) []string {
 	return lines
 }
 
+// Has checks if the node has metadata assigned to the given key.
 func (n *BasicNode) Has(tag string) (string, bool) {
 	v, ok := n.Metadata[tag]
 	return v, ok
 }
 
+// Tag assigns metadata to a key.
 func (n *BasicNode) Tag(tag, value string) {
 	n.Metadata[tag] = value
 }
 
+// AddBack adds a new child at the end of the children list.
 func (n *BasicNode) AddBack(child Node) {
 	n.Childs = append(n.Childs, child)
 }
 
+// AddFront adds a new child at the front of the children list.
 func (n *BasicNode) AddFront(child Node) {
 	n.Childs = append([]Node{child}, n.Childs...)
 }
 
+// NewBasic constructs a new basic node that can not be evaluated.
 func NewBasic(childs ...Node) BasicNode {
 	return BasicNode{
 		Childs: childs,

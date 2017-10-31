@@ -73,6 +73,7 @@ func loadPrint(c *runtime.Context) {
 	c.Namespace.Store(print)
 }
 
+// Load loads language-level function into the context namespace.
 func Load(c *runtime.Context) {
 	loadPrint(c)
 	loadTypeof(c)

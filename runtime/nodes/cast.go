@@ -11,10 +11,12 @@ type Typecast struct {
 	Alias string
 }
 
+// Name returns the name of AST node.
 func (Typecast) Name() string {
 	return "Typecast"
 }
 
+// Eval executes the typecast by first looking up the target type, evaluating the children for results and casting the last result to the expected type.
 func (t *Typecast) Eval(c *runtime.Context) (runtime.Value, error) {
 	item, err := c.Namespace.Find(runtime.SearchDatatype, t.Alias)
 	if err != nil {
@@ -34,6 +36,7 @@ func (t *Typecast) Eval(c *runtime.Context) (runtime.Value, error) {
 	return datatype.Cast(value)
 }
 
+// NewTypecast constructs a new typecast from the given typename and a list of value nodes.
 func NewTypecast(typename string, args ...Node) *Typecast {
 	return &Typecast{
 		BasicNode: NewBasic(args...),

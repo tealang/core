@@ -13,10 +13,13 @@ type Sequence struct {
 	Substitute bool
 }
 
+// Name returns the name of the AST node.
 func (Sequence) Name() string {
 	return "Sequence"
 }
 
+// Eval executes the sequence by evaluating its children one by one.
+// The control flow can be modified by using behavior control.
 func (n *Sequence) Eval(c *runtime.Context) (runtime.Value, error) {
 	var (
 		parent *runtime.Namespace
@@ -42,6 +45,8 @@ func (n *Sequence) Eval(c *runtime.Context) (runtime.Value, error) {
 	return value, nil
 }
 
+// NewSequence constructs a new sequence from the given children list.
+// The sequence can also be evaluated in a substitute namespace.
 func NewSequence(substitute bool, childs ...Node) *Sequence {
 	seq := &Sequence{
 		BasicNode:  NewBasic(childs...),

@@ -14,10 +14,12 @@ type Operation struct {
 	ArgCount int
 }
 
+// Name returns the name of the AST node.
 func (Operation) Name() string {
 	return "Operation"
 }
 
+// Eval executes the operator by first collecting the parameters and then calling associated function.
 func (o *Operation) Eval(c *runtime.Context) (runtime.Value, error) {
 	item, err := c.Namespace.Find(runtime.SearchOperator, o.Symbol)
 	if err != nil {
@@ -43,6 +45,7 @@ func (o *Operation) Eval(c *runtime.Context) (runtime.Value, error) {
 	return result, nil
 }
 
+// NewOperation constructs a new operation of the given symbol.
 func NewOperation(symbol string, argCount int, args ...Node) *Operation {
 	op := &Operation{
 		BasicNode: NewBasic(args...),
