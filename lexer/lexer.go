@@ -10,7 +10,8 @@ func Lex(input string) []tokens.Token {
 		Type:  nil,
 	}
 	output := []tokens.Token{}
-	for _, c := range input {
+	for i := 0; i < len(input); i++ {
+		c := input[i]
 		value := active.Value + string(c)
 		if active.Type != nil && active.Type.Match(value) {
 			active.Value = value
@@ -21,6 +22,13 @@ func Lex(input string) []tokens.Token {
 			active = tokens.Token{
 				Value: string(c),
 				Type:  tokens.FindMatch(string(c)),
+			}
+			switch active.Type {
+			case tokens.SingleLineComment:
+				for i < len(input) && input[i] != '\n' {
+					i++
+				}
+				active = tokens.Token{Type: tokens.Whitespace}
 			}
 		}
 	}

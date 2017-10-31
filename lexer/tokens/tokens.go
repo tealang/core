@@ -64,7 +64,7 @@ var (
 	}
 	Identifier = &Type{
 		Name:  "identifier",
-		Match: NewTokenMatcher(`^(#|[a-zA-Z_])+([0-9a-zA-Z_]+)?$`),
+		Match: NewTokenMatcher(`^([a-zA-Z_])+([0-9a-zA-Z_]+)?$`),
 	}
 	String = &Type{
 		Name:  "string",
@@ -86,7 +86,12 @@ var (
 		Name:  "leftBlock",
 		Match: NewTokenMatcher(`^{$`),
 	}
+	SingleLineComment = &Type{
+		Name:  "singleLineComment",
+		Match: NewTokenMatcher("^#$"),
+	}
 	AllTypes = []*Type{
+		SingleLineComment,
 		LeftParentheses,
 		RightParentheses,
 		Operator,
