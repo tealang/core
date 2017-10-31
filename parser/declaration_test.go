@@ -14,7 +14,64 @@ func Test_declarationParser_Parse(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			"Single declaration",
+			"Single declaration, invalid mode",
+			[]tokens.Token{
+				{Type: tokens.Identifier, Value: "invalid"},
+				{Type: tokens.Identifier, Value: "x"},
+				{Type: tokens.Operator, Value: ":"},
+				{Type: tokens.Identifier, Value: "int"},
+				{Type: tokens.Statement, Value: ";"},
+			},
+			0,
+			true,
+		},
+		{
+			"Single declaration, invalid mode token",
+			[]tokens.Token{
+				{Type: tokens.Number, Value: "3412"},
+				{Type: tokens.Identifier, Value: "x"},
+				{Type: tokens.Operator, Value: ":"},
+				{Type: tokens.Identifier, Value: "int"},
+				{Type: tokens.Statement, Value: ";"},
+			},
+			0,
+			true,
+		},
+		{
+			"Unexpected end of tokens",
+			[]tokens.Token{
+
+				{Type: tokens.Identifier, Value: "invalid"},
+				{Type: tokens.Identifier, Value: "x"},
+			},
+			0,
+			true,
+		},
+		{
+			"Unexpected tokens",
+			[]tokens.Token{
+
+				{Type: tokens.Identifier, Value: "let"},
+				{Type: tokens.Number, Value: "3"},
+			},
+			0,
+			true,
+		},
+		{
+			"Unexpected operator",
+			[]tokens.Token{
+
+				{Type: tokens.Identifier, Value: "let"},
+				{Type: tokens.Identifier, Value: "x"},
+				{Type: tokens.Operator, Value: "?"},
+				{Type: tokens.Identifier, Value: "int"},
+				{Type: tokens.Statement, Value: ";"},
+			},
+			0,
+			true,
+		},
+		{
+			"Single declaration (explicit w/o assignment)",
 			[]tokens.Token{
 				{Type: tokens.Identifier, Value: "let"},
 				{Type: tokens.Identifier, Value: "x"},
@@ -23,6 +80,96 @@ func Test_declarationParser_Parse(t *testing.T) {
 				{Type: tokens.Statement, Value: ";"},
 			},
 			4,
+			false,
+		},
+		{
+			"Tuple declaration (explicit w/o assignment)",
+			[]tokens.Token{
+				{Type: tokens.Identifier, Value: "let"},
+				{Type: tokens.Identifier, Value: "x"},
+				{Type: tokens.Separator},
+				{Type: tokens.Identifier, Value: "y"},
+				{Type: tokens.Operator, Value: ":"},
+				{Type: tokens.Identifier, Value: "int"},
+				{Type: tokens.Statement, Value: ";"},
+			},
+			6,
+			false,
+		},
+		{
+			"Tuple declaration (explicit w/o assignment, different types)",
+			[]tokens.Token{
+				{Type: tokens.Identifier, Value: "let"},
+				{Type: tokens.Identifier, Value: "x"},
+				{Type: tokens.Operator, Value: ":"},
+				{Type: tokens.Identifier, Value: "float"},
+				{Type: tokens.Separator},
+				{Type: tokens.Identifier, Value: "y"},
+				{Type: tokens.Operator, Value: ":"},
+				{Type: tokens.Identifier, Value: "int"},
+				{Type: tokens.Statement, Value: ";"},
+			},
+			8,
+			false,
+		},
+		{
+			"Single declaration (explicit with assignment)",
+			[]tokens.Token{
+				{Type: tokens.Identifier, Value: "var"},
+				{Type: tokens.Identifier, Value: "x"},
+				{Type: tokens.Operator, Value: ":"},
+				{Type: tokens.Identifier, Value: "int"},
+				{Type: tokens.Operator, Value: "="},
+				{Type: tokens.Number, Value: "3"},
+				{Type: tokens.Statement, Value: ";"},
+			},
+			6,
+			false,
+		},
+		{
+			"Tuple declaration (explicit with assignment)",
+			[]tokens.Token{
+				{Type: tokens.Identifier, Value: "var"},
+				{Type: tokens.Identifier, Value: "x"},
+				{Type: tokens.Separator},
+				{Type: tokens.Identifier, Value: "y"},
+				{Type: tokens.Operator, Value: ":"},
+				{Type: tokens.Identifier, Value: "int"},
+				{Type: tokens.Operator, Value: "="},
+				{Type: tokens.Number, Value: "3"},
+				{Type: tokens.Separator},
+				{Type: tokens.Number, Value: "4"},
+				{Type: tokens.Statement, Value: ";"},
+			},
+			10,
+			false,
+		},
+		{
+			"Single declaration (implicit with assignment)",
+			[]tokens.Token{
+				{Type: tokens.Identifier, Value: "let"},
+				{Type: tokens.Identifier, Value: "x"},
+				{Type: tokens.Operator, Value: "="},
+				{Type: tokens.Number, Value: "3"},
+				{Type: tokens.Statement, Value: ";"},
+			},
+			4,
+			false,
+		},
+		{
+			"Tuple declaration (implicit with assignment)",
+			[]tokens.Token{
+				{Type: tokens.Identifier, Value: "let"},
+				{Type: tokens.Identifier, Value: "x"},
+				{Type: tokens.Separator},
+				{Type: tokens.Identifier, Value: "y"},
+				{Type: tokens.Operator, Value: "="},
+				{Type: tokens.Number, Value: "3"},
+				{Type: tokens.Separator},
+				{Type: tokens.Number, Value: "4"},
+				{Type: tokens.Statement, Value: ";"},
+			},
+			8,
 			false,
 		},
 	}
