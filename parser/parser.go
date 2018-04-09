@@ -11,6 +11,7 @@ const (
 	variableKeyword    = "var"
 	returnKeyword      = "return"
 	breakKeyword       = "break"
+	fallthroughKeyword = "fallthrough"
 	defaultKeyword     = "default"
 	continueKeyword    = "continue"
 	ifKeyword          = "if"
@@ -21,6 +22,8 @@ const (
 	trueKeyword        = "true"
 	falseKeyword       = "false"
 	nullKeyword        = "null"
+	matchKeyword       = "match"
+	caseKeyword        = "case"
 	castOperator       = ":"
 	assignmentOperator = "="
 )
