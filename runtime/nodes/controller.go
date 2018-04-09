@@ -47,6 +47,8 @@ func NewController(behavior runtime.ContextBehavior) *Controller {
 		ctrl.Metadata["label"] = "Controller (break)"
 	case runtime.BehaviorReturn:
 		ctrl.Metadata["label"] = "Controller (return)"
+	case runtime.BehaviorFallthrough:
+		ctrl.Metadata["label"] = "Controller (fallthrough)"
 	}
 	return ctrl
 }
