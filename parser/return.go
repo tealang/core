@@ -20,7 +20,9 @@ func (returnParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	if err != nil {
 		return ctrl, n + 1, errors.Wrap(err, "parsing return term")
 	}
-	ctrl.AddBack(term)
+	if term != nil {
+		ctrl.AddBack(term)
+	}
 	return ctrl, n + 1, nil
 }
 
