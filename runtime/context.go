@@ -13,6 +13,8 @@ const (
 	BehaviorBreak
 	// BehaviorReturn cancels the running sequence up to function level.
 	BehaviorReturn
+	// BehaviorFallthrough executes the next case in the match list.
+	BehaviorFallthrough
 )
 
 // Context is the runtime context the AST is executed in.
