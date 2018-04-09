@@ -4,25 +4,25 @@ Welcome to the repository of *core*, the core Tealang runtime. **It is NOT compa
 
 ## How does FizzBuzz look?
 ```tea
-import std.io;
-
 operator /?(a, b: int): bool {
     return a % b == 0;
 }
 
-for var i = 0; i < 100; i++ {
+for var i = 0; i < 100; i = i + 1 {
     var a, b: string;
     if i /? 3 {
         a = "Fizz";
-    } else if i /? 5 {
+    }
+    if i /? 5 {
         b = "Buzz";
     }
-    match let v = a + b {
-        case "" => {
-            io.println(i);
+    let v = a + b;
+    match v {
+        case "" {
+            print(i);
         }
-        default => {
-            io.println(v);
+        default {
+            print(v);
         }
     }
 }
