@@ -83,6 +83,9 @@ func (sp *sequenceParser) handleIdentifier() error {
 	case continueKeyword:
 		sp.sequence.AddBack(nodes.NewController(runtime.BehaviorContinue))
 		sp.index++
+	case fallthroughKeyword:
+		sp.sequence.AddBack(nodes.NewController(runtime.BehaviorFallthrough))
+		sp.index++
 	case functionKeyword:
 		stmt, n, err := newFunctionParser(false).Parse(sp.inputSegment(0))
 		if err != nil {
@@ -109,6 +112,14 @@ func (sp *sequenceParser) handleIdentifier() error {
 		sp.statement = false
 	case forKeyword:
 		stmt, n, err := newLoopParser().Parse(sp.inputSegment(0))
+		if err != nil {
+			return err
+		}
+		sp.sequence.AddBack(stmt)
+		sp.index += n
+		sp.statement = false
+	case matchKeyword:
+		stmt, n, err := newMatchParser().Parse(sp.inputSegment(0))
 		if err != nil {
 			return err
 		}
