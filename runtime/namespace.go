@@ -60,6 +60,12 @@ type Value struct {
 	Reference bool
 }
 
+// EqualTo checks if the both values are equal.
+// To be classified as equal, they must have the same type and data.
+func (v Value) EqualTo(w Value) bool {
+	return v.Type == w.Type && v.Data == w.Data
+}
+
 // Rechange turns a (constant/variable) value into a (constant/variable) value.
 func (v Value) Rechange(constant bool) Value {
 	return Value{
