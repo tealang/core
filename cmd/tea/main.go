@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/tealang/core/repl"
+	"github.com/tealang/core/pkg/repl"
 	"gopkg.in/urfave/cli.v1"
 )
 
