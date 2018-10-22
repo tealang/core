@@ -70,7 +70,7 @@ func (v Value) EqualTo(w Value) bool {
 func (v Value) Rechange(constant bool) Value {
 	return Value{
 		Type:      v.Type,
-		Typeflag:  v.Type,
+		Typeflag:  v.Typeflag,
 		Data:      v.Data,
 		Name:      v.Name,
 		Constant:  constant,
@@ -82,7 +82,7 @@ func (v Value) Rechange(constant bool) Value {
 func (v Value) Rename(alias string) Value {
 	return Value{
 		Type:      v.Type,
-		Typeflag:  v.Type,
+		Typeflag:  v.Typeflag,
 		Data:      v.Data,
 		Name:      alias,
 		Constant:  v.Constant,
