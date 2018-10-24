@@ -100,7 +100,7 @@ func (literal *FunctionLiteral) Eval(c *runtime.Context) (runtime.Value, error) 
 	}
 	function := runtime.NewFunction(c.Namespace, signature)
 	return runtime.Value{
-		Type: types.Function,
+		Typeflag: runtime.T(types.Function),
 		Data: function,
 	}, nil
 }
@@ -156,7 +156,7 @@ func (definition *OperatorDefinition) Eval(c *runtime.Context) (runtime.Value, e
 		return runtime.Value{}, errors.Wrap(err, "can not store operator")
 	}
 	return runtime.Value{
-		Type: types.Function,
+		Typeflag: runtime.T(types.Function),
 		Data: function,
 	}, nil
 }

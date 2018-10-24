@@ -1,6 +1,7 @@
 package nodes
 
 import (
+	"fmt"
 	"github.com/pkg/errors"
 	"github.com/tealang/core/pkg/runtime"
 )
@@ -38,8 +39,10 @@ func (t *Typecast) Eval(c *runtime.Context) (runtime.Value, error) {
 
 // NewTypecast constructs a new typecast from the given typename and a list of value nodes.
 func NewTypecast(typename string, args ...Node) *Typecast {
-	return &Typecast{
+	cast := &Typecast{
 		BasicNode: NewBasic(args...),
 		Alias:     typename,
 	}
+	cast.Metadata["label"] = fmt.Sprintf("Typecast (%s)", typename)
+	return cast
 }

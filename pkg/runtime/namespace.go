@@ -2,6 +2,7 @@ package runtime
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -50,10 +51,43 @@ func (datatype *Datatype) String() string {
 	return datatype.Name
 }
 
+// Typeflag of a given datatype with one or more children typeflags.
+type Typeflag struct {
+	Type *Datatype
+	Params []Typeflag
+}
+
+func (tf Typeflag) String() string {
+	if len(tf.Params) > 0 {
+		params := make([]string, len(tf.Params))
+		for i := range tf.Params {
+			params[i] = tf.Params[i].String()
+		}
+		return fmt.Sprintf("%s<%s>", tf.Type.Name, strings.Join(params, ", "))
+	}
+	return tf.Type.Name
+}
+
+// T builds a typeflag using the given list of types.
+// For example, T(array, any, string) -> array<any<string>>
+func T(tree ...*Datatype) Typeflag {
+	if len(tree) == 0 {
+		return Typeflag{}
+	} else if len(tree) == 1 {
+		return Typeflag{
+			Type: tree[0],
+		}
+	} else {
+		return Typeflag{
+			Type: tree[0],
+			Params: []Typeflag{T(tree[1:]...)},
+		}
+	}
+}
+
 // Value of a given datatype stored data associated with a name.
 type Value struct {
-	Type      *Datatype
-	Typeflag  *Datatype
+	Typeflag
 	Data      interface{}
 	Name      string
 	Constant  bool
@@ -69,7 +103,6 @@ func (v Value) EqualTo(w Value) bool {
 // Rechange turns a (constant/variable) value into a (constant/variable) value.
 func (v Value) Rechange(constant bool) Value {
 	return Value{
-		Type:      v.Type,
 		Typeflag:  v.Typeflag,
 		Data:      v.Data,
 		Name:      v.Name,
@@ -81,7 +114,6 @@ func (v Value) Rechange(constant bool) Value {
 // Rename changes the values name.
 func (v Value) Rename(alias string) Value {
 	return Value{
-		Type:      v.Type,
 		Typeflag:  v.Typeflag,
 		Data:      v.Data,
 		Name:      alias,
