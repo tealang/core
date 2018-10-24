@@ -139,7 +139,7 @@ func (tp *termParser) handleIdentifier() error {
 
 func (tp *termParser) handleString() error {
 	tp.output.Push(tp.itemFromActive(nodes.NewLiteral(runtime.Value{
-		Type:     types.String,
+		Typeflag: runtime.T(types.String),
 		Data:     strings.Trim(tp.active.Value, "\""),
 		Constant: true,
 	})))
@@ -153,7 +153,7 @@ func (tp *termParser) handleNumber() error {
 			return errors.Wrap(err, "failed to parse float literal")
 		}
 		tp.output.Push(tp.itemFromActive(nodes.NewLiteral(runtime.Value{
-			Type:     types.Float,
+			Typeflag: runtime.T(types.Float),
 			Data:     f,
 			Constant: true,
 		})))
@@ -163,7 +163,7 @@ func (tp *termParser) handleNumber() error {
 			return errors.Wrap(err, "failed to parse float literal")
 		}
 		tp.output.Push(tp.itemFromActive(nodes.NewLiteral(runtime.Value{
-			Type:     types.Integer,
+			Typeflag: runtime.T(types.Integer),
 			Data:     i,
 			Constant: true,
 		})))

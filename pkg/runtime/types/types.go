@@ -13,6 +13,7 @@ var (
 	Any, Bool, Function *runtime.Datatype
 	Integer, Float      *runtime.Datatype
 	String              *runtime.Datatype
+	Array               *runtime.Datatype
 )
 
 // Boolean values.
@@ -26,17 +27,35 @@ func init() {
 		Parent: nil,
 		Cast: func(v runtime.Value) (runtime.Value, error) {
 			return runtime.Value{
-				Type:     Any,
-				Typeflag: v.Type,
-				Data:     v.Data,
-				Name:     v.Name,
+				Typeflag: v.Typeflag,
+				Data: v.Data,
+				Name: v.Name,
 			}, nil
 		},
 		Format: func(v runtime.Value) string {
-			if v.Typeflag != nil {
-				return v.Typeflag.Format(v)
+			if v.Data != nil {
+				return fmt.Sprint(v.Data)
 			}
-			return fmt.Sprintf("any<%s>", v.Data)
+			return "nil"
+		},
+	}
+	Array = &runtime.Datatype{
+		Name:   "array",
+		Parent: Any,
+		Cast: func(v runtime.Value) (runtime.Value, error) {
+			switch v.Type {
+			case Array:
+				return runtime.Value{
+					Typeflag: v.Typeflag,
+					Data: v.Data,
+					Name: v.Name,
+				}, nil
+			default:
+				return runtime.Value{}, errors.Errorf("can not cast %s to array", v.Type)
+			}
+		},
+		Format: func(v runtime.Value) string {
+			return "array"
 		},
 	}
 	Integer = &runtime.Datatype{
@@ -49,7 +68,7 @@ func init() {
 			switch v.Type {
 			case nil:
 				return runtime.Value{
-					Type: Integer,
+					Typeflag: runtime.T(Integer),
 					Data: int64(0),
 					Name: v.Name,
 				}, nil
@@ -57,7 +76,7 @@ func init() {
 				return v, nil
 			case Float:
 				return runtime.Value{
-					Type: Integer,
+					Typeflag: runtime.T(Integer),
 					Data: int64(v.Data.(float64)),
 					Name: v.Name,
 				}, nil
@@ -67,7 +86,7 @@ func init() {
 					return runtime.Value{}, errors.Wrap(err, "can not cast string to int")
 				}
 				return runtime.Value{
-					Type: Integer,
+					Typeflag: runtime.T(Integer),
 					Data: i,
 					Name: v.Name,
 				}, nil
@@ -86,13 +105,13 @@ func init() {
 			switch v.Type {
 			case nil:
 				return runtime.Value{
-					Type: Float,
+					Typeflag: runtime.T(Float),
 					Data: float64(0),
 					Name: v.Name,
 				}, nil
 			case Integer:
 				return runtime.Value{
-					Type: Float,
+					Typeflag: runtime.T(Float),
 					Data: float64(v.Data.(int64)),
 					Name: v.Name,
 				}, nil
@@ -113,7 +132,7 @@ func init() {
 			switch v.Type {
 			case nil:
 				return runtime.Value{
-					Type: String,
+					Typeflag: runtime.T(String),
 					Data: "",
 					Name: v.Name,
 				}, nil
@@ -146,7 +165,7 @@ func init() {
 				return v, nil
 			case nil:
 				return runtime.Value{
-					Type: Bool,
+					Typeflag: runtime.T(Bool),
 					Name: v.Name,
 					Data: false,
 				}, nil
@@ -159,13 +178,13 @@ func init() {
 		},
 	}
 	True = runtime.Value{
-		Type:     Bool,
+		Typeflag: runtime.T(Bool),
 		Data:     true,
 		Constant: true,
 		Name:     "true",
 	}
 	False = runtime.Value{
-		Type:     Bool,
+		Typeflag: runtime.T(Bool),
 		Data:     false,
 		Constant: true,
 		Name:     "false",
@@ -179,4 +198,5 @@ func Load(ctx *runtime.Context) {
 	ctx.Namespace.Store(String)
 	ctx.Namespace.Store(Integer)
 	ctx.Namespace.Store(Float)
+	ctx.Namespace.Store(Array)
 }

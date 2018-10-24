@@ -19,18 +19,18 @@ func loadRemainder(c *runtime.Context) {
 			return runtime.Value{}, errors.New("can not divide by 0")
 		}
 		return runtime.Value{
-			Type: types.Integer,
-			Data: a.Data.(int64) % b.Data.(int64),
+			Typeflag: runtime.T(types.Integer),
+			Data:     a.Data.(int64) % b.Data.(int64),
 		}, nil
 	})
-	remInteger := runtime.NewSignature(runtime.Value{Type: types.Integer}, adapter, []runtime.Value{
+	remInteger := runtime.NewSignature(runtime.Value{Typeflag: runtime.T(types.Integer)}, adapter, []runtime.Value{
 		{
-			Type: types.Integer,
-			Name: "a",
+			Typeflag: runtime.T(types.Integer),
+			Name:     "a",
 		},
 		{
-			Type: types.Integer,
-			Name: "b",
+			Typeflag: runtime.T(types.Integer),
+			Name:     "b",
 		},
 	})
 	remFunction := runtime.NewFunction(nil, remInteger)
@@ -65,13 +65,13 @@ func loadMultiplication(c *runtime.Context) {
 		switch a.Type {
 		case types.Integer:
 			return runtime.Value{
-				Type: types.Integer,
-				Data: a.Data.(int64) * b.Data.(int64),
+				Typeflag: runtime.T(types.Integer),
+				Data:     a.Data.(int64) * b.Data.(int64),
 			}, nil
 		case types.Float:
 			return runtime.Value{
-				Type: types.Float,
-				Data: a.Data.(float64) * b.Data.(float64),
+				Typeflag: runtime.T(types.Float),
+				Data:     a.Data.(float64) * b.Data.(float64),
 			}, nil
 		}
 		return runtime.Value{}, errors.New("operation * not applicable")
@@ -80,65 +80,65 @@ func loadMultiplication(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Float,
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Float,
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Float},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Float)},
 	}
 	mulFloatInteger := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Float,
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Integer,
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Float},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Float)},
 	}
 	mulInteger := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Integer,
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Integer,
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Integer},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Integer)},
 	}
 	mulIntegerFloat := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Integer,
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Float,
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Float},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Float)},
 	}
 	mulFunction := runtime.Function{
 		Signatures: []runtime.Signature{
@@ -183,8 +183,8 @@ func loadDivision(c *runtime.Context) {
 				return runtime.Value{}, errors.New("can not divide by 0")
 			}
 			return runtime.Value{
-				Type: types.Integer,
-				Data: a.Data.(int64) / bv,
+				Typeflag: runtime.T(types.Integer),
+				Data:     a.Data.(int64) / bv,
 			}, nil
 		case types.Float:
 			bv := b.Data.(float64)
@@ -192,8 +192,8 @@ func loadDivision(c *runtime.Context) {
 				return runtime.Value{}, errors.New("can not divide by 0")
 			}
 			return runtime.Value{
-				Type: types.Float,
-				Data: a.Data.(float64) / bv,
+				Typeflag: runtime.T(types.Float),
+				Data:     a.Data.(float64) / bv,
 			}, nil
 		}
 		return runtime.Value{}, errors.New("operation / not applicable")
@@ -202,65 +202,65 @@ func loadDivision(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Float,
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Float,
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Float},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Float)},
 	}
 	divFloatInteger := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Float,
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Integer,
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Float},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Float)},
 	}
 	divInteger := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Integer,
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Integer,
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Integer},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Integer)},
 	}
 	divIntegerFloat := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Integer,
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Float,
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Float},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Float)},
 	}
 	divFunction := runtime.Function{
 		Signatures: []runtime.Signature{
@@ -284,12 +284,12 @@ func loadAddition(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.String,
+				Typeflag: runtime.T(types.String),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Any,
+				Typeflag: runtime.T(types.Any),
 				Constant: true,
 			},
 		},
@@ -301,11 +301,11 @@ func loadAddition(c *runtime.Context) {
 				b         = identB.(runtime.Value)
 			)
 			return runtime.Value{
-				Type: types.String,
-				Data: a.Data.(string) + b.String(),
+				Typeflag: runtime.T(types.String),
+				Data:     a.Data.(string) + b.String(),
 			}, nil
 		}),
-		Returns: runtime.Value{Type: types.String},
+		Returns: runtime.Value{Typeflag: runtime.T(types.String)},
 	}
 	addAdapter := nodes.NewAdapter(func(c *runtime.Context) (runtime.Value, error) {
 		var (
@@ -329,13 +329,13 @@ func loadAddition(c *runtime.Context) {
 		switch a.Type {
 		case types.Integer:
 			return runtime.Value{
-				Type: types.Integer,
-				Data: a.Data.(int64) + b.Data.(int64),
+				Typeflag: runtime.T(types.Integer),
+				Data:     a.Data.(int64) + b.Data.(int64),
 			}, nil
 		case types.Float:
 			return runtime.Value{
-				Type: types.Float,
-				Data: a.Data.(float64) + b.Data.(float64),
+				Typeflag: runtime.T(types.Float),
+				Data:     a.Data.(float64) + b.Data.(float64),
 			}, nil
 		}
 		return runtime.Value{}, errors.New("operation + not applicable")
@@ -344,7 +344,7 @@ func loadAddition(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Float,
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 		},
@@ -354,17 +354,17 @@ func loadAddition(c *runtime.Context) {
 				a         = identA.(runtime.Value)
 			)
 			return runtime.Value{
-				Type: types.Float,
-				Data: a.Data.(float64),
+				Typeflag: runtime.T(types.Float),
+				Data:     a.Data.(float64),
 			}, nil
 		}),
-		Returns: runtime.Value{Type: types.Float},
+		Returns: runtime.Value{Typeflag: runtime.T(types.Float)},
 	}
 	plusInteger := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Integer,
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
@@ -374,75 +374,75 @@ func loadAddition(c *runtime.Context) {
 				a         = identA.(runtime.Value)
 			)
 			return runtime.Value{
-				Type: types.Integer,
-				Data: a.Data.(int64),
+				Typeflag: runtime.T(types.Integer),
+				Data:     a.Data.(int64),
 			}, nil
 		}),
-		Returns: runtime.Value{Type: types.Integer},
+		Returns: runtime.Value{Typeflag: runtime.T(types.Integer)},
 	}
 	addFloat := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Float,
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Float,
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 		},
 		Function: addAdapter,
-		Returns:  runtime.Value{Type: types.Float},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Float)},
 	}
 	addFloatInteger := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Float,
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Integer,
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
 		Function: addAdapter,
-		Returns:  runtime.Value{Type: types.Float},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Float)},
 	}
 	addInteger := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Integer,
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Integer,
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
 		Function: addAdapter,
-		Returns:  runtime.Value{Type: types.Integer},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Integer)},
 	}
 	addIntegerFloat := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Integer,
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Float,
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 		},
 		Function: addAdapter,
-		Returns:  runtime.Value{Type: types.Float},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Float)},
 	}
 	addFunction := runtime.Function{
 		Signatures: []runtime.Signature{
@@ -468,7 +468,7 @@ func loadSubtraction(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Float,
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 		},
@@ -478,17 +478,17 @@ func loadSubtraction(c *runtime.Context) {
 				a         = identA.(runtime.Value)
 			)
 			return runtime.Value{
-				Type: types.Float,
-				Data: -a.Data.(float64),
+				Typeflag: runtime.T(types.Float),
+				Data:     -a.Data.(float64),
 			}, nil
 		}),
-		Returns: runtime.Value{Type: types.Float},
+		Returns: runtime.Value{Typeflag: runtime.T(types.Float)},
 	}
 	minusInteger := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Integer,
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
@@ -498,11 +498,11 @@ func loadSubtraction(c *runtime.Context) {
 				a         = identA.(runtime.Value)
 			)
 			return runtime.Value{
-				Type: types.Integer,
-				Data: -a.Data.(int64),
+				Typeflag: runtime.T(types.Integer),
+				Data:     -a.Data.(int64),
 			}, nil
 		}),
-		Returns: runtime.Value{Type: types.Integer},
+		Returns: runtime.Value{Typeflag: runtime.T(types.Integer)},
 	}
 	subAdapter := nodes.NewAdapter(func(c *runtime.Context) (runtime.Value, error) {
 		var (
@@ -526,13 +526,13 @@ func loadSubtraction(c *runtime.Context) {
 		switch a.Type {
 		case types.Integer:
 			return runtime.Value{
-				Type: types.Integer,
-				Data: a.Data.(int64) - b.Data.(int64),
+				Typeflag: runtime.T(types.Integer),
+				Data:     a.Data.(int64) - b.Data.(int64),
 			}, nil
 		case types.Float:
 			return runtime.Value{
-				Type: types.Float,
-				Data: a.Data.(float64) - b.Data.(float64),
+				Typeflag: runtime.T(types.Float),
+				Data:     a.Data.(float64) - b.Data.(float64),
 			}, nil
 		}
 		return runtime.Value{}, errors.New("operator - not applicable")
@@ -541,65 +541,65 @@ func loadSubtraction(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Float,
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Float,
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 		},
 		Function: subAdapter,
-		Returns:  runtime.Value{Type: types.Float},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Float)},
 	}
 	subFloatInteger := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Float,
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Integer,
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
 		Function: subAdapter,
-		Returns:  runtime.Value{Type: types.Float},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Float)},
 	}
 	subInteger := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Integer,
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Integer,
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
 		Function: subAdapter,
-		Returns:  runtime.Value{Type: types.Integer},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Integer)},
 	}
 	subIntegerFloat := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Integer,
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Float,
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 		},
 		Function: subAdapter,
-		Returns:  runtime.Value{Type: types.Float},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Float)},
 	}
 	subFunction := runtime.Function{
 		Signatures: []runtime.Signature{

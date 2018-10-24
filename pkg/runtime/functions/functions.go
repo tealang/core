@@ -8,30 +8,57 @@ import (
 	"github.com/tealang/core/pkg/runtime/types"
 )
 
-func loadTypeof(c *runtime.Context) {
-	typeOfSignature := runtime.Signature{
+func loadStructof(c *runtime.Context) {
+	structOfSignature := runtime.Signature{
 		Expected: []runtime.Value{
 			{
-				Name: "data",
-				Type: types.Any,
+				Name:     "data",
+				Typeflag: runtime.T(types.Any),
 			},
 		},
 		Function: nodes.NewAdapter(func(c *runtime.Context) (runtime.Value, error) {
 			item, _ := c.Namespace.Find(runtime.SearchIdentifier, "data")
 			value := item.(runtime.Value)
-			if value.Typeflag != nil {
-				return runtime.Value{
-					Type: types.String,
-					Data: value.Typeflag.Name,
-				}, nil
-			}
 			return runtime.Value{
-				Type: types.String,
-				Data: value.Type.Name,
+				Typeflag: runtime.T(types.String),
+				Data: fmt.Sprintf("%#v", value),
 			}, nil
 		}),
 		Returns: runtime.Value{
-			Type: types.String,
+			Typeflag: runtime.T(types.String),
+		},
+	}
+	structOfFunction := runtime.Function{
+		Signatures: []runtime.Signature{structOfSignature},
+		Source: nil,
+	}
+	structof := runtime.Value{
+		Typeflag: runtime.T(types.Function),
+		Data: structOfFunction,
+		Name: "structof",
+		Constant: true,
+	}
+	c.Namespace.Store(structof)
+}
+
+func loadTypeof(c *runtime.Context) {
+	typeOfSignature := runtime.Signature{
+		Expected: []runtime.Value{
+			{
+				Name:     "data",
+				Typeflag: runtime.T(types.Any),
+			},
+		},
+		Function: nodes.NewAdapter(func(c *runtime.Context) (runtime.Value, error) {
+			item, _ := c.Namespace.Find(runtime.SearchIdentifier, "data")
+			value := item.(runtime.Value)
+			return runtime.Value{
+				Typeflag: runtime.T(types.String),
+				Data:     value.Typeflag.String(),
+			}, nil
+		}),
+		Returns: runtime.Value{
+			Typeflag: runtime.T(types.String),
 		},
 	}
 	typeOfFunction := runtime.Function{
@@ -39,7 +66,7 @@ func loadTypeof(c *runtime.Context) {
 		Source:     nil,
 	}
 	typeof := runtime.Value{
-		Type:     types.Function,
+		Typeflag: runtime.T(types.Function),
 		Data:     typeOfFunction,
 		Name:     "typeof",
 		Constant: true,
@@ -51,8 +78,8 @@ func loadPrint(c *runtime.Context) {
 	printSignature := runtime.Signature{
 		Expected: []runtime.Value{
 			{
-				Name: "text",
-				Type: types.Any,
+				Name:     "text",
+				Typeflag: runtime.T(types.Any),
 			},
 		},
 		Function: nodes.NewAdapter(func(c *runtime.Context) (runtime.Value, error) {
@@ -66,9 +93,9 @@ func loadPrint(c *runtime.Context) {
 		Source:     nil,
 	}
 	print := runtime.Value{
-		Name: "print",
-		Type: types.Function,
-		Data: printFunction,
+		Name:     "print",
+		Typeflag: runtime.T(types.Function),
+		Data:     printFunction,
 	}
 	c.Namespace.Store(print)
 }
@@ -77,4 +104,5 @@ func loadPrint(c *runtime.Context) {
 func Load(c *runtime.Context) {
 	loadPrint(c)
 	loadTypeof(c)
+	loadStructof(c)
 }

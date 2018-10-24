@@ -9,7 +9,7 @@ import (
 
 type declarationParser struct {
 	assignment  bool
-	typecasts   []string
+	datatypes   []nodes.Node
 	declaration *nodes.Declaration
 	index, size int
 	input       []tokens.Token
@@ -17,7 +17,7 @@ type declarationParser struct {
 
 func newDeclarationParser() *declarationParser {
 	return &declarationParser{
-		typecasts:   make([]string, 0),
+		datatypes:   make([]nodes.Node, 0),
 		declaration: nodes.NewMultiDeclaration([]string{}, false),
 	}
 }
@@ -61,8 +61,13 @@ func (dp *declarationParser) collectAliases() error {
 		switch active.Type {
 		case tokens.Identifier:
 			if nextTypeInfo {
-				for len(dp.typecasts) < len(dp.declaration.Alias) {
-					dp.typecasts = append(dp.typecasts, active.Value)
+				datatype, offset, err := newTypeParser().Parse(dp.input[dp.index:])
+				if err != nil {
+					return errors.Wrap(err, "could not get type info")
+				}
+				dp.index += offset - 1
+				for len(dp.datatypes) < len(dp.declaration.Alias) {
+					dp.datatypes = append(dp.datatypes, datatype)
 				}
 			} else {
 				dp.declaration.Alias = append(dp.declaration.Alias, active.Value)
@@ -89,11 +94,12 @@ func (dp *declarationParser) collectAliases() error {
 }
 
 func (dp *declarationParser) assignDefaultValues() error {
-	if len(dp.typecasts) != len(dp.declaration.Alias) {
-		return errors.Errorf("expected %d typecasts, got %d", len(dp.declaration.Alias), len(dp.typecasts))
+	if len(dp.datatypes) != len(dp.declaration.Alias) {
+		return errors.Errorf("expected %d typecasts, got %d", len(dp.declaration.Alias), len(dp.datatypes))
 	}
-	for _, t := range dp.typecasts {
-		dp.declaration.AddBack(nodes.NewTypecast(t, nodes.NewLiteral(runtime.Value{})))
+	for _, t := range dp.datatypes {
+		t.AddFront(nodes.NewLiteral(runtime.Value{}))
+		dp.declaration.AddBack(t)
 	}
 	return nil
 }
@@ -106,8 +112,9 @@ func (dp *declarationParser) assignValues() error {
 		}
 		dp.index += n
 
-		if i < len(dp.typecasts) {
-			term = nodes.NewTypecast(dp.typecasts[i], term)
+		if i < len(dp.datatypes) {
+			dp.datatypes[i].AddBack(term)
+			term = dp.datatypes[i]
 		}
 		dp.declaration.AddBack(term)
 

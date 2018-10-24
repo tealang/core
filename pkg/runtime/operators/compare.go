@@ -30,12 +30,12 @@ func loadGreaterEqual(c *runtime.Context) {
 		switch a.Type {
 		case types.Integer:
 			return runtime.Value{
-				Type: types.Bool,
+				Typeflag: runtime.T(types.Bool),
 				Data: a.Data.(int64) >= b.Data.(int64),
 			}, nil
 		case types.Float:
 			return runtime.Value{
-				Type: types.Bool,
+				Typeflag: runtime.T(types.Bool),
 				Data: a.Data.(float64) >= b.Data.(float64),
 			}, nil
 		}
@@ -45,65 +45,65 @@ func loadGreaterEqual(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Float,
+				Typeflag:     runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Float,
+				Typeflag:     runtime.T(types.Float),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Bool},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	greaterEqualFloatInt := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Float,
+				Typeflag:     runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Integer,
+				Typeflag:     runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Bool},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	greateEqualInt := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Integer,
+				Typeflag:     runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Integer,
+				Typeflag:     runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Bool},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	greaterEqualIntFloat := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Integer,
+				Typeflag:     runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Float,
+				Typeflag:     runtime.T(types.Float),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Bool},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	greaterEqualFunction := runtime.Function{
 		Signatures: []runtime.Signature{
@@ -145,12 +145,12 @@ func loadSmallerEqual(c *runtime.Context) {
 		switch a.Type {
 		case types.Integer:
 			return runtime.Value{
-				Type: types.Bool,
+				Typeflag: runtime.T(types.Bool),
 				Data: a.Data.(int64) <= b.Data.(int64),
 			}, nil
 		case types.Float:
 			return runtime.Value{
-				Type: types.Bool,
+				Typeflag: runtime.T(types.Bool),
 				Data: a.Data.(float64) <= b.Data.(float64),
 			}, nil
 		}
@@ -160,65 +160,65 @@ func loadSmallerEqual(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Float,
+				Typeflag:     runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Float,
+				Typeflag:     runtime.T(types.Float),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Bool},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	smallerEqualFloatInt := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Float,
+				Typeflag:     runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Integer,
+				Typeflag:     runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Bool},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	smallerEqualInt := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Integer,
+				Typeflag:     runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Integer,
+				Typeflag:     runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Bool},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	smallerEqualIntFloat := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Integer,
+				Typeflag:     runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Float,
+				Typeflag:     runtime.T(types.Float),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Bool},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	smallerEqualFunction := runtime.Function{
 		Signatures: []runtime.Signature{
@@ -260,12 +260,12 @@ func loadGreater(c *runtime.Context) {
 		switch a.Type {
 		case types.Integer:
 			return runtime.Value{
-				Type: types.Bool,
+				Typeflag: runtime.T(types.Bool),
 				Data: a.Data.(int64) > b.Data.(int64),
 			}, nil
 		case types.Float:
 			return runtime.Value{
-				Type: types.Bool,
+				Typeflag: runtime.T(types.Bool),
 				Data: a.Data.(float64) > b.Data.(float64),
 			}, nil
 		}
@@ -275,65 +275,65 @@ func loadGreater(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Float,
+				Typeflag:     runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Float,
+				Typeflag:     runtime.T(types.Float),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Bool},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	greaterFloatInt := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Float,
+				Typeflag:     runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Integer,
+				Typeflag:     runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Bool},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	greaterInt := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Integer,
+				Typeflag:     runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Integer,
+				Typeflag:     runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Bool},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	greaterIntFloat := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Integer,
+				Typeflag:     runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Float,
+				Typeflag:     runtime.T(types.Float),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Bool},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	greaterFunction := runtime.Function{
 		Signatures: []runtime.Signature{
@@ -375,12 +375,12 @@ func loadSmaller(c *runtime.Context) {
 		switch a.Type {
 		case types.Integer:
 			return runtime.Value{
-				Type: types.Bool,
+				Typeflag: runtime.T(types.Bool),
 				Data: a.Data.(int64) < b.Data.(int64),
 			}, nil
 		case types.Float:
 			return runtime.Value{
-				Type: types.Bool,
+				Typeflag: runtime.T(types.Bool),
 				Data: a.Data.(float64) < b.Data.(float64),
 			}, nil
 		}
@@ -390,65 +390,65 @@ func loadSmaller(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Float,
+				Typeflag:     runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Float,
+				Typeflag:     runtime.T(types.Float),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Bool},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	smallerFloatInt := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Float,
+				Typeflag:     runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Integer,
+				Typeflag:     runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Bool},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	smallerIntInt := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Integer,
+				Typeflag:     runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Integer,
+				Typeflag:     runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Bool},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	smallerIntFloat := runtime.Signature{
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Integer,
+				Typeflag:     runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Float,
+				Typeflag:     runtime.T(types.Float),
 				Constant: true,
 			},
 		},
 		Function: adapter,
-		Returns:  runtime.Value{Type: types.Bool},
+		Returns:  runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	smallerFunction := runtime.Function{
 		Signatures: []runtime.Signature{

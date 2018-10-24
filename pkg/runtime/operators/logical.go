@@ -12,12 +12,12 @@ func loadUnequals(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Any,
+				Typeflag:     runtime.T(types.Any),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Any,
+				Typeflag:     runtime.T(types.Any),
 				Constant: true,
 			},
 		},
@@ -29,11 +29,11 @@ func loadUnequals(c *runtime.Context) {
 				b         = identB.(runtime.Value)
 			)
 			return runtime.Value{
-				Type: types.Bool,
+				Typeflag: runtime.T(types.Bool),
 				Data: a.Data != b.Data,
 			}, nil
 		}),
-		Returns: runtime.Value{Type: types.Bool},
+		Returns: runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	unequalsFunction := runtime.Function{
 		Signatures: []runtime.Signature{
@@ -54,12 +54,12 @@ func loadEquals(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Any,
+				Typeflag:     runtime.T(types.Any),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Any,
+				Typeflag:     runtime.T(types.Any),
 				Constant: true,
 			},
 		},
@@ -71,11 +71,11 @@ func loadEquals(c *runtime.Context) {
 				b         = identB.(runtime.Value)
 			)
 			return runtime.Value{
-				Type: types.Bool,
+				Typeflag: runtime.T(types.Bool),
 				Data: a.Data == b.Data,
 			}, nil
 		}),
-		Returns: runtime.Value{Type: types.Bool},
+		Returns: runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	equalsFunction := runtime.Function{
 		Signatures: []runtime.Signature{
@@ -95,7 +95,7 @@ func loadNegation(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Bool,
+				Typeflag:     runtime.T(types.Bool),
 				Constant: true,
 			},
 		},
@@ -105,11 +105,11 @@ func loadNegation(c *runtime.Context) {
 				a         = identA.(runtime.Value)
 			)
 			return runtime.Value{
-				Type: types.Bool,
+				Typeflag: runtime.T(types.Bool),
 				Data: !a.Data.(bool),
 			}, nil
 		}),
-		Returns: runtime.Value{Type: types.Bool},
+		Returns: runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	negFunction := runtime.Function{
 		Signatures: []runtime.Signature{
@@ -129,12 +129,12 @@ func loadLogicalXor(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Bool,
+				Typeflag:     runtime.T(types.Bool),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Bool,
+				Typeflag:     runtime.T(types.Bool),
 				Constant: true,
 			},
 		},
@@ -148,11 +148,11 @@ func loadLogicalXor(c *runtime.Context) {
 				bv        = b.Data.(bool)
 			)
 			return runtime.Value{
-				Type: types.Bool,
+				Typeflag: runtime.T(types.Bool),
 				Data: (av || bv) && !(av && bv),
 			}, nil
 		}),
-		Returns: runtime.Value{Type: types.Bool},
+		Returns: runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	xorFunction := runtime.Function{
 		Signatures: []runtime.Signature{
@@ -172,12 +172,12 @@ func loadLogicalOr(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Bool,
+				Typeflag:     runtime.T(types.Bool),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Bool,
+				Typeflag:     runtime.T(types.Bool),
 				Constant: true,
 			},
 		},
@@ -189,11 +189,11 @@ func loadLogicalOr(c *runtime.Context) {
 				b         = identB.(runtime.Value)
 			)
 			return runtime.Value{
-				Type: types.Bool,
+				Typeflag: runtime.T(types.Bool),
 				Data: a.Data.(bool) || b.Data.(bool),
 			}, nil
 		}),
-		Returns: runtime.Value{Type: types.Bool},
+		Returns: runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	orFunction := runtime.Function{
 		Signatures: []runtime.Signature{
@@ -214,12 +214,12 @@ func loadLogicalAnd(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Type:     types.Bool,
+				Typeflag:     runtime.T(types.Bool),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Type:     types.Bool,
+				Typeflag:     runtime.T(types.Bool),
 				Constant: true,
 			},
 		},
@@ -231,11 +231,11 @@ func loadLogicalAnd(c *runtime.Context) {
 				b         = identB.(runtime.Value)
 			)
 			return runtime.Value{
-				Type: types.Bool,
+				Typeflag: runtime.T(types.Bool),
 				Data: a.Data.(bool) && b.Data.(bool),
 			}, nil
 		}),
-		Returns: runtime.Value{Type: types.Bool},
+		Returns: runtime.Value{Typeflag: runtime.T(types.Bool)},
 	}
 	andFunction := runtime.Function{
 		Signatures: []runtime.Signature{
