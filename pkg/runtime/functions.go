@@ -54,7 +54,7 @@ func (sign Signature) String() string {
 		items[i] = n.VariableString()
 	}
 	if sign.Returns.Type != nil {
-		return fmt.Sprintf("(%s) -> %s", strings.Join(items, ","), sign.Returns.Type.Name)
+		return fmt.Sprintf("(%s) -> %s", strings.Join(items, ","), sign.Returns.Typeflag)
 	}
 	return fmt.Sprintf("(%s)", strings.Join(items, ","))
 }

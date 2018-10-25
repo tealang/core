@@ -50,7 +50,7 @@ func (sp *sequenceParser) checkForAssignment() bool {
 		switch sp.active.Type {
 		case tokens.Identifier, tokens.Separator:
 		case tokens.Operator:
-			if sp.active.Value != "=" {
+			if !tokens.AssignmentOperator.Match(sp.active.Value) {
 				return false
 			}
 			return true

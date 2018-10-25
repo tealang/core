@@ -132,11 +132,10 @@ func (v Value) VariableString() string {
 	if v.Type == nil {
 		return ":null"
 	}
-
 	if v.Reference {
-		return fmt.Sprintf("%s: &%s", v.Name, v.Type)
+		return fmt.Sprintf("%s: &%s", v.Name, v.Typeflag)
 	}
-	return fmt.Sprintf("%s: %s", v.Name, v.Type)
+	return fmt.Sprintf("%s: %s", v.Name, v.Typeflag)
 }
 
 func (v Value) String() string {

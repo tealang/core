@@ -61,10 +61,12 @@ func (dp *declarationParser) collectAliases() error {
 		switch active.Type {
 		case tokens.Identifier:
 			if nextTypeInfo {
+				//fmt.Println(dp.input[dp.index:])
 				datatype, offset, err := newTypeParser().Parse(dp.input[dp.index:])
 				if err != nil {
 					return errors.Wrap(err, "could not get type info")
 				}
+				//fmt.Println(offset)
 				dp.index += offset - 1
 				for len(dp.datatypes) < len(dp.declaration.Alias) {
 					dp.datatypes = append(dp.datatypes, datatype)

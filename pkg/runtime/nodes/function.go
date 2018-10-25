@@ -117,14 +117,14 @@ func NewFunctionLiteral(body Node, returns *Type, args ...*Type) *FunctionLitera
 		Returns:   returns,
 		Args:      args,
 	}
-	types := make([]string, len(args))
+	typenames := make([]string, len(args))
 	for i, a := range args {
-		types[i] = a.Tree.String()
+		typenames[i] = a.Tree.String()
 	}
 	if returns != nil {
-		lit.Metadata["label"] = fmt.Sprintf("Function %s -> %s", types, returns.Tree)
+		lit.Metadata["label"] = fmt.Sprintf("Function %s -> %s", typenames, returns.Tree)
 	} else {
-		lit.Metadata["label"] = fmt.Sprintf("Function %s", types)
+		lit.Metadata["label"] = fmt.Sprintf("Function %s", typenames)
 	}
 	return lit
 }

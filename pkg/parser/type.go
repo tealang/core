@@ -9,7 +9,7 @@ import (
 type typeParser struct {
 	index, size int
 	input       []tokens.Token
-	active      tokens.Token
+	active, next      tokens.Token
 }
 
 func (tp *typeParser) fetch() tokens.Token {
@@ -18,6 +18,11 @@ func (tp *typeParser) fetch() tokens.Token {
 	}
 	tp.active = tp.input[tp.index]
 	tp.index++
+	if tp.index < tp.size {
+		tp.next = tp.input[tp.index]
+	} else {
+		tp.next = tokens.Token{}
+	}
 	return tp.active
 }
 
@@ -28,11 +33,11 @@ func (tp *typeParser) tree() (nodes.Typetree, error) {
 	tree := nodes.Typetree{
 		Name: tp.active.Value,
 	}
-	if tp.fetch().Type != tokens.Operator || tp.active.Value != "<" {
-		tp.index--
+	if tp.next.Type != tokens.Operator || tp.next.Value != "<" {
 		return tree, nil
 	}
-	for tp.input[tp.index].Type == tokens.Identifier {
+	tp.fetch()
+	for tp.next.Type == tokens.Identifier {
 		subtree, err := tp.tree()
 		if err != nil {
 			return tree, err

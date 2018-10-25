@@ -54,6 +54,10 @@ var (
 		Name:  "operator",
 		Match: NewTokenMatcher(`^([+\-*/=:<>!%^&|.]|([+\-*/^%<>=!][=?]{1})|([|^]\|)|(&&))$`),
 	}
+	AssignmentOperator = &Type{
+		Name: "assignmentOperator",
+		Match: NewTokenMatcher(`^([+\-*/^%<>!]?[=]{1})$`),
+	}
 	Whitespace = &Type{
 		Name:  "whitespace",
 		Match: NewTokenMatcher(`^\s+$`),

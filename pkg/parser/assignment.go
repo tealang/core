@@ -26,7 +26,9 @@ func (ap *assignmentParser) collectAliases() error {
 		case tokens.Separator:
 			break
 		case tokens.Operator:
-			if active.Value != "=" {
+			if tokens.AssignmentOperator.Match(active.Value) {
+				ap.assignment.Operator = active.Value[:len(active.Value)-1]
+			} else if active.Value != "=" {
 				return errors.Errorf("expected assignment operator, got %s", active.Value)
 			}
 			collectAliases = false
