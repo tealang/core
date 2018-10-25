@@ -52,7 +52,7 @@ var (
 	}
 	Operator = &Type{
 		Name:  "operator",
-		Match: NewTokenMatcher(`^([+\-*/=:<>!%^&|]|([+\-*/^%<>=!][=?]{1})|([|^]\|)|(&&))$`),
+		Match: NewTokenMatcher(`^([+\-*/=:<>!%^&|.]|([+\-*/^%<>=!][=?]{1})|([|^]\|)|(&&))$`),
 	}
 	Whitespace = &Type{
 		Name:  "whitespace",

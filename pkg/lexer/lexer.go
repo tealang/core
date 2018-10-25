@@ -1,7 +1,11 @@
 // Package lexer provides a simple lexer that generates a discrete series of tokens from an input string.
 package lexer
 
-import "github.com/tealang/core/pkg/lexer/tokens"
+import (
+	"fmt"
+	"github.com/tealang/core/pkg/lexer/tokens"
+	"os"
+)
 
 // Lex converts the input into a series of tokens.
 func Lex(input string) []tokens.Token {
@@ -9,7 +13,7 @@ func Lex(input string) []tokens.Token {
 		Value: "",
 		Type:  nil,
 	}
-	output := []tokens.Token{}
+	var output []tokens.Token
 	for i := 0; i < len(input); i++ {
 		c := input[i]
 		value := active.Value + string(c)
@@ -32,5 +36,7 @@ func Lex(input string) []tokens.Token {
 			}
 		}
 	}
-	return append(output, active)
+	output = append(output, active)
+	fmt.Fprintln(os.Stderr, output)
+	return output
 }

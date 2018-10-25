@@ -31,12 +31,12 @@ func loadGreaterEqual(c *runtime.Context) {
 		case types.Integer:
 			return runtime.Value{
 				Typeflag: runtime.T(types.Bool),
-				Data: a.Data.(int64) >= b.Data.(int64),
+				Data:     a.Data.(int64) >= b.Data.(int64),
 			}, nil
 		case types.Float:
 			return runtime.Value{
 				Typeflag: runtime.T(types.Bool),
-				Data: a.Data.(float64) >= b.Data.(float64),
+				Data:     a.Data.(float64) >= b.Data.(float64),
 			}, nil
 		}
 		return runtime.Value{}, errors.New("operator >= not applicable")
@@ -45,12 +45,12 @@ func loadGreaterEqual(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Float),
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Float),
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 		},
@@ -61,12 +61,12 @@ func loadGreaterEqual(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Float),
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Integer),
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
@@ -77,12 +77,12 @@ func loadGreaterEqual(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Integer),
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Integer),
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
@@ -93,12 +93,12 @@ func loadGreaterEqual(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Integer),
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Float),
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 		},
@@ -146,12 +146,12 @@ func loadSmallerEqual(c *runtime.Context) {
 		case types.Integer:
 			return runtime.Value{
 				Typeflag: runtime.T(types.Bool),
-				Data: a.Data.(int64) <= b.Data.(int64),
+				Data:     a.Data.(int64) <= b.Data.(int64),
 			}, nil
 		case types.Float:
 			return runtime.Value{
 				Typeflag: runtime.T(types.Bool),
-				Data: a.Data.(float64) <= b.Data.(float64),
+				Data:     a.Data.(float64) <= b.Data.(float64),
 			}, nil
 		}
 		return runtime.Value{}, errors.New("operator <= not applicable")
@@ -160,12 +160,12 @@ func loadSmallerEqual(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Float),
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Float),
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 		},
@@ -176,12 +176,12 @@ func loadSmallerEqual(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Float),
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Integer),
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
@@ -192,12 +192,12 @@ func loadSmallerEqual(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Integer),
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Integer),
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
@@ -208,12 +208,12 @@ func loadSmallerEqual(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Integer),
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Float),
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 		},
@@ -261,12 +261,12 @@ func loadGreater(c *runtime.Context) {
 		case types.Integer:
 			return runtime.Value{
 				Typeflag: runtime.T(types.Bool),
-				Data: a.Data.(int64) > b.Data.(int64),
+				Data:     a.Data.(int64) > b.Data.(int64),
 			}, nil
 		case types.Float:
 			return runtime.Value{
 				Typeflag: runtime.T(types.Bool),
-				Data: a.Data.(float64) > b.Data.(float64),
+				Data:     a.Data.(float64) > b.Data.(float64),
 			}, nil
 		}
 		return runtime.Value{}, errors.New("operator > not applicable")
@@ -275,12 +275,12 @@ func loadGreater(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Float),
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Float),
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 		},
@@ -291,12 +291,12 @@ func loadGreater(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Float),
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Integer),
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
@@ -307,12 +307,12 @@ func loadGreater(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Integer),
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Integer),
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
@@ -323,12 +323,12 @@ func loadGreater(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Integer),
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Float),
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 		},
@@ -376,12 +376,12 @@ func loadSmaller(c *runtime.Context) {
 		case types.Integer:
 			return runtime.Value{
 				Typeflag: runtime.T(types.Bool),
-				Data: a.Data.(int64) < b.Data.(int64),
+				Data:     a.Data.(int64) < b.Data.(int64),
 			}, nil
 		case types.Float:
 			return runtime.Value{
 				Typeflag: runtime.T(types.Bool),
-				Data: a.Data.(float64) < b.Data.(float64),
+				Data:     a.Data.(float64) < b.Data.(float64),
 			}, nil
 		}
 		return runtime.Value{}, errors.New("operator < not applicable")
@@ -390,12 +390,12 @@ func loadSmaller(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Float),
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Float),
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 		},
@@ -406,12 +406,12 @@ func loadSmaller(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Float),
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Integer),
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
@@ -422,12 +422,12 @@ func loadSmaller(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Integer),
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Integer),
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 		},
@@ -438,12 +438,12 @@ func loadSmaller(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Integer),
+				Typeflag: runtime.T(types.Integer),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Float),
+				Typeflag: runtime.T(types.Float),
 				Constant: true,
 			},
 		},

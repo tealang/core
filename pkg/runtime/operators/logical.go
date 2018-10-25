@@ -12,12 +12,12 @@ func loadUnequals(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Any),
+				Typeflag: runtime.T(types.Any),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Any),
+				Typeflag: runtime.T(types.Any),
 				Constant: true,
 			},
 		},
@@ -30,7 +30,7 @@ func loadUnequals(c *runtime.Context) {
 			)
 			return runtime.Value{
 				Typeflag: runtime.T(types.Bool),
-				Data: a.Data != b.Data,
+				Data:     a.Data != b.Data,
 			}, nil
 		}),
 		Returns: runtime.Value{Typeflag: runtime.T(types.Bool)},
@@ -54,12 +54,12 @@ func loadEquals(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Any),
+				Typeflag: runtime.T(types.Any),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Any),
+				Typeflag: runtime.T(types.Any),
 				Constant: true,
 			},
 		},
@@ -72,7 +72,7 @@ func loadEquals(c *runtime.Context) {
 			)
 			return runtime.Value{
 				Typeflag: runtime.T(types.Bool),
-				Data: a.Data == b.Data,
+				Data:     a.Data == b.Data,
 			}, nil
 		}),
 		Returns: runtime.Value{Typeflag: runtime.T(types.Bool)},
@@ -95,7 +95,7 @@ func loadNegation(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Bool),
+				Typeflag: runtime.T(types.Bool),
 				Constant: true,
 			},
 		},
@@ -106,7 +106,7 @@ func loadNegation(c *runtime.Context) {
 			)
 			return runtime.Value{
 				Typeflag: runtime.T(types.Bool),
-				Data: !a.Data.(bool),
+				Data:     !a.Data.(bool),
 			}, nil
 		}),
 		Returns: runtime.Value{Typeflag: runtime.T(types.Bool)},
@@ -129,12 +129,12 @@ func loadLogicalXor(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Bool),
+				Typeflag: runtime.T(types.Bool),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Bool),
+				Typeflag: runtime.T(types.Bool),
 				Constant: true,
 			},
 		},
@@ -149,7 +149,7 @@ func loadLogicalXor(c *runtime.Context) {
 			)
 			return runtime.Value{
 				Typeflag: runtime.T(types.Bool),
-				Data: (av || bv) && !(av && bv),
+				Data:     (av || bv) && !(av && bv),
 			}, nil
 		}),
 		Returns: runtime.Value{Typeflag: runtime.T(types.Bool)},
@@ -172,12 +172,12 @@ func loadLogicalOr(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Bool),
+				Typeflag: runtime.T(types.Bool),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Bool),
+				Typeflag: runtime.T(types.Bool),
 				Constant: true,
 			},
 		},
@@ -190,7 +190,7 @@ func loadLogicalOr(c *runtime.Context) {
 			)
 			return runtime.Value{
 				Typeflag: runtime.T(types.Bool),
-				Data: a.Data.(bool) || b.Data.(bool),
+				Data:     a.Data.(bool) || b.Data.(bool),
 			}, nil
 		}),
 		Returns: runtime.Value{Typeflag: runtime.T(types.Bool)},
@@ -214,12 +214,12 @@ func loadLogicalAnd(c *runtime.Context) {
 		Expected: []runtime.Value{
 			{
 				Name:     "a",
-				Typeflag:     runtime.T(types.Bool),
+				Typeflag: runtime.T(types.Bool),
 				Constant: true,
 			},
 			{
 				Name:     "b",
-				Typeflag:     runtime.T(types.Bool),
+				Typeflag: runtime.T(types.Bool),
 				Constant: true,
 			},
 		},
@@ -232,7 +232,7 @@ func loadLogicalAnd(c *runtime.Context) {
 			)
 			return runtime.Value{
 				Typeflag: runtime.T(types.Bool),
-				Data: a.Data.(bool) && b.Data.(bool),
+				Data:     a.Data.(bool) && b.Data.(bool),
 			}, nil
 		}),
 		Returns: runtime.Value{Typeflag: runtime.T(types.Bool)},

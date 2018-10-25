@@ -101,7 +101,7 @@ func (literal *FunctionLiteral) Eval(c *runtime.Context) (runtime.Value, error) 
 	function := runtime.NewFunction(c.Namespace, signature)
 	return runtime.Value{
 		Typeflag: runtime.T(types.Function),
-		Data: function,
+		Data:     function,
 	}, nil
 }
 
@@ -157,7 +157,7 @@ func (definition *OperatorDefinition) Eval(c *runtime.Context) (runtime.Value, e
 	}
 	return runtime.Value{
 		Typeflag: runtime.T(types.Function),
-		Data: function,
+		Data:     function,
 	}, nil
 }
 

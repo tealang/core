@@ -30,19 +30,19 @@ func init() {
 			case nil:
 				return runtime.Value{
 					Typeflag: runtime.T(Any),
-					Name: v.Name,
-					Data: nil,
+					Name:     v.Name,
+					Data:     nil,
 				}, nil
 			case Any:
 				return runtime.Value{
 					Typeflag: v.Typeflag,
-					Data: v.Data,
-					Name: v.Name,
+					Data:     v.Data,
+					Name:     v.Name,
 				}, nil
 			default:
 				return runtime.Value{
 					Typeflag: runtime.Typeflag{
-						Type: Any,
+						Type:   Any,
 						Params: []runtime.Typeflag{v.Typeflag},
 					},
 					Name: v.Name,
@@ -65,8 +65,8 @@ func init() {
 			case Array:
 				return runtime.Value{
 					Typeflag: v.Typeflag,
-					Data: v.Data,
-					Name: v.Name,
+					Data:     v.Data,
+					Name:     v.Name,
 				}, nil
 			default:
 				return runtime.Value{}, errors.Errorf("can not cast %s to array", v.Type)
@@ -90,16 +90,16 @@ func init() {
 			case nil:
 				return runtime.Value{
 					Typeflag: runtime.T(Integer),
-					Data: int64(0),
-					Name: v.Name,
+					Data:     int64(0),
+					Name:     v.Name,
 				}, nil
 			case Integer:
 				return v, nil
 			case Float:
 				return runtime.Value{
 					Typeflag: runtime.T(Integer),
-					Data: int64(v.Data.(float64)),
-					Name: v.Name,
+					Data:     int64(v.Data.(float64)),
+					Name:     v.Name,
 				}, nil
 			case String:
 				i, err := strconv.Atoi(v.Data.(string))
@@ -108,8 +108,8 @@ func init() {
 				}
 				return runtime.Value{
 					Typeflag: runtime.T(Integer),
-					Data: i,
-					Name: v.Name,
+					Data:     i,
+					Name:     v.Name,
 				}, nil
 			default:
 				return runtime.Value{}, errors.Errorf("can not cast %s to int", v.Type)
@@ -130,14 +130,14 @@ func init() {
 			case nil:
 				return runtime.Value{
 					Typeflag: runtime.T(Float),
-					Data: float64(0),
-					Name: v.Name,
+					Data:     float64(0),
+					Name:     v.Name,
 				}, nil
 			case Integer:
 				return runtime.Value{
 					Typeflag: runtime.T(Float),
-					Data: float64(v.Data.(int64)),
-					Name: v.Name,
+					Data:     float64(v.Data.(int64)),
+					Name:     v.Name,
 				}, nil
 			case Float:
 				return v, nil
@@ -160,8 +160,8 @@ func init() {
 			case nil:
 				return runtime.Value{
 					Typeflag: runtime.T(String),
-					Data: "",
-					Name: v.Name,
+					Data:     "",
+					Name:     v.Name,
 				}, nil
 			case String:
 				return v, nil
@@ -174,9 +174,9 @@ func init() {
 		Name:   "func",
 		Parent: Any,
 		Cast: func(v runtime.Value, f []runtime.Typeflag) (runtime.Value, error) {
-				if len(f) != 0 {
-					return runtime.Value{}, errors.New("unsupported type parameters")
-				}
+			if len(f) != 0 {
+				return runtime.Value{}, errors.New("unsupported type parameters")
+			}
 			if v.Type == Function {
 				return v, nil
 			}
@@ -199,8 +199,8 @@ func init() {
 			case nil:
 				return runtime.Value{
 					Typeflag: runtime.T(Bool),
-					Name: v.Name,
-					Data: false,
+					Name:     v.Name,
+					Data:     false,
 				}, nil
 			default:
 				return runtime.Value{}, errors.Errorf("can not cast %s to bool", v.Type)

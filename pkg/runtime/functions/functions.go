@@ -22,7 +22,7 @@ func loadStructof(c *runtime.Context) {
 			value := item.(runtime.Value)
 			return runtime.Value{
 				Typeflag: runtime.T(types.String),
-				Data: fmt.Sprintf("%#v", value),
+				Data:     fmt.Sprintf("%#v", value),
 			}, nil
 		}),
 		Returns: runtime.Value{
@@ -31,12 +31,12 @@ func loadStructof(c *runtime.Context) {
 	}
 	structOfFunction := runtime.Function{
 		Signatures: []runtime.Signature{structOfSignature},
-		Source: nil,
+		Source:     nil,
 	}
 	structof := runtime.Value{
 		Typeflag: runtime.T(types.Function),
-		Data: structOfFunction,
-		Name: "structof",
+		Data:     structOfFunction,
+		Name:     "structof",
 		Constant: true,
 	}
 	c.Namespace.Store(structof)

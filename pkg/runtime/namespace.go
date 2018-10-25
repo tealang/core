@@ -53,7 +53,7 @@ func (datatype *Datatype) String() string {
 
 // Typeflag of a given datatype with one or more children typeflags.
 type Typeflag struct {
-	Type *Datatype
+	Type   *Datatype
 	Params []Typeflag
 }
 
@@ -84,7 +84,7 @@ func T(tree ...*Datatype) Typeflag {
 		}
 	} else {
 		return Typeflag{
-			Type: tree[0],
+			Type:   tree[0],
 			Params: []Typeflag{T(tree[1:]...)},
 		}
 	}

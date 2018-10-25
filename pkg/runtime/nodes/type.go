@@ -8,7 +8,7 @@ import (
 )
 
 type Typetree struct {
-	Name string
+	Name   string
 	Params []Typetree
 }
 
@@ -45,7 +45,7 @@ func (t *Type) build(tree Typetree, c *runtime.Context) (runtime.Typeflag, error
 		}
 	}
 	return runtime.Typeflag{
-		Type: base.(*runtime.Datatype),
+		Type:   base.(*runtime.Datatype),
 		Params: params,
 	}, nil
 }
@@ -75,7 +75,7 @@ func (t *Type) Eval(c *runtime.Context) (runtime.Value, error) {
 func NewType(tree Typetree, args ...Node) *Type {
 	typed := &Type{
 		BasicNode: NewBasic(args...),
-		Tree: tree,
+		Tree:      tree,
 	}
 	typed.Metadata["label"] = fmt.Sprintf("Type (%s)", tree)
 	return typed
