@@ -1,45 +1,19 @@
 package functions
 
 import (
+	"bufio"
 	"fmt"
-	"os"
-
 	"github.com/tealang/core/pkg/runtime"
 	"github.com/tealang/core/pkg/runtime/nodes"
 	"github.com/tealang/core/pkg/runtime/types"
+	"os"
+	"strings"
 )
 
-func loadStructof(c *runtime.Context) {
-	structOfSignature := runtime.Signature{
-		Expected: []runtime.Value{
-			{
-				Name:     "data",
-				Typeflag: runtime.T(types.Any),
-			},
-		},
-		Function: nodes.NewAdapter(func(c *runtime.Context) (runtime.Value, error) {
-			item, _ := c.Namespace.Find(runtime.SearchIdentifier, "data")
-			value := item.(runtime.Value)
-			return runtime.Value{
-				Typeflag: runtime.T(types.String),
-				Data:     fmt.Sprintf("%#v", value),
-			}, nil
-		}),
-		Returns: runtime.Value{
-			Typeflag: runtime.T(types.String),
-		},
-	}
-	structOfFunction := runtime.Function{
-		Signatures: []runtime.Signature{structOfSignature},
-		Source:     nil,
-	}
-	structof := runtime.Value{
-		Typeflag: runtime.T(types.Function),
-		Data:     structOfFunction,
-		Name:     "structof",
-		Constant: true,
-	}
-	c.Namespace.Store(structof)
+var runtimeFunctions = []func(*runtime.Context){
+	loadTypeof,
+	loadPrint,
+	loadRead,
 }
 
 func loadTypeof(c *runtime.Context) {
@@ -75,6 +49,40 @@ func loadTypeof(c *runtime.Context) {
 	c.Namespace.Store(typeof)
 }
 
+func loadRead(c *runtime.Context) {
+	reader := bufio.NewReader(os.Stdin)
+	readAdapter := nodes.NewAdapter(func (c *runtime.Context) (runtime.Value, error) {
+		value, _ := c.Namespace.Find(runtime.SearchIdentifier, "text")
+		if value != nil {
+			fmt.Fprint(os.Stdout, value.(runtime.Value).Data)
+		}
+		input, _ := reader.ReadString('\n')
+		return runtime.Value{
+			Typeflag: runtime.T(types.String),
+			Data: strings.TrimSuffix(input, "\n"),
+		}, nil
+	})
+	readFunction := runtime.Function{
+		Signatures: []runtime.Signature{
+			{
+				Expected: []runtime.Value{{Name: "text", Typeflag: runtime.T(types.String)}},
+				Function: readAdapter,
+			},
+			{
+				Expected: []runtime.Value{},
+				Function: readAdapter,
+			},
+		},
+		Source: nil,
+	}
+	read := runtime.Value{
+		Name: "read",
+		Typeflag: runtime.T(types.Function),
+		Data: readFunction,
+	}
+	c.Namespace.Store(read)
+}
+
 func loadPrint(c *runtime.Context) {
 	printSignature := runtime.Signature{
 		Expected: []runtime.Value{
@@ -103,7 +111,7 @@ func loadPrint(c *runtime.Context) {
 
 // Load loads language-level function into the context namespace.
 func Load(c *runtime.Context) {
-	loadPrint(c)
-	loadTypeof(c)
-	loadStructof(c)
+	for _, f := range runtimeFunctions {
+		f(c)
+	}
 }

@@ -2,9 +2,7 @@
 package lexer
 
 import (
-	"fmt"
 	"github.com/tealang/core/pkg/lexer/tokens"
-	"os"
 )
 
 // Lex converts the input into a series of tokens.
@@ -37,6 +35,5 @@ func Lex(input string) []tokens.Token {
 		}
 	}
 	output = append(output, active)
-	fmt.Fprintln(os.Stderr, output)
 	return output
 }
