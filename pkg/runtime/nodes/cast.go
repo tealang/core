@@ -34,7 +34,7 @@ func (t *Typecast) Eval(c *runtime.Context) (runtime.Value, error) {
 			return runtime.Value{}, errors.Wrap(err, "can not typecast")
 		}
 	}
-	return datatype.Cast(value)
+	return datatype.Cast(value, nil)
 }
 
 // NewTypecast constructs a new typecast from the given typename and a list of value nodes.

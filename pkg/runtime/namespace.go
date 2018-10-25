@@ -11,7 +11,7 @@ import (
 type Formatter func(v Value) string
 
 // Caster attempts to convert the value in a value conforming to a specific datatype.
-type Caster func(v Value) (Value, error)
+type Caster func(v Value, f []Typeflag) (Value, error)
 
 // Datatype has a name, a parent, a caster and a formatter.
 type Datatype struct {
@@ -66,6 +66,11 @@ func (tf Typeflag) String() string {
 		return fmt.Sprintf("%s<%s>", tf.Type.Name, strings.Join(params, ", "))
 	}
 	return tf.Type.Name
+}
+
+// Cast does a cast to the type of the source value including source type params.
+func (tf Typeflag) Cast(v Value) (Value, error) {
+	return tf.Type.Cast(v, tf.Params)
 }
 
 // T builds a typeflag using the given list of types.
@@ -177,7 +182,7 @@ func (v Value) Update(item SearchItem) (SearchItem, error) {
 		}
 		v.Data = c.Data
 	} else {
-		casted, err := v.Type.Cast(c)
+		casted, err := v.Cast(c)
 		if err != nil {
 			return v, errors.Wrap(err, "could not update value")
 		}

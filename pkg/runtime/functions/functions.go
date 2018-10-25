@@ -2,6 +2,7 @@ package functions
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/tealang/core/pkg/runtime"
 	"github.com/tealang/core/pkg/runtime/nodes"
@@ -84,7 +85,7 @@ func loadPrint(c *runtime.Context) {
 		},
 		Function: nodes.NewAdapter(func(c *runtime.Context) (runtime.Value, error) {
 			value, _ := c.Namespace.Find(runtime.SearchIdentifier, "text")
-			fmt.Println(value.(runtime.Value).Data)
+			fmt.Fprintln(os.Stdout, value.(runtime.Value).Data)
 			return runtime.Value{}, nil
 		}),
 	}

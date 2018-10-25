@@ -1,6 +1,7 @@
 package runtime
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -22,7 +23,7 @@ func TestContext_Substitute(t *testing.T) {
 		return v, nil
 	}); err != nil {
 		t.Errorf("Unexpected error on substitute: %s", err)
-	} else if x != v {
+	} else if !reflect.DeepEqual(x, v) {
 		t.Errorf("Invalid value: expected %v, got %v", v, x)
 	}
 	if _, err := ctx.Namespace.Find(SearchIdentifier, "v"); err == nil {

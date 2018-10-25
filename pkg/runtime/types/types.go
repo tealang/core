@@ -25,12 +25,30 @@ func init() {
 	Any = &runtime.Datatype{
 		Name:   "any",
 		Parent: nil,
-		Cast: func(v runtime.Value) (runtime.Value, error) {
-			return runtime.Value{
-				Typeflag: v.Typeflag,
-				Data: v.Data,
-				Name: v.Name,
-			}, nil
+		Cast: func(v runtime.Value, f []runtime.Typeflag) (runtime.Value, error) {
+			switch v.Type {
+			case nil:
+				return runtime.Value{
+					Typeflag: runtime.T(Any),
+					Name: v.Name,
+					Data: nil,
+				}, nil
+			case Any:
+				return runtime.Value{
+					Typeflag: v.Typeflag,
+					Data: v.Data,
+					Name: v.Name,
+				}, nil
+			default:
+				return runtime.Value{
+					Typeflag: runtime.Typeflag{
+						Type: Any,
+						Params: []runtime.Typeflag{v.Typeflag},
+					},
+					Name: v.Name,
+					Data: v.Data,
+				}, nil
+			}
 		},
 		Format: func(v runtime.Value) string {
 			if v.Data != nil {
@@ -42,7 +60,7 @@ func init() {
 	Array = &runtime.Datatype{
 		Name:   "array",
 		Parent: Any,
-		Cast: func(v runtime.Value) (runtime.Value, error) {
+		Cast: func(v runtime.Value, f []runtime.Typeflag) (runtime.Value, error) {
 			switch v.Type {
 			case Array:
 				return runtime.Value{
@@ -64,7 +82,10 @@ func init() {
 		Format: func(v runtime.Value) string {
 			return fmt.Sprint(v.Data)
 		},
-		Cast: func(v runtime.Value) (runtime.Value, error) {
+		Cast: func(v runtime.Value, f []runtime.Typeflag) (runtime.Value, error) {
+			if len(f) != 0 {
+				return runtime.Value{}, errors.New("unsupported type parameters")
+			}
 			switch v.Type {
 			case nil:
 				return runtime.Value{
@@ -101,7 +122,10 @@ func init() {
 		Format: func(v runtime.Value) string {
 			return fmt.Sprint(v.Data)
 		},
-		Cast: func(v runtime.Value) (runtime.Value, error) {
+		Cast: func(v runtime.Value, f []runtime.Typeflag) (runtime.Value, error) {
+			if len(f) != 0 {
+				return runtime.Value{}, errors.New("unsupported type parameters")
+			}
 			switch v.Type {
 			case nil:
 				return runtime.Value{
@@ -128,7 +152,10 @@ func init() {
 		Format: func(v runtime.Value) string {
 			return fmt.Sprintf(`%s`, v.Data)
 		},
-		Cast: func(v runtime.Value) (runtime.Value, error) {
+		Cast: func(v runtime.Value, f []runtime.Typeflag) (runtime.Value, error) {
+			if len(f) != 0 {
+				return runtime.Value{}, errors.New("unsupported type parameters")
+			}
 			switch v.Type {
 			case nil:
 				return runtime.Value{
@@ -146,7 +173,10 @@ func init() {
 	Function = &runtime.Datatype{
 		Name:   "func",
 		Parent: Any,
-		Cast: func(v runtime.Value) (runtime.Value, error) {
+		Cast: func(v runtime.Value, f []runtime.Typeflag) (runtime.Value, error) {
+				if len(f) != 0 {
+					return runtime.Value{}, errors.New("unsupported type parameters")
+				}
 			if v.Type == Function {
 				return v, nil
 			}
@@ -159,7 +189,10 @@ func init() {
 	Bool = &runtime.Datatype{
 		Name:   "bool",
 		Parent: Any,
-		Cast: func(v runtime.Value) (runtime.Value, error) {
+		Cast: func(v runtime.Value, f []runtime.Typeflag) (runtime.Value, error) {
+			if len(f) != 0 {
+				return runtime.Value{}, errors.New("unsupported type parameters")
+			}
 			switch v.Type {
 			case Bool:
 				return v, nil

@@ -63,7 +63,7 @@ func (t *Type) Eval(c *runtime.Context) (runtime.Value, error) {
 		if err != nil {
 			return runtime.Value{}, errors.Wrap(err, "can not eval")
 		}
-		result, err = typeflag.Type.Cast(result)
+		result, err = typeflag.Cast(result)
 		if err != nil {
 			return runtime.Value{}, errors.Wrap(err, "can not cast")
 		}

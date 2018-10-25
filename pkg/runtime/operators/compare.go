@@ -17,12 +17,12 @@ func loadGreaterEqual(c *runtime.Context) {
 			err       error
 		)
 		if a.Type == types.Float {
-			b, err = a.Type.Cast(b)
+			b, err = a.Cast(b)
 			if err != nil {
 				return runtime.Value{}, errors.Wrap(err, "can not compare")
 			}
 		} else if b.Type == types.Float {
-			a, err = b.Type.Cast(b)
+			a, err = b.Cast(b)
 			if err != nil {
 				return runtime.Value{}, errors.Wrap(err, "can not compare")
 			}
@@ -132,12 +132,12 @@ func loadSmallerEqual(c *runtime.Context) {
 			err       error
 		)
 		if a.Type == types.Float {
-			b, err = a.Type.Cast(b)
+			b, err = a.Cast(b)
 			if err != nil {
 				return runtime.Value{}, errors.Wrap(err, "can not compare")
 			}
 		} else if b.Type == types.Float {
-			a, err = b.Type.Cast(b)
+			a, err = b.Cast(b)
 			if err != nil {
 				return runtime.Value{}, errors.Wrap(err, "can not compare")
 			}
@@ -247,12 +247,12 @@ func loadGreater(c *runtime.Context) {
 			err       error
 		)
 		if a.Type == types.Float {
-			b, err = a.Type.Cast(b)
+			b, err = a.Cast(b)
 			if err != nil {
 				return runtime.Value{}, errors.Wrap(err, "can not compare")
 			}
 		} else if b.Type == types.Float {
-			a, err = b.Type.Cast(b)
+			a, err = b.Cast(b)
 			if err != nil {
 				return runtime.Value{}, errors.Wrap(err, "can not compare")
 			}
@@ -362,12 +362,12 @@ func loadSmaller(c *runtime.Context) {
 			err       error
 		)
 		if a.Type == types.Float {
-			b, err = a.Type.Cast(b)
+			b, err = a.Cast(b)
 			if err != nil {
 				return runtime.Value{}, errors.Wrap(err, "can not compare")
 			}
 		} else if b.Type == types.Float {
-			a, err = b.Type.Cast(b)
+			a, err = b.Cast(b)
 			if err != nil {
 				return runtime.Value{}, errors.Wrap(err, "can not compare")
 			}

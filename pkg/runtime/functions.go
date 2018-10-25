@@ -32,13 +32,13 @@ func (sign Signature) Match(args []Value) ([]Value, error) {
 			if !args[i].Type.KindOf(sign.Expected[i].Type) {
 				return nil, errors.Errorf("unknown signature, expected type %s for argument %d, got %s", sign.Expected[i].Type, i, args[i].Type)
 			}
-			casted, err := sign.Expected[i].Type.Cast(args[i])
+			casted, err := sign.Expected[i].Cast(args[i])
 			if err != nil {
 				return nil, errors.Wrap(err, "signature not matching")
 			}
 			matched[i] = casted
 		} else if sign.Expected[i].Data != nil {
-			matched[i], _ = sign.Expected[i].Type.Cast(sign.Expected[i])
+			matched[i], _ = sign.Expected[i].Cast(sign.Expected[i])
 		} else {
 			return nil, errors.Errorf("missing args, expected %d, got %d", expected, got)
 		}

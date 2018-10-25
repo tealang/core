@@ -75,7 +75,7 @@ func (mp *matchParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 	if mp.index < mp.size && input[mp.index].Type == tokens.Identifier && input[mp.index].Value == defaultKeyword {
 		mp.index++
 		if err := mp.parseCase(input, true); err != nil {
-			return nil, mp.index, errors.Errorf("failed to build match default: %v")
+			return nil, mp.index, errors.Errorf("failed to build match default: %v", err)
 		}
 	}
 
