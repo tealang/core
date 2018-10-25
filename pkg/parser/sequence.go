@@ -171,7 +171,7 @@ func (sp *sequenceParser) Parse(input []tokens.Token) (nodes.Node, int, error) {
 				handler = sp.handleTerm
 			}
 			if err := handler(); err != nil {
-				return sp.sequence, sp.index, errors.Wrap(err, "failed handling sequence token")
+				return sp.sequence, sp.index, errors.Wrapf(err, "failed handling token %s", sp.active.Type.Name)
 			}
 		}
 		if sp.cap != 0 && len(sp.sequence.Childs) >= sp.cap {

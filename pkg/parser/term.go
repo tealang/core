@@ -182,7 +182,7 @@ func (tp *termParser) handleOperator() error {
 		}
 		item.Node = typenode
 		tp.index += offset
-		tp.fetch(true)
+		tp.fetch(false)
 	}
 	for !tp.operators.Empty() && !tp.binding(item) {
 		top := tp.operators.Peek()
