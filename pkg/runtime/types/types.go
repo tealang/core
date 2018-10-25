@@ -62,6 +62,12 @@ func init() {
 		Parent: Any,
 		Cast: func(v runtime.Value, f []runtime.Typeflag) (runtime.Value, error) {
 			switch v.Type {
+			case nil:
+				return runtime.Value{
+					Typeflag: v.Typeflag,
+					Data: nil,
+					Name: v.Name,
+				}, nil
 			case Array:
 				return runtime.Value{
 					Typeflag: v.Typeflag,
