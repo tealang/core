@@ -176,7 +176,12 @@ func (tp *termParser) handleOperator() error {
 	if tp.active.Value != ":" || tp.next.Type != tokens.Identifier {
 		item.Node = nodes.NewOperation(tp.active.Value, tp.argCount(item))
 	} else {
-		item.Node = nodes.NewTypecast(tp.next.Value)
+		typenode, offset, err := newTypeParser().Parse(tp.input[tp.index+1:])
+		if err != nil {
+			return err
+		}
+		item.Node = typenode
+		tp.index += offset
 		tp.fetch(true)
 	}
 	for !tp.operators.Empty() && !tp.binding(item) {

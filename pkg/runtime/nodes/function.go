@@ -65,8 +65,8 @@ func NewFunctionCall(alias string, args ...Node) *FunctionCall {
 // FunctionLiteral generates on evaluation a new function with parameters, return type and function body.
 type FunctionLiteral struct {
 	BasicNode
-	Args    []*Typecast
-	Returns *Typecast
+	Args    []*Type
+	Returns *Type
 }
 
 func (literal *FunctionLiteral) buildSignature(c *runtime.Context) (runtime.Signature, error) {
@@ -111,7 +111,7 @@ func (FunctionLiteral) Name() string {
 }
 
 // NewFunctionLiteral constructs a new function literal from the given body, return type and parameters.
-func NewFunctionLiteral(body Node, returns *Typecast, args ...*Typecast) *FunctionLiteral {
+func NewFunctionLiteral(body Node, returns *Type, args ...*Type) *FunctionLiteral {
 	lit := &FunctionLiteral{
 		BasicNode: NewBasic(body),
 		Returns:   returns,
@@ -119,12 +119,12 @@ func NewFunctionLiteral(body Node, returns *Typecast, args ...*Typecast) *Functi
 	}
 	types := make([]string, len(args))
 	for i, a := range args {
-		types[i] = a.Alias
+		types[i] = a.Tree.String()
 	}
 	if returns != nil {
-		lit.Metadata["label"] = fmt.Sprintf("Function <%s> -> %s", types, returns.Alias)
+		lit.Metadata["label"] = fmt.Sprintf("Function %s -> %s", types, returns.Tree)
 	} else {
-		lit.Metadata["label"] = fmt.Sprintf("Function <%s>", types)
+		lit.Metadata["label"] = fmt.Sprintf("Function %s", types)
 	}
 	return lit
 }
@@ -162,7 +162,7 @@ func (definition *OperatorDefinition) Eval(c *runtime.Context) (runtime.Value, e
 }
 
 // NewOperatorDefinition constructs a new operator defitinition with the associated symbol.
-func NewOperatorDefinition(symbol string, body Node, returns *Typecast, args ...*Typecast) *OperatorDefinition {
+func NewOperatorDefinition(symbol string, body Node, returns *Type, args ...*Type) *OperatorDefinition {
 	def := &OperatorDefinition{
 		FunctionLiteral: FunctionLiteral{
 			BasicNode: NewBasic(body),
@@ -173,12 +173,12 @@ func NewOperatorDefinition(symbol string, body Node, returns *Typecast, args ...
 	}
 	types := make([]string, len(args))
 	for i, a := range args {
-		types[i] = a.Alias
+		types[i] = a.Tree.String()
 	}
 	if returns != nil {
-		def.Metadata["label"] = fmt.Sprintf("Define %s as <%s> -> %s", symbol, types, returns.Alias)
+		def.Metadata["label"] = fmt.Sprintf("Define %s as %s -> %s", symbol, types, returns.Tree)
 	} else {
-		def.Metadata["label"] = fmt.Sprintf("Define %s as <%s> -> ()", symbol, types)
+		def.Metadata["label"] = fmt.Sprintf("Define %s as %s -> ()", symbol, types)
 	}
 	return def
 }

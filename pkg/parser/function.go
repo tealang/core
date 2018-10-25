@@ -11,8 +11,8 @@ type parameterizedSequenceParser struct {
 	active      tokens.Token
 	index, size int
 	input       []tokens.Token
-	args        []*nodes.Typecast
-	returns     *nodes.Typecast
+	args        []*nodes.Type
+	returns     *nodes.Type
 	body        nodes.Node
 }
 
@@ -39,8 +39,13 @@ func (sp *parameterizedSequenceParser) collectArgs() error {
 		case tokens.Identifier:
 			if activeArgs != nil {
 				if expectType {
+					typenode, offset, err := newTypeParser().Parse(sp.input[sp.index-1:])
+					if err != nil {
+						return errors.Wrap(err, "failed to parse param")
+					}
+					sp.index += offset - 1
 					for _, arg := range activeArgs {
-						sp.args = append(sp.args, nodes.NewTypecast(sp.active.Value, arg))
+						sp.args = append(sp.args, nodes.NewType(typenode.(*nodes.Type).Tree, arg))
 					}
 					activeArgs = nil
 					expectType = false
@@ -75,8 +80,12 @@ func (sp *parameterizedSequenceParser) collectArgs() error {
 		if sp.fetch().Type != tokens.Identifier {
 			return errors.Errorf("expected results cast, got %s", sp.active.Type)
 		}
-		sp.returns = nodes.NewTypecast(sp.active.Value, nodes.NewLiteral(runtime.Value{}))
-		sp.index++
+		typenode, offset, err := newTypeParser().Parse(sp.input[sp.index-1:])
+		if err != nil {
+			return errors.Wrap(err, "failed to parse return type")
+		}
+		sp.index += offset - 1
+		sp.returns = typenode.(*nodes.Type)
 	}
 
 	return nil
@@ -91,7 +100,8 @@ func (sp *parameterizedSequenceParser) collectBody() error {
 	sp.body = stmt
 	return nil
 }
-func (sp *parameterizedSequenceParser) Parse(input []tokens.Token) ([]*nodes.Typecast, nodes.Node, *nodes.Typecast, int, error) {
+
+func (sp *parameterizedSequenceParser) Parse(input []tokens.Token) ([]*nodes.Type, nodes.Node, *nodes.Type, int, error) {
 	sp.index, sp.size = 0, len(input)
 	sp.input = input
 	if err := sp.collectArgs(); err != nil {
@@ -104,7 +114,7 @@ func (sp *parameterizedSequenceParser) Parse(input []tokens.Token) ([]*nodes.Typ
 }
 
 func newParameterizedSequenceParser() *parameterizedSequenceParser {
-	return &parameterizedSequenceParser{args: make([]*nodes.Typecast, 0)}
+	return &parameterizedSequenceParser{args: make([]*nodes.Type, 0)}
 }
 
 type functionParser struct {

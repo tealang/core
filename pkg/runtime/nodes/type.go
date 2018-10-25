@@ -55,8 +55,9 @@ func (t *Type) Eval(c *runtime.Context) (runtime.Value, error) {
 	if err != nil {
 		return runtime.Value{}, errors.Wrap(err, "can not build typeflag")
 	}
-	result := runtime.Value{
-		Typeflag: typeflag,
+	result, err := typeflag.Cast(runtime.Value{})
+	if err != nil {
+		return runtime.Value{}, errors.Wrap(err, "type has no nil value")
 	}
 	for i := range t.Childs {
 		result, err = t.Childs[i].Eval(c)

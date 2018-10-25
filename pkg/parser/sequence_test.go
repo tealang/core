@@ -53,7 +53,6 @@ func Test_sequenceParser_Parse(t *testing.T) {
 			}
 			if got != tt.want {
 				t.Errorf("sequenceParser.Parse() got = %v, want %v", got, tt.want)
-				//fmt.Println(n.Graphviz("x"))
 			}
 		})
 	}
